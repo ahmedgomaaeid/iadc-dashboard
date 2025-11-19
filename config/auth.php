@@ -40,6 +40,26 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'user' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'board' => [
+            'driver' => 'session',
+            'provider' => 'boards',
+        ],
+
+        'highboard' => [
+            'driver' => 'session',
+            'provider' => 'highboards',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -65,10 +85,20 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'boards' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Board::class,
+        ],
+
+        'highboards' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Highboard::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
     ],
 
     /*
