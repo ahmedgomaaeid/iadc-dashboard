@@ -12,7 +12,7 @@
     <meta name="keywords" content="admin,admin dashboard,admin panel,admin template,bootstrap,clean,dashboard,flat,jquery,modern,responsive,premium admin templates,responsive admin,ui,ui kit.">
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{route('index')}}/assets/images/brand/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{route('index')}}/assets/images/brand/logo-2.svg" />
 
     <!-- TITLE -->
     <title>Login</title>
@@ -52,7 +52,7 @@
                 <!-- CONTAINER OPEN -->
                 <div class="col col-login mx-auto mt-7">
                     <div class="text-center">
-                        <img src="{{route('index')}}/assets/images/brand/logo-white.png" class="header-brand-img" alt="">
+                        <img src="{{route('index')}}/assets/images/brand/logo.png" class="header-brand-img" style="width: 250px;" alt="IADC Suez">
                     </div>
                 </div>
 

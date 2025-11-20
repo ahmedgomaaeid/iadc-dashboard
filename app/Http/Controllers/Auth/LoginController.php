@@ -194,4 +194,46 @@ class LoginController extends Controller
         return redirect()->route('board.dashboard')
             ->with('success', 'You are now logged in as ' . $board->name);
     }
+
+    // Highboard Impersonation - Login as Board Member
+    public function highboardLoginAsBoard(Request $request, $id)
+    {
+        // Verify highboard is authenticated
+        if (!Auth::guard('highboard')->check()) {
+            return redirect()->route('highboard.login');
+        }
+
+        $highboard = Auth::guard('highboard')->user();
+        $fieldId = $highboard->field_id;
+
+        // Find the board member and verify they belong to highboard's field
+        $board = \App\Models\Board::where('field_id', $fieldId)->findOrFail($id);
+
+        // Login as board member
+        Auth::guard('board')->login($board);
+
+        return redirect()->route('board.dashboard')
+            ->with('success', 'You are now logged in as ' . $board->name);
+    }
+
+    // Highboard Impersonation - Login as Member/User
+    public function highboardLoginAsMember(Request $request, $id)
+    {
+        // Verify highboard is authenticated
+        if (!Auth::guard('highboard')->check()) {
+            return redirect()->route('highboard.login');
+        }
+
+        $highboard = Auth::guard('highboard')->user();
+        $fieldId = $highboard->field_id;
+
+        // Find the member and verify they belong to highboard's field
+        $member = \App\Models\User::where('field_id', $fieldId)->findOrFail($id);
+
+        // Login as member
+        Auth::guard('user')->login($member);
+
+        return redirect()->route('user.dashboard')
+            ->with('success', 'You are now logged in as ' . $member->name);
+    }
 }

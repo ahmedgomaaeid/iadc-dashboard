@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:admin')->group(function () {
@@ -38,4 +39,12 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
         ->name('login-as-highboard');
     Route::post('login-as-board/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsBoard'])
         ->name('login-as-board');
+    
+    // Profile Routes
+    Route::get('profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.password');
 });

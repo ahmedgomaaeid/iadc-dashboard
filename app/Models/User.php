@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'field_id',
+        'committee_id',
+        'is_active',
+        'image',
     ];
 
     /**
@@ -43,6 +48,31 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the committee that this user belongs to
+     */
+    public function committee()
+    {
+        return $this->belongsTo(Committee::class);
+    }
+
+    /**
+     * Get the field that this user belongs to
+     */
+    public function field()
+    {
+        return $this->belongsTo(Field::class);
+    }
+
+    /**
+     * Scope to filter only active users
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

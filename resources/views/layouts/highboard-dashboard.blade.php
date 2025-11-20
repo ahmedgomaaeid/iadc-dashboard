@@ -54,7 +54,7 @@
                     <div class="d-flex">
                         <a aria-label="Hide Sidebar" class="app-sidebar__toggle" data-bs-toggle="sidebar" href="javascript:void(0)"></a>
                         <!-- sidebar-toggle-->
-                        <a class="logo-horizontal " href="{{route('admin.dashboard')}}">
+                        <a class="logo-horizontal " href="{{route('highboard.dashboard')}}">
                             <img src="{{asset('assets/images/brand/logo.png')}}" class="header-brand-img desktop-logo" alt="logo" style="height: 60px;">
                             <img src="{{asset('assets/images/brand/logo-3.png')}}" class="header-brand-img light-logo1"
                                 alt="logo" style="height: 60px;">
@@ -101,26 +101,26 @@
                                         <!-- SIDE-MENU -->
                                         <div class="dropdown d-flex profile-1">
                                             <a href="javascript:void(0)" data-bs-toggle="dropdown" class="nav-link leading-none d-flex">
-                                                @if(Auth::guard('admin')->user()->image)
-                                                    <img src="{{ asset('storage/' . Auth::guard('admin')->user()->image) }}" alt="profile-user"
+                                                @if(Auth::guard('highboard')->user()->image)
+                                                    <img src="{{ asset('storage/' . Auth::guard('highboard')->user()->image) }}" alt="profile-user"
                                                         class="avatar profile-user brround cover-image">
                                                 @else
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::guard('admin')->user()->name) }}&size=200&background=random" alt="profile-user"
+                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::guard('highboard')->user()->name) }}&size=200&background=random" alt="profile-user"
                                                         class="avatar profile-user brround cover-image">
                                                 @endif
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                                 <div class="drop-heading">
                                                     <div class="text-center">
-                                                        <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ Auth::guard('admin')->user()->name }}</h5>
-                                                        <small class="text-muted">Administrator</small>
+                                                        <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ Auth::guard('highboard')->user()->name }}</h5>
+                                                        <small class="text-muted">Highboard Member</small>
                                                     </div>
                                                 </div>
                                                 <div class="dropdown-divider m-0"></div>
-                                                <a class="dropdown-item" href="{{ route('admin.profile.edit') }}">
+                                                <a class="dropdown-item" href="{{ route('highboard.profile.edit') }}">
                                                     <i class="dropdown-icon fe fe-user"></i> Edit Profile
                                                 </a>
-                                                <a class="dropdown-item" href="{{route('admin.logout')}}">
+                                                <a class="dropdown-item" href="{{route('highboard.logout')}}">
                                                     <i class="dropdown-icon fe fe-alert-circle"></i> Sign out
                                                 </a>
                                             </div>
@@ -161,42 +161,34 @@
                                         <h3>Home</h3>
                                     </li>
                                     <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('admin.dashboard')}}"><i
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('highboard.dashboard')}}"><i
                                                 class="side-menu__icon fe fe-home"></i><span
-                                                class="side-menu__label">Home</span></a>
+                                                class="side-menu__label">Dashboard</span></a>
                                     </li>
 
                                     <li class="sub-category">
-                                        <h3>Committees</h3>
+                                        <h3>Management</h3>
                                     </li>
                                     <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.fields.index') }}"><i
-                                                class="side-menu__icon fe fe-layers"></i><span
-                                                class="side-menu__label">Fields</span></a>
-                                    </li>
-                                    <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.committees.index') }}"><i
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.committees.index') }}"><i
                                                 class="side-menu__icon fe fe-briefcase"></i><span
                                                 class="side-menu__label">Committees</span></a>
                                     </li>
-                                    <li class="sub-category">
-                                        <h3>Members</h3>
-                                    </li>
                                     <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.highboards.index') }}"><i
-                                                class="side-menu__icon fe fe-user-check"></i><span
-                                                class="side-menu__label">Highboard</span></a>
-                                    </li>
-                                    <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.boards.index') }}"><i
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.boards.index') }}"><i
                                                 class="side-menu__icon fe fe-users"></i><span
-                                                class="side-menu__label">Board</span></a>
+                                                class="side-menu__label">Board Members</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.members.index') }}"><i
+                                                class="side-menu__icon fe fe-user"></i><span
+                                                class="side-menu__label">Members</span></a>
                                     </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>
                                     <li class="slide">
-                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('admin.logout')}}"><i
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('highboard.logout')}}"><i
                                                 class="side-menu__icon icon icon-logout"></i><span
                                                 class="side-menu__label">Logout</span></a>
                                     </li>

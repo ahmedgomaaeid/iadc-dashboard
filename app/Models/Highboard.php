@@ -17,6 +17,7 @@ class Highboard extends Authenticatable
         'phone',
         'field_id',
         'is_active',
+        'image',
     ];
 
     protected $hidden = [

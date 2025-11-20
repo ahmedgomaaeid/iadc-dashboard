@@ -31,4 +31,20 @@ class Committee extends Model
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get all users belonging to this committee
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
+     * Get all board members belonging to this committee
+     */
+    public function boards()
+    {
+        return $this->hasMany(Board::class);
+    }
 }

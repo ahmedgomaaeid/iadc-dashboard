@@ -18,6 +18,7 @@ class Board extends Authenticatable
         'field_id',
         'committee_id',
         'is_active',
+        'image',
     ];
 
     protected $hidden = [
