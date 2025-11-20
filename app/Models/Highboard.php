@@ -14,6 +14,9 @@ class Highboard extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'field_id',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -26,6 +29,23 @@ class Highboard extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the field that this highboard member belongs to
+     */
+    public function field()
+    {
+        return $this->belongsTo(Field::class);
+    }
+
+    /**
+     * Scope to filter only active highboard members
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

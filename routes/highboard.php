@@ -12,5 +12,5 @@ Route::middleware('auth:highboard')->group(function () {
     Route::get('/highboard', function () {
         return 'Highboard Dashboard';
     })->name('highboard.dashboard');
-    Route::post('/highboard/logout', [LoginController::class, 'logout'])->name('highboard.logout');
+    Route::get('/highboard/logout', [LoginController::class, 'highboardlogout'])->name('highboard.logout');
 });

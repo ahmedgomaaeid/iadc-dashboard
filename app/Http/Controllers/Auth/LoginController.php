@@ -105,17 +105,93 @@ class LoginController extends Controller
     {
         if (Auth::guard('user')->check()) {
             Auth::guard('user')->logout();
-        } elseif (Auth::guard('board')->check()) {
+        }
+
+        return redirect('/');
+    }
+
+    public function boardlogout(Request $request)
+    {
+        if (Auth::guard('board')->check()) {
             Auth::guard('board')->logout();
-        } elseif (Auth::guard('highboard')->check()) {
+        }
+        if(Auth::guard('user')->check()) {
+            Auth::guard('user')->logout();
+        }
+
+        return redirect('/board');
+    }
+
+    public function highboardlogout(Request $request)
+    {
+        if (Auth::guard('highboard')->check()) {
             Auth::guard('highboard')->logout();
-        } elseif (Auth::guard('admin')->check()) {
+        }
+
+        if(Auth::guard('user')->check()) {
+            Auth::guard('user')->logout();
+        }
+
+        if(Auth::guard('board')->check()) {
+            Auth::guard('board')->logout();
+        }
+        return redirect('/highboard');
+    }
+
+    public function adminlogout(Request $request)
+    {
+        if (Auth::guard('admin')->check()) {
             Auth::guard('admin')->logout();
         }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if(Auth::guard('user')->check()) {
+            Auth::guard('user')->logout();
+        }
 
-        return redirect('/');
+        if(Auth::guard('board')->check()) {
+            Auth::guard('board')->logout();
+        }
+
+        if(Auth::guard('highboard')->check()) {
+            Auth::guard('highboard')->logout();
+        }
+
+        return redirect('/admin');
+    }
+
+    // Admin Impersonation - Login as Highboard
+    public function loginAsHighboard(Request $request, $id)
+    {
+        // Verify admin is authenticated
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('admin.login');
+        }
+
+        // Find the highboard member
+        $highboard = \App\Models\Highboard::findOrFail($id);
+
+        // Login as highboard member
+        Auth::guard('highboard')->login($highboard);
+
+        return redirect()->route('highboard.dashboard')
+            ->with('success', 'You are now logged in as ' . $highboard->name);
+    }
+
+    // Admin Impersonation - Login as Board
+    public function loginAsBoard(Request $request, $id)
+    {
+        // Verify admin is authenticated
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('admin.login');
+        }
+
+        // Find the board member
+        $board = \App\Models\Board::findOrFail($id);
+
+        // Login as board member
+        Auth::guard('board')->login($board);
+
+        return redirect()->route('board.dashboard')
+            ->with('success', 'You are now logged in as ' . $board->name);
     }
 }

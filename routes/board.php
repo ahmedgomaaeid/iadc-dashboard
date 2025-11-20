@@ -12,5 +12,5 @@ Route::middleware('auth:board')->group(function () {
     Route::get('/board', function () {
         return 'Board Dashboard';
     })->name('board.dashboard');
-    Route::post('/board/logout', [LoginController::class, 'logout'])->name('board.logout');
+    Route::get('/board/logout', [LoginController::class, 'boardlogout'])->name('board.logout');
 });

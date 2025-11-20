@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:admin')->group(function () {
@@ -8,9 +9,33 @@ Route::middleware('guest:admin')->group(function () {
     Route::post('/admin/login', [LoginController::class, 'adminAuthenticate']);
 });
 
-Route::middleware('auth:admin')->group(function () {
-    Route::get('/admin', function () {
-        return 'Admin Dashboard';
-    })->name('admin.dashboard');
-    Route::get('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
+Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/logout', [LoginController::class, 'adminlogout'])->name('logout');
+    
+    // Field Management Routes
+    Route::resource('fields', \App\Http\Controllers\admin\FieldController::class);
+    Route::post('fields/{field}/toggle-status', [\App\Http\Controllers\admin\FieldController::class, 'toggleStatus'])
+        ->name('fields.toggle-status');
+    
+    // Committee Management Routes
+    Route::resource('committees', \App\Http\Controllers\admin\CommitteeController::class);
+    Route::post('committees/{committee}/toggle-status', [\App\Http\Controllers\admin\CommitteeController::class, 'toggleStatus'])
+        ->name('committees.toggle-status');
+    
+    // Highboard Management Routes
+    Route::resource('highboards', \App\Http\Controllers\admin\HighboardController::class);
+    Route::post('highboards/{highboard}/toggle-status', [\App\Http\Controllers\admin\HighboardController::class, 'toggleStatus'])
+        ->name('highboards.toggle-status');
+    
+    // Board Management Routes
+    Route::resource('boards', \App\Http\Controllers\admin\BoardController::class);
+    Route::post('boards/{board}/toggle-status', [\App\Http\Controllers\admin\BoardController::class, 'toggleStatus'])
+        ->name('boards.toggle-status');
+    
+    // Admin Impersonation Routes
+    Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])
+        ->name('login-as-highboard');
+    Route::post('login-as-board/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsBoard'])
+        ->name('login-as-board');
 });

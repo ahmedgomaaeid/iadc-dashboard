@@ -1,3 +1,5 @@
 @extends('layouts.auth')
 
-@section('action', route('board.login'))
+@section('action', route('highboard.login'))
+
+@section('title', 'Manager Login')

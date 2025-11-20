@@ -6,5 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Committee extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'field_id',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    /**
+     * Get the field that this committee belongs to
+     */
+    public function field()
+    {
+        return $this->belongsTo(Field::class);
+    }
+
+    /**
+     * Scope to filter only active committees
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 }
