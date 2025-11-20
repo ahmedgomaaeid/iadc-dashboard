@@ -2,4 +2,4 @@
 
 @section('action', route('admin.login'))
 
-@section('title', 'Admin Login | IADC')
+@section('title', 'Admin Login')
