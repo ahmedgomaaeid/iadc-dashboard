@@ -1,44 +1,44 @@
-# name: Deploy Dashboard
+name: Deploy Dashboard
 
-# on:
-#   push:
-#     branches: [ "main" ]
+on:
+  push:
+    branches: [ "main" ]
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Deploy to Server via SSH
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.HOST }}
-#         username: ${{ secrets.USERNAME }}
-#         key: ${{ secrets.SSH_PRIVATE_KEY }}
-#         port: 22 # أو البورت الخاص بك إذا كان مختلفاً
-#         script: |
-#           # الانتقال لمسار المشروع الجديد
-#           cd ${{ secrets.PROJECT_PATH }}
+    steps:
+    - name: Deploy to Server via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22 # أو البورت الخاص بك إذا كان مختلفاً
+        script: |
+          # الانتقال لمسار المشروع الجديد
+          cd ${{ secrets.PROJECT_PATH }}
 
-#           # ضمان عمل git pull
-#           git config --global --add safe.directory ${{ secrets.PROJECT_PATH }}
+          # ضمان عمل git pull
+          git config --global --add safe.directory ${{ secrets.PROJECT_PATH }}
 
-#           # سحب التحديثات
-#           git pull origin main
+          # سحب التحديثات
+          git pull origin main
 
-#           # تحديث المكاتب
-#           export COMPOSER_ALLOW_SUPERUSER=1
-#           composer install --no-dev --optimize-autoloader
+          # تحديث المكاتب
+          export COMPOSER_ALLOW_SUPERUSER=1
+          composer install --no-dev --optimize-autoloader
 
-#           # المايكريشن
-#           php artisan migrate --force
+          # المايكريشن
+          php artisan migrate --force
 
-#           # تنظيف الكاش
-#           php artisan optimize:clear
-#           php artisan config:cache
-#           php artisan route:cache
-#           php artisan view:cache
+          # تنظيف الكاش
+          php artisan optimize:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
 
-#           # إصلاح الصلاحيات لـ aaPanel
-#           chown -R www:www .
-#           chmod -R 775 storage bootstrap/cache
+          # إصلاح الصلاحيات لـ aaPanel
+          chown -R www:www .
+          chmod -R 775 storage bootstrap/cache
