@@ -58,4 +58,14 @@ class Board extends Authenticatable
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get all members (users) in this board's committee
+     */
+    public function members()
+    {
+        return User::whereHas('committees', function ($query) {
+            $query->where('committees.id', $this->committee_id);
+        });
+    }
 }

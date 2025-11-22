@@ -1,4 +1,4 @@
-@extends('layouts.highboard-dashboard')
+@extends('layouts.board-dashboard')
 
 @section('title', isset($member) ? 'Edit Member' : 'Create Member')
 
@@ -7,8 +7,8 @@
         <h1 class="page-title">{{ isset($member) ? 'Edit Member' : 'Create Member' }}</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('highboard.members.index') }}">Members</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('board.members.index') }}">Members</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     {{ isset($member) ? 'Edit' : 'Create' }}
                 </li>
@@ -23,7 +23,7 @@
                     <h3 class="card-title">{{ isset($member) ? 'Edit Member' : 'New Member' }}</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ isset($member) ? route('highboard.members.update', $member) : route('highboard.members.store') }}" 
+                    <form action="{{ isset($member) ? route('board.members.update', $member) : route('board.members.store') }}" 
                           method="POST">
                         @csrf
                         @if(isset($member))
@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" 
                                        class="form-control @error('phone') is-invalid @enderror" 
@@ -69,20 +69,6 @@
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="committees" class="form-label">Committees <span class="text-danger">*</span></label>
-                                <select class="form-control select2 @error('committees') is-invalid @enderror" data-placeholder="Choose Browser" name="committees[]" id="committees" multiple>
-                                    @foreach($committees as $committee)
-                                        <option value="{{ $committee->id }}"
-                                                {{ in_array($committee->id, old('committees', isset($member) ? $member->committees->pluck('id')->toArray() : [])) ? 'selected' : '' }}>{{ $committee->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('committees')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple committees</small>
                             </div>
                         </div>
 
@@ -123,11 +109,16 @@
                             <small class="text-muted">Inactive members will not be able to log in</small>
                         </div>
 
+                        <div class="alert alert-info">
+                            <i class="fe fe-info me-2"></i>
+                            This member will be added to: <strong>{{ $board->committee->name ?? 'your committee' }}</strong>
+                        </div>
+
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fe fe-save me-2"></i>{{ isset($member) ? 'Update' : 'Create' }} Member
                             </button>
-                            <a href="{{ route('highboard.members.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('board.members.index') }}" class="btn btn-secondary">
                                 <i class="fe fe-x me-2"></i>Cancel
                             </a>
                         </div>
@@ -137,7 +128,4 @@
         </div>
     </div>
 @endsection
-@section('scripts')
-    <script src="{{ asset('assets/plugins/select2/select2.full.min.js') }}"></script>
-    <script src="{{ asset('assets/js/select2.js') }}"></script>
-@endsection
+

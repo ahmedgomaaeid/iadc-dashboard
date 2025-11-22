@@ -9,8 +9,22 @@ Route::middleware('guest:board')->group(function () {
 });
 
 Route::middleware('auth:board')->group(function () {
-    Route::get('/board', function () {
-        return 'Board Dashboard';
-    })->name('board.dashboard');
+    // Dashboard
+    Route::get('/board', [\App\Http\Controllers\board\DashboardController::class, 'index'])->name('board.dashboard');
+    
+    // Member Management Routes
+    Route::resource('board/members', \App\Http\Controllers\board\MemberController::class, ['as' => 'board']);
+    Route::post('board/members/{member}/toggle-status', [\App\Http\Controllers\board\MemberController::class, 'toggleStatus'])
+        ->name('board.members.toggle-status');
+    
+    // Profile Routes
+    Route::get('board/profile', [\App\Http\Controllers\board\ProfileController::class, 'edit'])
+        ->name('board.profile.edit');
+    Route::put('board/profile', [\App\Http\Controllers\board\ProfileController::class, 'update'])
+        ->name('board.profile.update');
+    Route::put('board/profile/password', [\App\Http\Controllers\board\ProfileController::class, 'updatePassword'])
+        ->name('board.profile.password');
+    
+    // Logout
     Route::get('/board/logout', [LoginController::class, 'boardlogout'])->name('board.logout');
 });

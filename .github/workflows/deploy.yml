@@ -37,8 +37,4 @@ jobs:
           chown -R www:www .
           chmod -R 775 storage bootstrap/cache
 
-          # make storage public for anyone
-          chmod -R 775 public/storage
-
-
           
