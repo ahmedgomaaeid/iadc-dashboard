@@ -38,7 +38,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Committee</th>
+                                    <th>Committees</th>
                                     <th>Status</th>
                                     <th>Created At</th>
                                     <th>Actions</th>
@@ -52,11 +52,11 @@
                                         <td>{{ $member->email }}</td>
                                         <td>{{ $member->phone ?? 'N/A' }}</td>
                                         <td>
-                                            @if($member->committee)
-                                                <span class="badge bg-info">{{ $member->committee->name }}</span>
-                                            @else
+                                            @forelse($member->committees as $committee)
+                                                <span class="badge bg-info">{{ $committee->name }}</span>
+                                            @empty
                                                 <span class="badge bg-secondary">No Committee</span>
-                                            @endif
+                                            @endforelse
                                         </td>
                                         <td>
                                             @if($member->is_active)

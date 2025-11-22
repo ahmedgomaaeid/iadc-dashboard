@@ -23,7 +23,6 @@ class User extends Authenticatable
         'password',
         'phone',
         'field_id',
-        'committee_id',
         'is_active',
         'image',
     ];
@@ -53,11 +52,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the committee that this user belongs to
+     * Get the committees that this user belongs to
      */
-    public function committee()
+    public function committees()
     {
-        return $this->belongsTo(Committee::class);
+        return $this->belongsToMany(Committee::class);
     }
 
     /**

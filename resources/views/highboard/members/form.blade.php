@@ -10,7 +10,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('highboard.members.index') }}">Members</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    {{ isset($board) ? 'Edit' : 'Create' }}
+                    {{ isset($member) ? 'Edit' : 'Create' }}
                 </li>
             </ol>
         </div>
@@ -26,7 +26,7 @@
                     <form action="{{ isset($member) ? route('highboard.members.update', $member) : route('highboard.members.store') }}" 
                           method="POST">
                         @csrf
-                        @if(isset($board))
+                        @if(isset($member))
                             @method('PUT')
                         @endif
 
@@ -72,30 +72,30 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="committee_id" class="form-label">Committee <span class="text-danger">*</span></label>
-                                <select class="form-select @error('committee_id') is-invalid @enderror" 
-                                        id="committee_id" 
-                                        name="committee_id" 
+                                <label for="committees" class="form-label">Committees <span class="text-danger">*</span></label>
+                                <select class="form-select @error('committees') is-invalid @enderror" 
+                                        id="committees" 
+                                        name="committees[]" 
+                                        multiple
                                         required>
-                                    <option value="">Select a committee</option>
                                     @foreach($committees as $committee)
                                         <option value="{{ $committee->id }}" 
-                                                {{ old('committee_id', $member->committee_id ?? '') == $committee->id ? 'selected' : '' }}>
+                                                {{ in_array($committee->id, old('committees', isset($member) ? $member->committees->pluck('id')->toArray() : [])) ? 'selected' : '' }}>
                                             {{ $committee->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('committee_id')
+                                @error('committees')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Only committees from your field are shown</small>
+                                <small class="text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple committees</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">
                                 Password 
-                                @if(!isset($board))
+                                @if(!isset($member))
                                     <span class="text-danger">*</span>
                                 @endif
                             </label>

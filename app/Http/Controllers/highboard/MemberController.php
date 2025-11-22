@@ -21,7 +21,7 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         $members = User::where('field_id', $fieldId)
-            ->with(['committee', 'field'])
+            ->with(['committees', 'field'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -57,19 +57,27 @@ class MemberController extends Controller
             'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|string|max:20',
             'password' => ['required', 'string', Password::min(8)],
-            'committee_id' => 'required|exists:committees,id',
+            'committees' => 'required|array',
+            'committees.*' => 'exists:committees,id',
             'is_active' => 'boolean',
         ]);
 
-        // Verify committee belongs to highboard's field
-        $committee = Committee::where('field_id', $fieldId)
-            ->findOrFail($validated['committee_id']);
+        // Verify committees belong to highboard's field
+        $validCommitteeIds = Committee::where('field_id', $fieldId)
+            ->whereIn('id', $validated['committees'])
+            ->pluck('id')
+            ->toArray();
+
+        if (count($validCommitteeIds) !== count($validated['committees'])) {
+            return back()->withErrors(['committees' => 'Invalid committee selection.']);
+        }
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
         $validated['password'] = Hash::make($validated['password']);
         $validated['field_id'] = $fieldId; // Auto-assign field
 
-        User::create($validated);
+        $user = User::create($validated);
+        $user->committees()->attach($validated['committees']);
 
         return redirect()->route('highboard.members.index')
             ->with('success', 'Member created successfully.');
@@ -110,13 +118,20 @@ class MemberController extends Controller
             'email' => 'required|email|unique:users,email,' . $member->id,
             'phone' => 'nullable|string|max:20',
             'password' => ['nullable', 'string', Password::min(8)],
-            'committee_id' => 'required|exists:committees,id',
+            'committees' => 'required|array',
+            'committees.*' => 'exists:committees,id',
             'is_active' => 'boolean',
         ]);
 
-        // Verify committee belongs to highboard's field
-        $committee = Committee::where('field_id', $fieldId)
-            ->findOrFail($validated['committee_id']);
+        // Verify committees belong to highboard's field
+        $validCommitteeIds = Committee::where('field_id', $fieldId)
+            ->whereIn('id', $validated['committees'])
+            ->pluck('id')
+            ->toArray();
+
+        if (count($validCommitteeIds) !== count($validated['committees'])) {
+            return back()->withErrors(['committees' => 'Invalid committee selection.']);
+        }
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
 
@@ -130,6 +145,7 @@ class MemberController extends Controller
         $validated['field_id'] = $fieldId; // Ensure field doesn't change
 
         $member->update($validated);
+        $member->committees()->sync($validated['committees']);
 
         return redirect()->route('highboard.members.index')
             ->with('success', 'Member updated successfully.');

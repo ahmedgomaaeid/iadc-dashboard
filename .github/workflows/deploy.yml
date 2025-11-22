@@ -17,28 +17,20 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22 # أو البورت الخاص بك إذا كان مختلفاً
         script: |
-          # الانتقال لمسار المشروع الجديد
           cd ${{ secrets.PROJECT_PATH }}
-
-          # ضمان عمل git pull
           git config --global --add safe.directory ${{ secrets.PROJECT_PATH }}
-
-          # سحب التحديثات
           git pull origin main
-
-          # تحديث المكاتب
           export COMPOSER_ALLOW_SUPERUSER=1
           composer install --no-dev --optimize-autoloader
 
-          # المايكريشن
           php artisan migrate --force
 
-          # تنظيف الكاش
           php artisan optimize:clear
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
 
-          # إصلاح الصلاحيات لـ aaPanel
+          php artisan storage:link
+
           chown -R www:www .
           chmod -R 775 storage bootstrap/cache
