@@ -15,7 +15,7 @@ Route::get('/debug-storage', function () {
             'path' => $publicStorage,
             'exists' => file_exists($publicStorage),
             'is_link' => is_link($publicStorage),
-            'link_target' => is_link($publicStorage) ? readlink($publicStorage) : null,
+            'link_target' => (is_link($publicStorage) && function_exists('readlink')) ? readlink($publicStorage) : 'readlink disabled or not a link',
         ],
         'storage_app_public' => [
             'path' => $storageAppPublic,
