@@ -30,7 +30,9 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
+          # إصلاح الروابط والصلاحيات
+          rm -rf public/storage
           php artisan storage:link
-
+          
           chown -R www:www .
           chmod -R 775 storage bootstrap/cache
