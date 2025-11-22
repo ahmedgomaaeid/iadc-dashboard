@@ -61,7 +61,7 @@
                         <form class="login100-form validate-form" action="@yield('action')" method="POST">
                             @csrf
                             <span class="login100-form-title pb-5">
-                                @yield('title', 'login')
+                                @yield('title', 'login') | IADC
                             </span>
                             <div class="panel panel-primary">
                                 <div class="tab-menu-heading">
