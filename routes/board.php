@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\board\DashboardController;
+use App\Http\Controllers\board\LessonController;
+use App\Http\Controllers\board\MemberController;
+use App\Http\Controllers\board\ProfileController;
+use App\Http\Controllers\board\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:board')->group(function () {
@@ -8,23 +13,30 @@ Route::middleware('guest:board')->group(function () {
     Route::post('/board/login', [LoginController::class, 'boardAuthenticate']);
 });
 
-Route::middleware('auth:board')->group(function () {
+Route::middleware('auth:board')->prefix('board')->name('board.')->group(function () {
     // Dashboard
-    Route::get('/board', [\App\Http\Controllers\board\DashboardController::class, 'index'])->name('board.dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Member Management Routes
-    Route::resource('board/members', \App\Http\Controllers\board\MemberController::class, ['as' => 'board']);
-    Route::post('board/members/{member}/toggle-status', [\App\Http\Controllers\board\MemberController::class, 'toggleStatus'])
-        ->name('board.members.toggle-status');
+    // Member Management  
+    Route::resource('members', MemberController::class);
+    Route::post('members/{member}/toggle-status', [MemberController::class, 'toggleStatus'])
+        ->name('members.toggle-status');
+
+    // Lesson Management
+    Route::resource('lessons', LessonController::class);
+    Route::delete('lessons/attachments/{attachment}', [LessonController::class, 'destroyAttachment'])
+        ->name('lessons.attachments.destroy');
+
+    // Task Management
+    Route::resource('tasks', TaskController::class);
+    Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
+        ->name('tasks.attachments.destroy');
     
-    // Profile Routes
-    Route::get('board/profile', [\App\Http\Controllers\board\ProfileController::class, 'edit'])
-        ->name('board.profile.edit');
-    Route::put('board/profile', [\App\Http\Controllers\board\ProfileController::class, 'update'])
-        ->name('board.profile.update');
-    Route::put('board/profile/password', [\App\Http\Controllers\board\ProfileController::class, 'updatePassword'])
-        ->name('board.profile.password');
+    // Profile Management
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     
     // Logout
-    Route::get('/board/logout', [LoginController::class, 'boardlogout'])->name('board.logout');
+    Route::get('/logout', [LoginController::class, 'boardlogout'])->name('logout');
 });

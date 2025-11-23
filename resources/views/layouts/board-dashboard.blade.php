@@ -163,6 +163,16 @@
                                                 class="side-menu__icon fe fe-users"></i><span
                                                 class="side-menu__label">Members</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.lessons.index') }}"><i
+                                                class="side-menu__icon fe fe-book-open"></i><span
+                                                class="side-menu__label">Lessons</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.tasks.index') }}"><i
+                                                class="side-menu__icon fe fe-check-square"></i><span
+                                                class="side-menu__label">Tasks</span></a>
+                                    </li>
                                     
                                     <li class="sub-category">
                                         <h3>Account</h3>

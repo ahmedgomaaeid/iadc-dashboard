@@ -60,12 +60,26 @@ class Board extends Authenticatable
     }
 
     /**
-     * Get all members (users) in this board's committee
+     * Get all members (users) in the board's committee.
      */
     public function members()
     {
-        return User::whereHas('committees', function ($query) {
-            $query->where('committees.id', $this->committee_id);
-        });
+        return $this->committee->users();
+    }
+
+    /**
+     * Get all lessons created by this board member.
+     */
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    /**
+     * Get all tasks created by this board member.
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }
