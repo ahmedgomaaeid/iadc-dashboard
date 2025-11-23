@@ -30,7 +30,7 @@
                     @if($task->content)
                         <div class="mb-4">
                             <div class="content-section">
-                                {!! nl2br(e($task->content)) !!}
+                                {!! $task->content !!}
                             </div>
                         </div>
                     @endif

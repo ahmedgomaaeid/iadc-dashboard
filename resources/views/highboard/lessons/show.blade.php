@@ -53,7 +53,7 @@
                     @if($lesson->content)
                         <div class="mb-4">
                             <div class="content-section">
-                                {!! nl2br(e($lesson->content)) !!}
+                                {!! $lesson->content !!}
                             </div>
                         </div>
                     @endif

@@ -173,7 +173,40 @@
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/plugins/summernote/summernote1.js') }}"></script>
 <script>
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: 'Write your lesson content here... URLs will be automatically detected as tags.',
+            tabsize: 2,
+            height: 300,
+            callbacks: {
+                onChange: function(contents, $editable) {
+                    // Sync content to textarea immediately on change
+                    $('#content').val(contents);
+                    
+                    // Update link preview
+                    // We strip HTML tags to find links in the text content
+                    var text = $('<div>').html(contents).text();
+                    updateLinkPreview(text);
+                }
+            }
+        });
+
+        // Initial check for links
+        var initialContent = $('#content').summernote('code');
+        var initialText = $('<div>').html(initialContent).text();
+        updateLinkPreview(initialText);
+
+        // Ensure content is synced on form submit
+        $('form').on('submit', function() {
+            if ($('#content').summernote('isEmpty')) {
+                $('#content').val('');
+            } else {
+                $('#content').val($('#content').summernote('code'));
+            }
+        });
+    });
 // Auto-detect links in content
 document.getElementById('content').addEventListener('input', function() {
     const content = this.value;
