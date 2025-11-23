@@ -85,19 +85,21 @@
                                    class="btn btn-sm btn-info" title="View">
                                     <i class="fe fe-eye"></i>
                                 </a>
-                                <a href="{{ route('board.lessons.edit', $lesson) }}" 
-                                   class="btn btn-sm btn-primary" title="Edit">
-                                    <i class="fe fe-edit"></i>
-                                </a>
-                                <form action="{{ route('board.lessons.destroy', $lesson) }}" 
-                                      method="POST" class="d-inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this lesson? All attached files will be deleted.');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                        <i class="fe fe-trash-2"></i>
-                                    </button>
-                                </form>
+                                @if($lesson->board_id === Auth::guard('board')->id())
+                                    <a href="{{ route('board.lessons.edit', $lesson) }}" 
+                                       class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fe fe-edit"></i>
+                                    </a>
+                                    <form action="{{ route('board.lessons.destroy', $lesson) }}" 
+                                          method="POST" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this lesson? All attached files will be deleted.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="fe fe-trash-2"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

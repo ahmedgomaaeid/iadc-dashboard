@@ -87,7 +87,15 @@
                             <div class="col-md-6">
                                 <small class="text-muted">
                                     <i class="fe fe-user me-1"></i>
-                                    Created by: <strong>{{ $lesson->board->name }}</strong>
+                                    Created by: <strong>
+                                        @if($lesson->highboard_id)
+                                            {{ $lesson->highboard->name }} (Highboard)
+                                        @elseif($lesson->board_id)
+                                            {{ $lesson->board->name }}
+                                        @else
+                                            Unknown
+                                        @endif
+                                    </strong>
                                 </small>
                             </div>
                             <div class="col-md-6 text-md-end">

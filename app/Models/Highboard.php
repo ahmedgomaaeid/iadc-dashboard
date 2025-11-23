@@ -49,4 +49,20 @@ class Highboard extends Authenticatable
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get all lessons created by this highboard member.
+     */
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    /**
+     * Get all tasks created by this highboard member.
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

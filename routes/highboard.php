@@ -1,6 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\highboard\BoardController;
+use App\Http\Controllers\highboard\CommitteeController;
+use App\Http\Controllers\highboard\DashboardController;
+use App\Http\Controllers\highboard\LessonController;
+use App\Http\Controllers\highboard\MemberController;
+use App\Http\Controllers\highboard\ProfileController;
+use App\Http\Controllers\highboard\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:highboard')->group(function () {
@@ -8,36 +15,43 @@ Route::middleware('guest:highboard')->group(function () {
     Route::post('/highboard/login', [LoginController::class, 'highboardAuthenticate']);
 });
 
-Route::middleware('auth:highboard')->group(function () {
-    Route::get('/highboard', [\App\Http\Controllers\highboard\DashboardController::class, 'index'])->name('highboard.dashboard');
-    Route::get('/highboard/logout', [LoginController::class, 'highboardlogout'])->name('highboard.logout');
+Route::middleware('auth:highboard')->prefix('highboard')->name('highboard.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/logout', [LoginController::class, 'highboardlogout'])->name('logout');
     
     // Committee Management Routes
-    Route::resource('highboard/committees', \App\Http\Controllers\highboard\CommitteeController::class, ['as' => 'highboard']);
-    Route::post('highboard/committees/{committee}/toggle-status', [\App\Http\Controllers\highboard\CommitteeController::class, 'toggleStatus'])
-        ->name('highboard.committees.toggle-status');
+    Route::resource('committees', CommitteeController::class);
+    Route::post('committees/{committee}/toggle-status', [CommitteeController::class, 'toggleStatus'])
+        ->name('committees.toggle-status');
     
     // Board Management Routes
-    Route::resource('highboard/boards', \App\Http\Controllers\highboard\BoardController::class, ['as' => 'highboard']);
-    Route::post('highboard/boards/{board}/toggle-status', [\App\Http\Controllers\highboard\BoardController::class, 'toggleStatus'])
-        ->name('highboard.boards.toggle-status');
+    Route::resource('boards', BoardController::class);
+    Route::post('boards/{board}/toggle-status', [BoardController::class, 'toggleStatus'])
+        ->name('boards.toggle-status');
     
     // Member Management Routes
-    Route::resource('highboard/members', \App\Http\Controllers\highboard\MemberController::class, ['as' => 'highboard']);
-    Route::post('highboard/members/{member}/toggle-status', [\App\Http\Controllers\highboard\MemberController::class, 'toggleStatus'])
-        ->name('highboard.members.toggle-status');
+    Route::resource('members', MemberController::class);
+    Route::post('members/{member}/toggle-status', [MemberController::class, 'toggleStatus'])
+        ->name('members.toggle-status');
+
+    // Lesson Management
+    Route::resource('lessons', LessonController::class);
+    Route::delete('lessons/attachments/{attachment}', [LessonController::class, 'destroyAttachment'])
+        ->name('lessons.attachments.destroy');
+
+    // Task Management
+    Route::resource('tasks', TaskController::class);
+    Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
+        ->name('tasks.attachments.destroy');
     
     // Highboard Impersonation Routes
-    Route::post('highboard/login-as-board/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'highboardLoginAsBoard'])
-        ->name('highboard.login-as-board');
-    Route::post('highboard/login-as-member/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'highboardLoginAsMember'])
-        ->name('highboard.login-as-member');
+    Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])
+        ->name('login-as-board');
+    Route::post('login-as-member/{id}', [LoginController::class, 'highboardLoginAsMember'])
+        ->name('login-as-member');
     
     // Profile Routes
-    Route::get('highboard/profile', [\App\Http\Controllers\highboard\ProfileController::class, 'edit'])
-        ->name('highboard.profile.edit');
-    Route::put('highboard/profile', [\App\Http\Controllers\highboard\ProfileController::class, 'update'])
-        ->name('highboard.profile.update');
-    Route::put('highboard/profile/password', [\App\Http\Controllers\highboard\ProfileController::class, 'updatePassword'])
-        ->name('highboard.profile.password');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });

@@ -1,4 +1,4 @@
-@extends('layouts.board-dashboard')
+@extends('layouts.highboard-dashboard')
 
 @section('title', $task->title)
 
@@ -7,8 +7,8 @@
         <h1 class="page-title">Task Details</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('board.tasks.index') }}">Tasks</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('highboard.tasks.index') }}">Tasks</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($task->title, 20) }}</li>
             </ol>
         </div>
@@ -30,7 +30,7 @@
                     @if($task->content)
                         <div class="mb-4">
                             <div class="content-section">
-                                {!! $task->content !!}
+                                {!! nl2br(e($task->content)) !!}
                             </div>
                         </div>
                     @endif
@@ -89,15 +89,15 @@
                 </div>
                 <div class="card-footer">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('board.tasks.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('highboard.tasks.index') }}" class="btn btn-secondary">
                             <i class="fe fe-arrow-left me-2"></i>Back to Tasks
                         </a>
-                        @if($task->board_id === Auth::guard('board')->id())
+                        @if($task->highboard_id === Auth::guard('highboard')->id() || $task->board_id)
                             <div class="d-flex gap-2">
-                                <a href="{{ route('board.tasks.edit', $task) }}" class="btn btn-warning">
+                                <a href="{{ route('highboard.tasks.edit', $task) }}" class="btn btn-warning">
                                     <i class="fe fe-edit-2 me-2"></i>Edit
                                 </a>
-                                <form action="{{ route('board.tasks.destroy', $task) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                <form action="{{ route('highboard.tasks.destroy', $task) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">
@@ -124,7 +124,7 @@
                                 @if($task->highboard_id)
                                     {{ $task->highboard->name }} (Highboard)
                                 @elseif($task->board_id)
-                                    {{ $task->board->name }}
+                                    {{ $task->board->name }} (Board)
                                 @else
                                     Unknown
                                 @endif

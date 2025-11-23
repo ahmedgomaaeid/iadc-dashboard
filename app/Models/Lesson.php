@@ -11,6 +11,7 @@ class Lesson extends Model
 
     protected $fillable = [
         'board_id',
+        'highboard_id',
         'committee_id',
         'title',
         'content',
@@ -30,6 +31,14 @@ class Lesson extends Model
     public function board()
     {
         return $this->belongsTo(Board::class);
+    }
+
+    /**
+     * Get the highboard that owns the lesson.
+     */
+    public function highboard()
+    {
+        return $this->belongsTo(Highboard::class);
     }
 
     /**

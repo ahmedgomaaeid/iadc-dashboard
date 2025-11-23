@@ -11,6 +11,7 @@ class Task extends Model
 
     protected $fillable = [
         'board_id',
+        'highboard_id',
         'committee_id',
         'title',
         'content',
@@ -26,6 +27,11 @@ class Task extends Model
     public function board()
     {
         return $this->belongsTo(Board::class);
+    }
+
+    public function highboard()
+    {
+        return $this->belongsTo(Highboard::class);
     }
 
     public function committee()
