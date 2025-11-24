@@ -1,4 +1,8 @@
 <IfModule mod_rewrite.c>
+    # --- التعديل: السماح بتتبع الروابط الرمزية ---
+    Options +FollowSymLinks
+    # -------------------------------------------
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
