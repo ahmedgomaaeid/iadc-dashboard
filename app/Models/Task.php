@@ -52,4 +52,8 @@ class Task extends Model
         preg_match_all('/https?:\/\/[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|\/))/', $content, $matches);
         return array_unique($matches[0]);
     }
+    public function submissions()
+    {
+        return $this->hasMany(TaskSubmission::class);
+    }
 }

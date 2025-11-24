@@ -74,4 +74,8 @@ class User extends Authenticatable
     {
         return $query->where('is_active', true);
     }
+    public function submissions()
+    {
+        return $this->hasMany(TaskSubmission::class);
+    }
 }
