@@ -64,7 +64,7 @@
                                 @elseif($submission->status == 'rejected')
                                     <span class="badge bg-danger"><i class="fe fe-x me-1"></i> Rejected</span>
                                 @else
-                                    <span class="badge bg-warning"><i class="fe fe-clock me-1"></i> Pending</span>
+                                    <span class="badge bg-warning"><i class="fe fe-clock me-1"></i> Under Review</span>
                                 @endif
                             @else
                                 <span class="badge bg-secondary"><i class="fe fe-minus me-1"></i> Not Submitted</span>

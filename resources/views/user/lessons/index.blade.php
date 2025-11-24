@@ -18,7 +18,7 @@
     <!-- ROW-1 -->
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
-            <div class="card bg-primary-gradient text-white">
+            <div class="card bg-success-gradient text-white">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
@@ -50,8 +50,8 @@
             <div class="col-md-6 col-xl-4">
                 <div class="card">
                     @if($lesson->youtube_video_id)
-                        <div class="card-img-top bg-primary-transparent text-center py-4">
-                            <i class="fe fe-video display-4 text-danger"></i>
+                        <div class="card-img-top bg-success-transparent text-center py-4">
+                            <i class="fe fe-video display-4 text-success"></i>
                         </div>
                     @else
                         <div class="card-img-top bg-secondary-transparent text-center py-4">
@@ -61,12 +61,12 @@
                     <div class="card-body d-flex flex-column">
                         <h4 class="card-title">
                             <a href="{{ route('lessons.show', $lesson) }}">{{ $lesson->title }}</a>
-                            <span class="badge bg-primary-transparent text-primary float-end fs-12">{{ $lesson->committee->name }}</span>
+                            <span class="badge bg-success-transparent text-success float-end fs-12">{{ $lesson->committee->name }}</span>
                         </h4>
                         <div class="text-muted mb-3">{{ Str::limit(strip_tags($lesson->content), 100) }}</div>
                         <div class="d-flex align-items-center pt-2 mt-auto">
                             <div class="ms-auto">
-                                <a href="{{ route('lessons.show', $lesson) }}" class="btn btn-primary"><i class="fe fe-play me-1"></i> Watch Lesson</a>
+                                <a href="{{ route('lessons.show', $lesson) }}" class="btn btn-success"><i class="fe fe-play me-1"></i> Watch Lesson</a>
                             </div>
                         </div>
                     </div>
