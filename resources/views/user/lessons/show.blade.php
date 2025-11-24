@@ -23,7 +23,7 @@
                 <div class="card-body">
                     @if($lesson->youtube_video_id)
                         <div class="ratio ratio-16x9 mb-4 border rounded">
-                            <iframe src="https://www.youtube.com/embed/{{ $lesson->youtube_video_id }}" title="YouTube video" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/{{ $lesson->youtube_video_id }}" title="{{ $lesson->title }}" allowfullscreen></iframe>
                         </div>
                     @endif
 
