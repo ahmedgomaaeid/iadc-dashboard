@@ -72,7 +72,9 @@
                                                 <span class="bg-primary-transparent brround p-2 me-2">
                                                     <i class="fe fe-video text-primary"></i>
                                                 </span>
-                                                {{ Str::limit($lesson->title, 20) }}
+                                                <a href="{{ route('lessons.show', $lesson) }}">
+                                                    {{ Str::limit($lesson->title, 20) }}
+                                                </a>
                                             </div>
                                         </td>
                                         <td><span class="badge bg-light text-dark">{{ $lesson->committee->name }}</span></td>
@@ -122,7 +124,9 @@
                                                 <span class="bg-success-transparent brround p-2 me-2">
                                                     <i class="fe fe-file-text text-success"></i>
                                                 </span>
-                                                {{ Str::limit($task->title, 20) }}
+                                                <a href="{{ route('tasks.show', $task) }}">
+                                                    {{ Str::limit($task->title, 20) }}
+                                                </a>
                                             </div>
                                         </td>
                                         <td><span class="badge bg-light text-dark">{{ $task->committee->name }}</span></td>
