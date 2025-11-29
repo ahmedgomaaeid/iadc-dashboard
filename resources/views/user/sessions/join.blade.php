@@ -3,8 +3,8 @@
 @section('title', 'Join Session: ' . $session->title)
 
 @section('css')
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.18.0/css/bootstrap.css" />
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.18.0/css/react-select.css" />
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.1.6/css/bootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.1.6/css/react-select.css" />
     <style>
         #zmmtg-root {
             display: none;
@@ -15,12 +15,6 @@
             left: 0;
             z-index: 9999;
             background-color: black;
-        }
-        .meeting-container {
-            position: relative;
-            width: 100%;
-            height: calc(100vh - 200px);
-            min-height: 600px;
         }
     </style>
 @endsection
@@ -47,6 +41,7 @@
                     <button id="join-meeting" class="btn btn-primary btn-lg">
                         <i class="fe fe-video me-2"></i> Join Meeting
                     </button>
+                    <div id="error-message" class="text-danger mt-3" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -56,12 +51,12 @@
 @endsection
 
 @section('scripts')
-    <script src="https://source.zoom.us/2.18.0/lib/vendor/react.min.js"></script>
-    <script src="https://source.zoom.us/2.18.0/lib/vendor/react-dom.min.js"></script>
-    <script src="https://source.zoom.us/2.18.0/lib/vendor/redux.min.js"></script>
-    <script src="https://source.zoom.us/2.18.0/lib/vendor/redux-thunk.min.js"></script>
-    <script src="https://source.zoom.us/2.18.0/lib/vendor/lodash.min.js"></script>
-    <script src="https://source.zoom.us/zoom-meeting-2.18.0.min.js"></script>
+    <script src="https://source.zoom.us/3.1.6/lib/vendor/react.min.js"></script>
+    <script src="https://source.zoom.us/3.1.6/lib/vendor/react-dom.min.js"></script>
+    <script src="https://source.zoom.us/3.1.6/lib/vendor/redux.min.js"></script>
+    <script src="https://source.zoom.us/3.1.6/lib/vendor/redux-thunk.min.js"></script>
+    <script src="https://source.zoom.us/3.1.6/lib/vendor/lodash.min.js"></script>
+    <script src="https://source.zoom.us/zoom-meeting-3.1.6.min.js"></script>
 
     <script>
         ZoomMtg.preLoadWasm();
@@ -84,23 +79,32 @@
 
             ZoomMtg.init({
                 leaveUrl: meetingConfig.leaveUrl,
+                patchJsMedia: true,
                 success: function() {
                     ZoomMtg.join({
                         meetingNumber: meetingConfig.meetingNumber,
                         userName: meetingConfig.userName,
                         signature: meetingConfig.signature,
-                        apiKey: meetingConfig.apiKey,
+                        sdkKey: meetingConfig.apiKey,
                         passWord: meetingConfig.passWord,
                         success: function(res) {
                             console.log('join meeting success');
                         },
                         error: function(res) {
                             console.log(res);
+                            document.getElementById('zmmtg-root').style.display = 'none';
+                            var errorDiv = document.getElementById('error-message');
+                            errorDiv.style.display = 'block';
+                            errorDiv.innerText = 'Error joining meeting: ' + (res.result || res.method || 'Unknown error');
                         }
                     });
                 },
                 error: function(res) {
                     console.log(res);
+                    document.getElementById('zmmtg-root').style.display = 'none';
+                    var errorDiv = document.getElementById('error-message');
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerText = 'Error initializing Zoom: ' + (res.result || res.method || 'Unknown error');
                 }
             });
         });
