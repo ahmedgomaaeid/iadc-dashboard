@@ -8,7 +8,7 @@ use App\Http\Controllers\highboard\LessonController;
 use App\Http\Controllers\highboard\MemberController;
 use App\Http\Controllers\highboard\ProfileController;
 use App\Http\Controllers\highboard\TaskController;
-use App\Http\Controllers\Highboard\SessionController;
+use App\Http\Controllers\highboard\SessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:highboard')->group(function () {

@@ -6,7 +6,7 @@ use App\Http\Controllers\board\LessonController;
 use App\Http\Controllers\board\MemberController;
 use App\Http\Controllers\board\ProfileController;
 use App\Http\Controllers\board\TaskController;
-use App\Http\Controllers\Board\SessionController;
+use App\Http\Controllers\board\SessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:board')->group(function () {

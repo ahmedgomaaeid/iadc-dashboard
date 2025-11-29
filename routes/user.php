@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\user\DashboardController;
 use App\Http\Controllers\user\LessonController;
 use App\Http\Controllers\user\TaskController;
-use App\Http\Controllers\User\SessionController;
+use App\Http\Controllers\user\SessionController;
 use App\Http\Controllers\user\ProfileController;
 use Illuminate\Support\Facades\Route;
 
