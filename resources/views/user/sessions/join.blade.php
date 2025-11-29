@@ -59,6 +59,7 @@
     <script src="https://source.zoom.us/zoom-meeting-3.1.6.min.js"></script>
 
     <script>
+        ZoomMtg.setZoomJSLib('https://source.zoom.us/3.1.6/lib', '/av');
         ZoomMtg.preLoadWasm();
         ZoomMtg.prepareWebSDK();
 
@@ -79,7 +80,6 @@
 
             ZoomMtg.init({
                 leaveUrl: meetingConfig.leaveUrl,
-                patchJsMedia: true,
                 success: function() {
                     ZoomMtg.join({
                         meetingNumber: meetingConfig.meetingNumber,
