@@ -8,6 +8,7 @@ use App\Http\Controllers\highboard\LessonController;
 use App\Http\Controllers\highboard\MemberController;
 use App\Http\Controllers\highboard\ProfileController;
 use App\Http\Controllers\highboard\TaskController;
+use App\Http\Controllers\Highboard\SessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:highboard')->group(function () {
@@ -43,6 +44,10 @@ Route::middleware('auth:highboard')->prefix('highboard')->name('highboard.')->gr
     Route::resource('tasks', TaskController::class);
     Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
         ->name('tasks.attachments.destroy');
+
+    // Session Management
+    Route::resource('sessions', SessionController::class);
+    Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
     
     // Highboard Impersonation Routes
     Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])

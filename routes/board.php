@@ -6,6 +6,7 @@ use App\Http\Controllers\board\LessonController;
 use App\Http\Controllers\board\MemberController;
 use App\Http\Controllers\board\ProfileController;
 use App\Http\Controllers\board\TaskController;
+use App\Http\Controllers\Board\SessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:board')->group(function () {
@@ -31,6 +32,10 @@ Route::middleware('auth:board')->prefix('board')->name('board.')->group(function
     Route::resource('tasks', TaskController::class);
     Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
         ->name('tasks.attachments.destroy');
+    
+    // Session Management
+    Route::resource('sessions', SessionController::class);
+    Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
     
     // Profile Management
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

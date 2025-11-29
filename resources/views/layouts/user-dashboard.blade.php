@@ -106,6 +106,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="dropdown-divider m-0"></div>
+                                                <a class="dropdown-item" href="{{ route('user.profile.edit') }}">
+                                                    <i class="dropdown-icon fe fe-user"></i> Edit Profile
+                                                </a>
                                                 <a class="dropdown-item" href="{{route('logout')}}">
                                                     <i class="dropdown-icon fe fe-alert-circle"></i> Sign out
                                                 </a>
@@ -165,9 +168,19 @@
                                                 class="side-menu__icon fe fe-check-square"></i><span
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('user.sessions.index') }}"><i
+                                                class="side-menu__icon fe fe-video"></i><span
+                                                class="side-menu__label">Sessions</span></a>
+                                    </li>
                                     
                                     <li class="sub-category">
                                         <h3>Account</h3>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('user.profile.edit') }}"><i
+                                                class="side-menu__icon fe fe-user"></i><span
+                                                class="side-menu__label">Profile</span></a>
                                     </li>
                                     <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('logout')}}"><i

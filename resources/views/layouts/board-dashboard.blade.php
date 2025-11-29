@@ -173,6 +173,11 @@
                                                 class="side-menu__icon fe fe-check-square"></i><span
                                                 class="side-menu__label">Tasks</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.sessions.index') }}"><i
+                                                class="side-menu__icon fe fe-video"></i><span
+                                                class="side-menu__label">Sessions</span></a>
+                                    </li>
                                     
                                     <li class="sub-category">
                                         <h3>Account</h3>

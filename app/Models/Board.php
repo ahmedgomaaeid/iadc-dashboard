@@ -19,11 +19,16 @@ class Board extends Authenticatable
         'committee_id',
         'is_active',
         'image',
+        'zoom_access_token',
+        'zoom_refresh_token',
+        'zoom_token_expires_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'zoom_access_token',
+        'zoom_refresh_token',
     ];
 
     protected function casts(): array
@@ -32,6 +37,7 @@ class Board extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'zoom_token_expires_at' => 'datetime',
         ];
     }
 
