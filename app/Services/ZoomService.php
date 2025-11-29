@@ -22,16 +22,27 @@ class ZoomService
 
     public function getOAuthUrl()
     {
-        $redirectUri = route('zoom.callback');
+        // Ensure we use the APP_URL defined in .env, or fallback to route()
+        $redirectUri = config('app.url') . '/zoom/callback';
+        // If config is missing, fallback to route but ensure https if on production
+        if (!config('app.url')) {
+             $redirectUri = route('zoom.callback');
+        }
+        
         return "https://zoom.us/oauth/authorize?response_type=code&client_id={$this->clientId}&redirect_uri={$redirectUri}";
     }
 
     public function handleCallback($code)
     {
+        $redirectUri = config('app.url') . '/zoom/callback';
+        if (!config('app.url')) {
+             $redirectUri = route('zoom.callback');
+        }
+
         $response = Http::asForm()->post('https://zoom.us/oauth/token', [
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'redirect_uri' => route('zoom.callback'),
+            'redirect_uri' => $redirectUri,
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
         ]);
