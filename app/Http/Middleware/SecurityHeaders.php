@@ -17,8 +17,15 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
-        $response->headers->set('Cross-Origin-Embedder-Policy', 'require-corp');
+        // Skip security headers for Zoom session join pages
+        // The Zoom Web SDK requires loading cross-origin resources
+        $routeName = $request->route() ? $request->route()->getName() : '';
+        $isSessionJoinPage = str_contains($routeName, 'sessions.join');
+        
+        if (!$isSessionJoinPage) {
+            $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
+            $response->headers->set('Cross-Origin-Embedder-Policy', 'require-corp');
+        }
 
         return $response;
     }
