@@ -3,8 +3,8 @@
 @section('title', 'Join Session: ' . $session->title)
 
 @section('css')
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.1.6/css/bootstrap.css" />
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.1.6/css/react-select.css" />
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.18.2/css/bootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.18.2/css/react-select.css" />
     <style>
         #zmmtg-root {
             display: none;
@@ -15,6 +15,24 @@
             left: 0;
             z-index: 9999;
             background-color: black;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+        }
+        
+        .loading-spinner {
+            color: white;
+            font-size: 18px;
         }
     </style>
 @endsection
@@ -48,65 +66,128 @@
     </div>
 
     <div id="zmmtg-root"></div>
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+            <p class="mt-3">Joining meeting...</p>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
-    <script src="https://source.zoom.us/3.1.6/lib/vendor/react.min.js"></script>
-    <script src="https://source.zoom.us/3.1.6/lib/vendor/react-dom.min.js"></script>
-    <script src="https://source.zoom.us/3.1.6/lib/vendor/redux.min.js"></script>
-    <script src="https://source.zoom.us/3.1.6/lib/vendor/redux-thunk.min.js"></script>
-    <script src="https://source.zoom.us/3.1.6/lib/vendor/lodash.min.js"></script>
-    <script src="https://source.zoom.us/zoom-meeting-3.1.6.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/lib/vendor/react.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/lib/vendor/react-dom.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/lib/vendor/redux.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/lib/vendor/redux-thunk.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/lib/vendor/lodash.min.js"></script>
+    <script src="https://source.zoom.us/2.18.2/zoom-meeting-2.18.2.min.js"></script>
 
     <script>
-        ZoomMtg.setZoomJSLib('https://source.zoom.us/3.1.6/lib', '/av');
+        console.log('Zoom SDK loaded, version:', ZoomMtg.getVersion());
+        
+        // Configure Zoom SDK
+        ZoomMtg.setZoomJSLib('https://source.zoom.us/2.18.2/lib', '/av');
         ZoomMtg.preLoadWasm();
         ZoomMtg.prepareWebSDK();
 
-        document.getElementById('join-meeting').addEventListener('click', function() {
-            document.getElementById('zmmtg-root').style.display = 'block';
+        // Meeting configuration
+        var meetingConfig = {
+            apiKey: "{{ env('ZOOM_CLIENT_ID') }}",
+            meetingNumber: "{{ $session->zoom_meeting_id }}",
+            userName: "{{ $user->name }}",
+            passWord: "{{ $session->zoom_password ?? '' }}",
+            leaveUrl: "{{ route('user.sessions.index') }}",
+            role: 0, // 0 for participant, 1 for host
+            userEmail: "{{ $user->email }}",
+            signature: "{{ $signature }}",
+        };
 
-            var meetingConfig = {
-                apiKey: "{{ env('ZOOM_CLIENT_ID') }}",
-                meetingNumber: "{{ $session->zoom_meeting_id }}",
-                userName: "{{ $user->name }}",
-                passWord: "{{ $session->zoom_password }}",
-                leaveUrl: "{{ route('user.sessions.index') }}",
-                role: 0,
-                userEmail: "{{ $user->email }}",
-                signature: "{{ $signature }}",
-                china: 0,
-            };
+        console.log('Meeting config:', {
+            meetingNumber: meetingConfig.meetingNumber,
+            userName: meetingConfig.userName,
+            hasSignature: !!meetingConfig.signature,
+            hasApiKey: !!meetingConfig.apiKey
+        });
+
+        document.getElementById('join-meeting').addEventListener('click', function() {
+            var loadingOverlay = document.getElementById('loading-overlay');
+            var errorDiv = document.getElementById('error-message');
+            var joinButton = document.getElementById('join-meeting');
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            joinButton.disabled = true;
+            errorDiv.style.display = 'none';
+
+            console.log('Initializing Zoom meeting...');
 
             ZoomMtg.init({
                 leaveUrl: meetingConfig.leaveUrl,
-                success: function() {
+                isSupportAV: true,
+                success: function(initResult) {
+                    console.log('Zoom init success:', initResult);
+                    
                     ZoomMtg.join({
                         meetingNumber: meetingConfig.meetingNumber,
                         userName: meetingConfig.userName,
                         signature: meetingConfig.signature,
                         sdkKey: meetingConfig.apiKey,
                         passWord: meetingConfig.passWord,
-                        success: function(res) {
-                            console.log('join meeting success');
+                        userEmail: meetingConfig.userEmail,
+                        success: function(joinResult) {
+                            console.log('Join meeting success:', joinResult);
+                            loadingOverlay.style.display = 'none';
+                            document.getElementById('zmmtg-root').style.display = 'block';
                         },
-                        error: function(res) {
-                            console.log(res);
-                            document.getElementById('zmmtg-root').style.display = 'none';
-                            var errorDiv = document.getElementById('error-message');
+                        error: function(joinError) {
+                            console.error('Join meeting error:', joinError);
+                            loadingOverlay.style.display = 'none';
+                            joinButton.disabled = false;
                             errorDiv.style.display = 'block';
-                            errorDiv.innerText = 'Error joining meeting: ' + (res.result || res.method || 'Unknown error');
+                            
+                            var errorMessage = 'Error joining meeting: ';
+                            if (joinError.errorMessage) {
+                                errorMessage += joinError.errorMessage;
+                            } else if (joinError.result) {
+                                errorMessage += joinError.result;
+                            } else if (joinError.method) {
+                                errorMessage += joinError.method;
+                            } else {
+                                errorMessage += 'Unknown error. Please check your meeting credentials.';
+                            }
+                            
+                            errorDiv.innerText = errorMessage;
                         }
                     });
                 },
-                error: function(res) {
-                    console.log(res);
-                    document.getElementById('zmmtg-root').style.display = 'none';
-                    var errorDiv = document.getElementById('error-message');
+                error: function(initError) {
+                    console.error('Zoom init error:', initError);
+                    loadingOverlay.style.display = 'none';
+                    joinButton.disabled = false;
                     errorDiv.style.display = 'block';
-                    errorDiv.innerText = 'Error initializing Zoom: ' + (res.result || res.method || 'Unknown error');
+                    
+                    var errorMessage = 'Error initializing Zoom: ';
+                    if (initError.errorMessage) {
+                        errorMessage += initError.errorMessage;
+                    } else if (initError.result) {
+                        errorMessage += initError.result;
+                    } else if (initError.method) {
+                        errorMessage += initError.method;
+                    } else {
+                        errorMessage += 'Failed to initialize Zoom SDK. Please refresh the page and try again.';
+                    }
+                    
+                    errorDiv.innerText = errorMessage;
                 }
             });
+        });
+
+        // Handle meeting leave
+        ZoomMtg.inMeetingServiceListener('onMeetingStatus', function(data) {
+            console.log('Meeting status:', data);
+            if (data.meetingStatus === 3) { // Meeting ended
+                window.location.href = meetingConfig.leaveUrl;
+            }
         });
     </script>
 @endsection

@@ -101,7 +101,7 @@ class LoginController extends Controller
     }
 
     // Logout
-    public function logout(Request $request)
+    public function userlogout(Request $request)
     {
         if (Auth::guard('user')->check()) {
             Auth::guard('user')->logout();
