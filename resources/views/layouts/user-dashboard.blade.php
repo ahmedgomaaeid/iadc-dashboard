@@ -260,9 +260,6 @@
     <!-- SIDE-MENU JS-->
     <script src="{{route('index')}}/assets/plugins/sidemenu/sidemenu.js"></script>
 
-    <!-- INTERNAL INDEX JS -->
-    <script src="{{route('index')}}/assets/js/index1.js"></script>
-
     <!-- Color Theme js -->
     <script src="{{route('index')}}/assets/js/themeColors.js"></script>
 

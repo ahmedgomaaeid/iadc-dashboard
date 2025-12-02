@@ -103,7 +103,6 @@ class ZoomService
             'role' => $role,
             'iat' => $iat,
             'exp' => $exp,
-            'appKey' => $this->clientId,
             'tokenExp' => $exp,
         ];
 
