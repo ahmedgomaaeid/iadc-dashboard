@@ -6,15 +6,19 @@
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.8.10/css/bootstrap.css" />
     <link type="text/css" rel="stylesheet" href="https://source.zoom.us/3.8.10/css/react-select.css" />
     <style>
+        body {
+            overflow: scroll !important;
+        }
+        .breadcrumb {
+            background-color: transparent !important;
+        }
         #zmmtg-root {
             display: none;
             width: 100%;
-            height: 80vh; /* 80% of viewport height to leave room for content above */
             min-height: 600px;
-            position: relative;
+            position: relative !important;
             background-color: #000;
             border-radius: 8px;
-            overflow: hidden;
         }
         
         .loading-overlay {
