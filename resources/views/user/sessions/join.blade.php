@@ -8,13 +8,13 @@
     <style>
         #zmmtg-root {
             display: none;
-            min-width: 100%;
-            min-height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            background-color: black;
+            width: 100%;
+            height: 80vh; /* 80% of viewport height to leave room for content above */
+            min-height: 600px;
+            position: relative;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         .loading-overlay {
@@ -49,12 +49,13 @@
         </div>
     </div>
 
-    <div class="row">
+    <!-- Join Button Card (hidden when meeting starts) -->
+    <div class="row" id="join-card">
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center">
                     <h3 class="mb-4">Join Meeting</h3>
-                    <p class="text-muted mb-4">Click the button below to join the meeting directly in your browser.</p>
+                    <p class="text-muted mb-4">Click the button below to join the meeting.</p>
                     
                     <button id="join-meeting" class="btn btn-primary btn-lg">
                         <i class="fe fe-video me-2"></i> Join Meeting
@@ -65,7 +66,25 @@
         </div>
     </div>
 
-    <div id="zmmtg-root"></div>
+    <!-- Zoom Meeting Card (shown when meeting starts) -->
+    <div class="row" id="meeting-container" style="display:none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fe fe-video me-2"></i> {{ $session->title }}</h3>
+                    <div class="card-options">
+                        <span class="badge bg-success">
+                            <i class="fe fe-circle me-1"></i> Live
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="zmmtg-root"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner">
             <i class="fa fa-spinner fa-spin fa-3x"></i>
@@ -231,12 +250,17 @@
                     
                     // Status: 1 = Connecting/Joining, 2 = In Meeting, 3 = Ended
                     if (data.meetingStatus === 1 || data.meetingStatus === 2) {
-                        // Hide loading overlay and show Zoom interface
+                        // Hide loading overlay
                         var loadingOverlay = document.getElementById('loading-overlay');
                         if (loadingOverlay) {
                             loadingOverlay.style.display = 'none';
                         }
+                        
+                        // Hide join card and show meeting container
+                        document.getElementById('join-card').style.display = 'none';
+                        document.getElementById('meeting-container').style.display = 'block';
                         document.getElementById('zmmtg-root').style.display = 'block';
+                        
                         console.log('Zoom interface shown, status:', data.meetingStatus);
                     } else if (data.meetingStatus === 3) { // Meeting ended
                         window.location.href = meetingConfig.leaveUrl;

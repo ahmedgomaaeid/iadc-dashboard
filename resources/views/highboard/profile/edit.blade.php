@@ -38,7 +38,7 @@
                                     @if($user->image)
                                         <img src="{{ asset('storage/' . $user->image) }}" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview">
                                     @else
-                                        <img src="{{ asset('assets/images/users/default-avatar.png') }}" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=random'">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=random" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview">
                                     @endif
                                 </div>
                                 <div>
