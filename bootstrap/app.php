@@ -25,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias([
+            'check.active' => \App\Http\Middleware\CheckActiveStatus::class,
+        ]);
+
         $middleware->web(append: [
             \App\Http\Middleware\SecurityHeaders::class,
         ]);

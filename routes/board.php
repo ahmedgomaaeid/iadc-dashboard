@@ -14,7 +14,7 @@ Route::middleware('guest:board')->group(function () {
     Route::post('/board/login', [LoginController::class, 'boardAuthenticate']);
 });
 
-Route::middleware('auth:board')->prefix('board')->name('board.')->group(function () {
+Route::middleware(['auth:board', 'check.active:board'])->prefix('board')->name('board.')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     

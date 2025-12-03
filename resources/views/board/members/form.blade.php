@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" 
                                        class="form-control @error('phone') is-invalid @enderror" 
@@ -67,6 +67,42 @@
                                        name="phone" 
                                        value="{{ old('phone', $member->phone ?? '') }}">
                                 @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="university" class="form-label">University</label>
+                                <input type="text" 
+                                       class="form-control @error('university') is-invalid @enderror" 
+                                       id="university" 
+                                       name="university" 
+                                       value="{{ old('university', $member->university ?? '') }}">
+                                @error('university')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="faculty" class="form-label">Faculty</label>
+                                <input type="text" 
+                                       class="form-control @error('faculty') is-invalid @enderror" 
+                                       id="faculty" 
+                                       name="faculty" 
+                                       value="{{ old('faculty', $member->faculty ?? '') }}">
+                                @error('faculty')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="academic_year" class="form-label">Academic Year</label>
+                                <input type="text" 
+                                       class="form-control @error('academic_year') is-invalid @enderror" 
+                                       id="academic_year" 
+                                       name="academic_year" 
+                                       value="{{ old('academic_year', $member->academic_year ?? '') }}">
+                                @error('academic_year')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

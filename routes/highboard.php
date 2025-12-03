@@ -16,7 +16,7 @@ Route::middleware('guest:highboard')->group(function () {
     Route::post('/highboard/login', [LoginController::class, 'highboardAuthenticate']);
 });
 
-Route::middleware('auth:highboard')->prefix('highboard')->name('highboard.')->group(function () {
+Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboard')->name('highboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [LoginController::class, 'highboardlogout'])->name('logout');
     

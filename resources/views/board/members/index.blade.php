@@ -38,6 +38,9 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>University</th>
+                                    <th>Faculty</th>
+                                    <th>Academic Year</th>
                                     <th>Committees</th>
                                     <th>Status</th>
                                     <th>Created At</th>
@@ -51,6 +54,9 @@
                                         <td>{{ $member->name }}</td>
                                         <td>{{ $member->email }}</td>
                                         <td>{{ $member->phone ?? 'N/A' }}</td>
+                                        <td>{{ $member->university ?? 'N/A' }}</td>
+                                        <td>{{ $member->faculty ?? 'N/A' }}</td>
+                                        <td>{{ $member->academic_year ?? 'N/A' }}</td>
                                         <td>
                                             @forelse($member->committees as $committee)
                                                 <span class="badge bg-info">{{ $committee->name }}</span>
@@ -97,7 +103,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">No members found in your committee.</td>
+                                        <td colspan="11" class="text-center">No members found in your committee.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

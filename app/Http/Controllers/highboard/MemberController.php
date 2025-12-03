@@ -60,6 +60,9 @@ class MemberController extends Controller
             'committees' => 'required|array',
             'committees.*' => 'exists:committees,id',
             'is_active' => 'boolean',
+            'university' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'academic_year' => 'nullable|string|max:255',
         ]);
 
         // Verify committees belong to highboard's field
@@ -121,6 +124,9 @@ class MemberController extends Controller
             'committees' => 'required|array',
             'committees.*' => 'exists:committees,id',
             'is_active' => 'boolean',
+            'university' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'academic_year' => 'nullable|string|max:255',
         ]);
 
         // Verify committees belong to highboard's field

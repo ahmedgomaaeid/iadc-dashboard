@@ -25,6 +25,9 @@ class User extends Authenticatable
         'field_id',
         'is_active',
         'image',
+        'university',
+        'faculty',
+        'academic_year',
     ];
 
     /**

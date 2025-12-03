@@ -51,6 +51,9 @@ class MemberController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'university' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'academic_year' => 'nullable|string|max:255',
         ]);
 
         // Handle image upload
@@ -107,6 +110,9 @@ class MemberController extends Controller
             'password' => 'nullable|string|min:8',
             'phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'university' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'academic_year' => 'nullable|string|max:255',
         ]);
 
         // Handle image upload

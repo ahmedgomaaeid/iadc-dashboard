@@ -13,7 +13,7 @@ Route::middleware('guest:user')->group(function () {
     Route::post('/login', [LoginController::class, 'userAuthenticate']);
 });
 
-Route::middleware('auth:user')->group(function () {
+Route::middleware(['auth:user', 'check.active:user'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
     
     // Lessons
