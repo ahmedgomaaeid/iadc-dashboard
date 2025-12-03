@@ -176,7 +176,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Soft delete the specified member
+     * Delete the specified member
      */
     public function destroy($id)
     {
@@ -189,10 +189,15 @@ class MemberController extends Controller
             })
             ->findOrFail($id);
 
-        $member->update(['is_active' => false]);
+        // Delete image if exists
+        if ($member->image) {
+            \Storage::disk('public')->delete($member->image);
+        }
+
+        $member->delete();
 
         return redirect()->route('highboard.members.index')
-            ->with('success', 'Member deactivated successfully.');
+            ->with('success', 'Member deleted successfully.');
     }
 
     /**

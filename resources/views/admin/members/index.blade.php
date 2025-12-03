@@ -1,4 +1,4 @@
-@extends('layouts.board-dashboard')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Members Management')
 
@@ -7,7 +7,7 @@
         <h1 class="page-title">Members Management</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Members</li>
             </ol>
         </div>
@@ -24,8 +24,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Committee Members</h3>
-                    <a href="{{ route('board.members.create') }}" class="btn btn-primary">
+                    <h3 class="card-title">All Members</h3>
+                    <a href="{{ route('admin.members.create') }}" class="btn btn-primary">
                         <i class="fe fe-plus me-2"></i>Add New Member
                     </a>
                 </div>
@@ -74,12 +74,12 @@
                                         <td>{{ $member->created_at->format('Y-m-d H:i') }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('board.members.edit', $member) }}" 
+                                                <a href="{{ route('admin.members.edit', $member) }}" 
                                                    class="btn btn-sm btn-info" title="Edit">
                                                     <i class="fe fe-edit"></i>
                                                 </a>
                                                 
-                                                <form action="{{ route('board.members.toggle-status', $member) }}" 
+                                                <form action="{{ route('admin.members.toggle-status', $member) }}" 
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-warning" 
@@ -87,12 +87,23 @@
                                                         <i class="fe fe-{{ $member->is_active ? 'eye-off' : 'eye' }}"></i>
                                                     </button>
                                                 </form>
+                                                
+                                                <form action="{{ route('admin.members.destroy', $member) }}" 
+                                                      method="POST" class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                                            title="Delete">
+                                                        <i class="fe fe-trash-2"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="11" class="text-center">No members found in your committee.</td>
+                                        <td colspan="11" class="text-center">No members found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -107,4 +118,3 @@
         </div>
     </div>
 @endsection
-

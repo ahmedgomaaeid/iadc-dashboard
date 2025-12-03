@@ -34,6 +34,11 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
     Route::post('boards/{board}/toggle-status', [\App\Http\Controllers\admin\BoardController::class, 'toggleStatus'])
         ->name('boards.toggle-status');
     
+    // Member Management Routes
+    Route::resource('members', \App\Http\Controllers\admin\MemberController::class);
+    Route::post('members/{id}/toggle-status', [\App\Http\Controllers\admin\MemberController::class, 'toggleStatus'])
+        ->name('members.toggle-status');
+    
     // Admin Impersonation Routes
     Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])
         ->name('login-as-highboard');

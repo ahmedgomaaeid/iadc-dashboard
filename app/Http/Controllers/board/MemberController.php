@@ -150,30 +150,6 @@ class MemberController extends Controller
     }
 
     /**
-     * Remove the specified member from storage.
-     */
-    public function destroy($id)
-    {
-        $board = Auth::guard('board')->user();
-        
-        // Ensure the member belongs to this board's committee
-        $member = User::whereHas('committees', function ($query) use ($board) {
-            $query->where('committees.id', $board->committee_id);
-        })->findOrFail($id);
-
-        // Delete image if exists
-        if ($member->image) {
-            Storage::disk('public')->delete($member->image);
-        }
-
-        $member->delete();
-
-        return redirect()
-            ->route('board.members.index')
-            ->with('success', 'Member deleted successfully.');
-    }
-
-    /**
      * Toggle the active status of a member.
      */
     public function toggleStatus($id)
