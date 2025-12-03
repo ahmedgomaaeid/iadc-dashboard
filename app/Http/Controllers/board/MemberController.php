@@ -63,7 +63,6 @@ class MemberController extends Controller
 
         // Hash the password
         $validated['password'] = Hash::make($validated['password']);
-        $validated['field_id'] = $board->field_id;
         $validated['is_active'] = true;
 
         // Create the user
@@ -132,6 +131,18 @@ class MemberController extends Controller
         }
 
         $member->update($validated);
+
+        // Preserve committees from other committees
+        // Board members can only manage their own committee
+        $otherCommittees = $member->committees()
+            ->where('committees.id', '!=', $board->committee_id)
+            ->pluck('committees.id')
+            ->toArray();
+
+        // Keep user in board's committee plus any other committees
+        $allCommittees = array_unique(array_merge($otherCommittees, [$board->committee_id]));
+
+        $member->committees()->sync($allCommittees);
 
         return redirect()
             ->route('board.members.index')

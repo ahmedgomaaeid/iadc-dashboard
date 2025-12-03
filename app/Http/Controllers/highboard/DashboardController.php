@@ -15,8 +15,12 @@ class DashboardController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Statistics
-        $totalUsers = User::where('field_id', $fieldId)->where('is_active', true)->count();
+        // Statistics - count users who belong to committees in this field
+        $totalUsers = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->where('is_active', true)
+            ->count();
         $totalBoards = Board::where('field_id', $fieldId)->where('is_active', true)->count();
         $totalCommittees = Committee::where('field_id', $fieldId)->where('is_active', true)->count();
 

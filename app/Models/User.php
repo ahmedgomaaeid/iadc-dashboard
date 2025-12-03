@@ -22,7 +22,6 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
-        'field_id',
         'is_active',
         'image',
         'university',
@@ -63,11 +62,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the field that this user belongs to
+     * Get the fields that this user belongs to (through committees)
      */
-    public function field()
+    public function fields()
     {
-        return $this->belongsTo(Field::class);
+        return Field::whereIn('id', $this->committees()->pluck('field_id'))->get();
     }
 
     /**

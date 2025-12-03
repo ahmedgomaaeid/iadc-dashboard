@@ -227,8 +227,11 @@ class LoginController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Find the member and verify they belong to highboard's field
-        $member = \App\Models\User::where('field_id', $fieldId)->findOrFail($id);
+        // Find the member and verify they belong to committees in highboard's field
+        $member = \App\Models\User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->findOrFail($id);
 
         // Login as member
         Auth::guard('user')->login($member);

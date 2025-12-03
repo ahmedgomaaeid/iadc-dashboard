@@ -20,8 +20,11 @@ class MemberController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        $members = User::where('field_id', $fieldId)
-            ->with(['committees', 'field'])
+        // Get members who belong to committees in this field
+        $members = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->with(['committees', 'committees.field'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -77,7 +80,6 @@ class MemberController extends Controller
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
         $validated['password'] = Hash::make($validated['password']);
-        $validated['field_id'] = $fieldId; // Auto-assign field
 
         $user = User::create($validated);
         $user->committees()->attach($validated['committees']);
@@ -94,8 +96,11 @@ class MemberController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Ensure member belongs to highboard's field
-        $member = User::where('field_id', $fieldId)->findOrFail($id);
+        // Ensure member belongs to committees in highboard's field
+        $member = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->findOrFail($id);
 
         $committees = Committee::where('field_id', $fieldId)
             ->active()
@@ -113,8 +118,11 @@ class MemberController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Ensure member belongs to highboard's field
-        $member = User::where('field_id', $fieldId)->findOrFail($id);
+        // Ensure member belongs to committees in highboard's field
+        $member = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -148,10 +156,20 @@ class MemberController extends Controller
             unset($validated['password']);
         }
 
-        $validated['field_id'] = $fieldId; // Ensure field doesn't change
-
         $member->update($validated);
-        $member->committees()->sync($validated['committees']);
+        
+        // Preserve committees from other fields
+        // Get committees from other fields that should be preserved
+        $otherFieldCommittees = $member->committees()
+            ->where('field_id', '!=', $fieldId)
+            ->pluck('committees.id')
+            ->toArray();
+
+        // Combine with new committees from this field
+        $allCommittees = array_merge($otherFieldCommittees, $validated['committees']);
+
+        // Sync all committees (preserves other fields, updates this field)
+        $member->committees()->sync($allCommittees);
 
         return redirect()->route('highboard.members.index')
             ->with('success', 'Member updated successfully.');
@@ -165,8 +183,11 @@ class MemberController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Ensure member belongs to highboard's field
-        $member = User::where('field_id', $fieldId)->findOrFail($id);
+        // Ensure member belongs to committees in highboard's field
+        $member = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->findOrFail($id);
 
         $member->update(['is_active' => false]);
 
@@ -182,8 +203,11 @@ class MemberController extends Controller
         $highboard = Auth::guard('highboard')->user();
         $fieldId = $highboard->field_id;
 
-        // Ensure member belongs to highboard's field
-        $member = User::where('field_id', $fieldId)->findOrFail($id);
+        // Ensure member belongs to committees in highboard's field
+        $member = User::whereHas('committees', function($query) use ($fieldId) {
+                $query->where('field_id', $fieldId);
+            })
+            ->findOrFail($id);
 
         $member->update(['is_active' => !$member->is_active]);
 
