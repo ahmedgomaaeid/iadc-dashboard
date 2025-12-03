@@ -205,11 +205,24 @@
     <script>
         $(document).ready(function() {
             $('#committees').select2({
-                placeholder: "Select Committees",
+                placeholder: "Select Committees (Max 2)",
                 allowClear: true,
                 width: '100%',
                 closeOnSelect: false, // Keep dropdown open for multiple selection
                 minimumResultsForSearch: 0 // Ensure search is enabled
+            });
+
+            // Handle selection to maintain max 2 items
+            $('#committees').on('select2:select', function(e) {
+                var selectedValues = $(this).val();
+                
+                // If more than 2 items are selected, remove the first one
+                if (selectedValues && selectedValues.length > 2) {
+                    // Remove the first selected item
+                    selectedValues.shift();
+                    // Update the select with the new values
+                    $(this).val(selectedValues).trigger('change');
+                }
             });
         });
     </script>
