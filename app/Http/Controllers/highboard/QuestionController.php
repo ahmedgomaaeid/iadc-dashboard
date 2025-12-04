@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\highboard;
+namespace App\Http\Controllers\Highboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question;
