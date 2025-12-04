@@ -33,6 +33,7 @@
 
     <!-- COLOR SKIN CSS -->
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="{{route('index')}}/assets/colors/color1.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     @yield('css')
 </head>
 
@@ -198,6 +199,11 @@
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.sessions.index') }}"><i
                                                 class="side-menu__icon fe fe-video"></i><span
                                                 class="side-menu__label">Sessions</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.quizzes.index') }}"><i
+                                                class="side-menu__icon fe fe-book"></i><span
+                                                class="side-menu__label">Quizzes</span></a>
                                     </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>

@@ -9,6 +9,8 @@ use App\Http\Controllers\highboard\MemberController;
 use App\Http\Controllers\highboard\ProfileController;
 use App\Http\Controllers\highboard\TaskController;
 use App\Http\Controllers\highboard\SessionController;
+use App\Http\Controllers\highboard\QuizController;
+use App\Http\Controllers\highboard\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:highboard')->group(function () {
@@ -54,6 +56,15 @@ Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboa
         ->name('login-as-board');
     Route::post('login-as-member/{id}', [LoginController::class, 'highboardLoginAsMember'])
         ->name('login-as-member');
+    
+
+    // Quiz Routes
+    Route::resource('quizzes', QuizController::class);
+    Route::patch('quizzes/{quiz}/toggle-active', [QuizController::class, 'toggleActive'])->name('quizzes.toggle-active');
+    Route::get('quizzes/{quiz}/leaderboard', [QuizController::class, 'leaderboard'])->name('quizzes.leaderboard');
+    Route::get('quizzes/{quiz}/leaderboard/export', [QuizController::class, 'exportLeaderboard'])->name('quizzes.leaderboard.export');
+    Route::delete('quizzes/{quiz}/leaderboard/clear', [QuizController::class, 'clearLeaderboard'])->name('quizzes.leaderboard.clear');
+    Route::resource('quizzes.questions', QuestionController::class)->shallow();
     
     // Profile Routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
