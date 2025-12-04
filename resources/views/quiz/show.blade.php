@@ -418,11 +418,11 @@
                                 <div id="quiz_inputs_container">
                                     <div class="mb-3">
                                         <label for="participant_name" class="form-label">Full Name</label>
-                                        <input type="text" id="participant_name" name="name" class="form-control" placeholder="Your Full Name" required>
+                                        <input type="text" id="participant_name" name="name" class="form-control" placeholder="Your Full Name" value="{{ $userName }}" @if($userName) readonly @endif required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="participant_email" class="form-label">Email Address</label>
-                                        <input type="email" id="participant_email" name="email" class="form-control" placeholder="Your Email Address" required>
+                                        <input type="email" id="participant_email" name="email" class="form-control" placeholder="Your Email Address" value="{{ $userEmail }}" @if($userEmail) readonly @endif required>
                                     </div>
                                     <div class="d-grid">
                                         <button type="submit" id = "submit-button" class="btn btn-register">

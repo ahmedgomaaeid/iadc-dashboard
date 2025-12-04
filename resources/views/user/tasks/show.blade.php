@@ -9,7 +9,7 @@
         <div>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}"><i class="fe fe-home"></i> Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('tasks.index') }}"><i class="fe fe-check-square"></i> Quizzes</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('tasks.index') }}"><i class="fe fe-check-square"></i> Tasks</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ $task->title }}</li>
             </ol>
         </div>
@@ -49,7 +49,7 @@
                     @endif
                     
                     <div class="mt-5">
-                        <a href="{{ route('tasks.index') }}" class="btn btn-light"><i class="fe fe-arrow-left me-1"></i> Back to Quizzes</a>
+                        <a href="{{ route('tasks.index') }}" class="btn btn-light"><i class="fe fe-arrow-left me-1"></i> Back to Tasks</a>
                     </div>
                 </div>
             </div>

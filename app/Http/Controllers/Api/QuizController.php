@@ -23,6 +23,12 @@ class QuizController extends Controller
         );
 
         if (!$participantId) {
+            // Check if it's because email already participated
+            if (QuizCacheService::hasEmailParticipated($quizId, $validated['email'])) {
+                return response()->json([
+                    'error' => 'This email has already participated in this quiz'
+                ], 409); // 409 Conflict
+            }
             return response()->json(['error' => 'Failed to add participant'], 500);
         }
 

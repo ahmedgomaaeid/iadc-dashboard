@@ -152,9 +152,35 @@ class QuizCacheService
         }
     }
 
+    /**
+     * Check if an email has already participated in a quiz.
+     */
+    public static function hasEmailParticipated(int $quizId, string $email): bool
+    {
+        try {
+            $emailKey = "quiz:{$quizId}:email:" . md5(strtolower($email));
+            return Redis::exists($emailKey) > 0;
+        } catch (\Throwable $e) {
+            Log::warning('Failed to check email participation in Redis', [
+                'quiz_id' => $quizId,
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
+
     public static function addParticipant(int $quizId, string $name, string $email): ?string
     {
         try {
+            // Check if email has already participated
+            if (self::hasEmailParticipated($quizId, $email)) {
+                Log::info('Email already participated in quiz', [
+                    'quiz_id' => $quizId,
+                    'email' => $email,
+                ]);
+                return null; // Email already used
+            }
+
             $participantId = uniqid('p_', true);
             $participantKey = "quiz:{$quizId}:participant:{$participantId}";
             $payload = json_encode([
@@ -162,6 +188,11 @@ class QuizCacheService
                 'email' => $email,
             ]);
             Redis::set($participantKey, $payload);
+            
+            // Store email participation record
+            $emailKey = "quiz:{$quizId}:email:" . md5(strtolower($email));
+            Redis::set($emailKey, $participantId);
+            
             // Also initialize the score to 0
             $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
             Redis::set($scoreKey, 0);
@@ -443,6 +474,16 @@ class QuizCacheService
                 // Delete question order
                 $orderKey = "quiz:{$quizId}:participant:{$participantId}:question_order";
                 Redis::del($orderKey);
+                
+                // Delete email participation record
+                $participantData = Redis::get($infoKey);
+                if ($participantData) {
+                    $participant = json_decode($participantData, true);
+                    if (isset($participant['email'])) {
+                        $emailKey = "quiz:{$quizId}:email:" . md5(strtolower($participant['email']));
+                        Redis::del($emailKey);
+                    }
+                }
 
                 // Delete all question answers
                 $answerPattern = "quiz:{$quizId}:participant:{$participantId}:q:*:answer";

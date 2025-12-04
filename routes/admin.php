@@ -39,6 +39,19 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
     Route::post('members/{id}/toggle-status', [\App\Http\Controllers\admin\MemberController::class, 'toggleStatus'])
         ->name('members.toggle-status');
     
+    // Quiz Management Routes
+    Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class);
+    Route::patch('quizzes/{quiz}/toggle-active', [\App\Http\Controllers\Admin\QuizController::class, 'toggleActive'])
+        ->name('quizzes.toggle-active');
+    Route::get('quizzes/{quiz}/leaderboard', [\App\Http\Controllers\Admin\QuizController::class, 'leaderboard'])
+        ->name('quizzes.leaderboard');
+    Route::get('quizzes/{quiz}/leaderboard/export', [\App\Http\Controllers\Admin\QuizController::class, 'exportLeaderboard'])
+        ->name('quizzes.leaderboard.export');
+    Route::delete('quizzes/{quiz}/leaderboard/clear', [\App\Http\Controllers\Admin\QuizController::class, 'clearLeaderboard'])
+        ->name('quizzes.leaderboard.clear');
+    Route::resource('quizzes.questions', \App\Http\Controllers\Admin\QuestionController::class)->shallow();
+    Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only([]);
+    
     // Admin Impersonation Routes
     Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])
         ->name('login-as-highboard');

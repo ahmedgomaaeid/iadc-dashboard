@@ -31,6 +31,7 @@
 
     <!-- COLOR SKIN CSS -->
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="{{route('index')}}/assets/colors/color1.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     @yield('css')
 </head>
 
@@ -172,6 +173,11 @@
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.tasks.index') }}"><i
                                                 class="side-menu__icon fe fe-check-square"></i><span
                                                 class="side-menu__label">Tasks</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.quizzes.index') }}"><i
+                                                class="side-menu__icon fe fe-award"></i><span
+                                                class="side-menu__label">Quizzes</span></a>
                                     </li>
                                     <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.sessions.index') }}"><i

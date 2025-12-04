@@ -33,6 +33,19 @@ Route::middleware(['auth:board', 'check.active:board'])->prefix('board')->name('
     Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
         ->name('tasks.attachments.destroy');
     
+    // Quiz Management
+    Route::resource('quizzes', \App\Http\Controllers\Board\QuizController::class);
+    Route::patch('quizzes/{quiz}/toggle-active', [\App\Http\Controllers\Board\QuizController::class, 'toggleActive'])
+        ->name('quizzes.toggle-active');
+    Route::get('quizzes/{quiz}/leaderboard', [\App\Http\Controllers\Board\QuizController::class, 'leaderboard'])
+        ->name('quizzes.leaderboard');
+    Route::get('quizzes/{quiz}/leaderboard/export', [\App\Http\Controllers\Board\QuizController::class, 'exportLeaderboard'])
+        ->name('quizzes.leaderboard.export');
+    Route::delete('quizzes/{quiz}/leaderboard/clear', [\App\Http\Controllers\Board\QuizController::class, 'clearLeaderboard'])
+        ->name('quizzes.leaderboard.clear');
+    Route::resource('quizzes.questions', \App\Http\Controllers\Board\QuestionController::class)->shallow();
+    Route::resource('questions', \App\Http\Controllers\Board\QuestionController::class)->only([]);
+    
     // Session Management
     Route::resource('sessions', SessionController::class);
     Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');

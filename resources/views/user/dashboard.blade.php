@@ -100,9 +100,9 @@
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
             <div class="card">
                 <div class="card-header border-bottom-0">
-                    <h3 class="card-title"><i class="fe fe-check-square text-success me-2"></i> New Quizzes</h3>
+                    <h3 class="card-title"><i class="fe fe-award text-primary me-2"></i> New Quizzes</h3>
                     <div class="card-options">
-                        <a href="{{ route('tasks.index') }}" class="btn btn-sm btn-light">View All <i class="fe fe-arrow-right ms-1"></i></a>
+                        <a href="{{ route('user.quizzes.index') }}" class="btn btn-sm btn-light">View All <i class="fe fe-arrow-right ms-1"></i></a>
                     </div>
                 </div>
                 <div class="card-body pt-0">
@@ -117,22 +117,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($recentTasks as $task)
+                                @forelse($recentQuizzes as $quiz)
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <span class="bg-success-transparent brround p-2 me-2">
-                                                    <i class="fe fe-file-text text-success"></i>
+                                                <span class="bg-primary-transparent brround p-2 me-2">
+                                                    <i class="fe fe-award text-primary"></i>
                                                 </span>
-                                                <a href="{{ route('tasks.show', $task) }}">
-                                                    {{ Str::limit($task->title, 20) }}
+                                                <a href="{{ route('quiz.show', $quiz->id) }}">
+                                                    {{ Str::limit($quiz->name, 20) }}
                                                 </a>
                                             </div>
                                         </td>
-                                        <td><span class="badge bg-light text-dark">{{ $task->committee->name }}</span></td>
-                                        <td>{{ $task->created_at->format('M d, Y') }}</td>
+                                        <td><span class="badge bg-light text-dark">{{ $quiz->committee->name }}</span></td>
+                                        <td>{{ $quiz->created_at->format('M d, Y') }}</td>
                                         <td>
-                                            <a href="{{ route('tasks.show', $task) }}" class="btn btn-success btn-sm btn-icon"><i class="fe fe-eye"></i></a>
+                                            <a href="{{ route('quiz.show', $quiz->id) }}" class="btn btn-primary btn-sm btn-icon"><i class="fe fe-play"></i></a>
                                         </td>
                                     </tr>
                                 @empty

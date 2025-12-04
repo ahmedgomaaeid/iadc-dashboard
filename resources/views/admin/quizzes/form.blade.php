@@ -1,11 +1,11 @@
-@extends('layouts.highboard-dashboard')
+@extends('layouts.admin-dashboard')
 
 @section('content')
     <div class="page-header">
         <h1 class="page-title">{{ isset($quiz) ? 'Edit Quiz' : 'Create Quiz' }}</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ isset($quiz) ? 'Edit Quiz' : 'Create Quiz' }}</li>
             </ol>
         </div>
@@ -36,7 +36,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($quiz) ? route('highboard.quizzes.update', $quiz) : route('highboard.quizzes.store') }}" method="POST" class="row g-3">
+                    <form action="{{ isset($quiz) ? route('admin.quizzes.update', $quiz) : route('admin.quizzes.store') }}" method="POST" class="row g-3">
                         @csrf
                         @if (isset($quiz))
                             @method('PUT')
@@ -90,7 +90,7 @@
 
                         <div class="col-12 d-flex gap-2">
                             <button type="submit" class="btn btn-primary">{{ isset($quiz) ? 'Update Quiz' : 'Create Quiz' }}</button>
-                            <a href="{{ route('highboard.quizzes.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="{{ route('admin.quizzes.index') }}" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

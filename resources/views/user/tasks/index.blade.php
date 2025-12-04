@@ -1,15 +1,15 @@
 @extends('layouts.user-dashboard')
 
-@section('title', 'Quizzes')
+@section('title', 'Tasks')
 
 @section('content')
     <!-- PAGE-HEADER -->
     <div class="page-header">
-        <h1 class="page-title">Quizzes</h1>
+        <h1 class="page-title">Tasks</h1>
         <div>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Quizzes</li>
+                <li class="breadcrumb-item active" aria-current="page">Tasks</li>
             </ol>
         </div>
     </div>
@@ -22,8 +22,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
-                            <h3 class="card-title text-white"><i class="fe fe-filter me-2"></i> Filter Quizzes</h3>
-                            <p class="mb-0">Select a committee to filter quizzes.</p>
+                            <h3 class="card-title text-white"><i class="fe fe-filter me-2"></i> Filter Tasks</h3>
+                            <p class="mb-0">Select a committee to filter Tasks.</p>
                         </div>
                         <div class="col-md-4">
                             <form action="{{ route('tasks.index') }}" method="GET">
@@ -73,7 +73,7 @@
 
                         <div class="d-flex align-items-center pt-2 mt-auto">
                             <div class="ms-auto">
-                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-success"><i class="fe fe-eye me-1"></i> View Quiz</a>
+                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-success"><i class="fe fe-eye me-1"></i> View Task</a>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                 <div class="card">
                     <div class="card-body text-center py-5">
                         <i class="fe fe-slash fs-50 text-muted mb-3"></i>
-                        <h3 class="text-muted">No quizzes found.</h3>
+                        <h3 class="text-muted">No Tasks found.</h3>
                     </div>
                 </div>
             </div>

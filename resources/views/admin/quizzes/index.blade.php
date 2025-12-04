@@ -1,4 +1,4 @@
-@extends('layouts.highboard-dashboard')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Quizzes')
 @section('content')
@@ -6,7 +6,7 @@
         <h1 class="page-title">Quizzes</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Quizzes</li>
             </ol>
         </div>
@@ -31,7 +31,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">All Quizzes</h3>
-                    <a href="{{ route('highboard.quizzes.create') }}" class="btn btn-primary">
+                    <a href="{{ route('admin.quizzes.create') }}" class="btn btn-primary">
                         <i class="fe fe-plus me-2"></i>Add New Quiz
                     </a>
                 </div>
@@ -73,22 +73,22 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('highboard.quizzes.leaderboard', $quiz) }}" class="btn btn-info btn-sm" title="View Leaderboard">
+                                            <a href="{{ route('admin.quizzes.leaderboard', $quiz) }}" class="btn btn-info btn-sm" title="View Leaderboard">
                                                 <i class="fas fa-trophy"></i> Leaderboard
                                             </a>
                                             <a href="#" class="btn btn-outline-danger btn-sm copyQuizLink" data-clipboard-text="{{ route('quiz.show', $quiz) }}">
                                                 <i class="fe fe-copy"></i> Copy Link
                                             </a> 
-                                            <a href="{{ route('highboard.quizzes.show', $quiz) }}" class="btn btn-outline-info btn-sm">View</a>
-                                            <a href="{{ route('highboard.quizzes.edit', $quiz) }}" class="btn btn-outline-primary btn-sm">Edit</a>
-                                            <form action="{{ route('highboard.quizzes.toggle-active', $quiz) }}" method="POST" class="d-inline">
+                                            <a href="{{ route('admin.quizzes.show', $quiz) }}" class="btn btn-outline-info btn-sm">View</a>
+                                            <a href="{{ route('admin.quizzes.edit', $quiz) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                            <form action="{{ route('admin.quizzes.toggle-active', $quiz) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="btn btn-sm {{ $quiz->is_active ? 'btn-warning' : 'btn-success' }}">
                                                     {{ $quiz->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
-                                            <form action="{{ route('highboard.quizzes.destroy', $quiz) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('admin.quizzes.destroy', $quiz) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this quiz?')">Delete</button>

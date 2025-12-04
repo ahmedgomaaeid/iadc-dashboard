@@ -47,4 +47,12 @@ class Committee extends Model
     {
         return $this->hasMany(Board::class);
     }
+
+    /**
+     * Get all quizzes belonging to this committee
+     */
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

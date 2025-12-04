@@ -166,6 +166,11 @@
                                     <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('tasks.index') }}"><i
                                                 class="side-menu__icon fe fe-check-square"></i><span
+                                                class="side-menu__label">Tasks</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('user.quizzes.index') }}"><i
+                                                class="side-menu__icon fe fe-award"></i><span
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
                                     <li class="slide">

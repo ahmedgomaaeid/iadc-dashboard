@@ -6,6 +6,7 @@ use App\Http\Controllers\user\LessonController;
 use App\Http\Controllers\user\TaskController;
 use App\Http\Controllers\user\SessionController;
 use App\Http\Controllers\user\ProfileController;
+use App\Http\Controllers\user\QuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:user')->group(function () {
@@ -20,10 +21,13 @@ Route::middleware(['auth:user', 'check.active:user'])->group(function () {
     Route::get('/lessons', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
 
-    // Tasks/Quizzes
+    // Tasks/Quizes
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::post('/tasks/{task}/submit', [TaskController::class, 'submit'])->name('tasks.submit');
+
+    // Quizzes
+    Route::get('/quizzes', [QuizController::class, 'index'])->name('user.quizzes.index');
 
     // Sessions
     Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Highboard;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class QuizController extends Controller
     public function index()
     {
         $quizzes = Quiz::with('committee')->paginate(15);
-        return view('highboard.quizzes.index', compact('quizzes'));
+        return view('admin.quizzes.index', compact('quizzes'));
     }
 
     /**
@@ -23,9 +23,8 @@ class QuizController extends Controller
      */
     public function create()
     {
-        $highboard = auth('highboard')->user();
-        $committees = Committee::active()->where('field_id', $highboard->field_id)->get();
-        return view('highboard.quizzes.create', compact('committees'));
+        $committees = Committee::active()->get();
+        return view('admin.quizzes.create', compact('committees'));
     }
 
     /**
@@ -43,7 +42,7 @@ class QuizController extends Controller
         Quiz::create($request->all());
 
         // return to view of this quiz to add questions
-        return redirect()->route('highboard.quizzes.show', Quiz::latest()->first())->with('success', 'Quiz created successfully.');
+        return redirect()->route('admin.quizzes.show', Quiz::latest()->first())->with('success', 'Quiz created successfully.');
     }
 
     /**
@@ -51,7 +50,7 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
-        return view('highboard.quizzes.show', compact('quiz'));
+        return view('admin.quizzes.show', compact('quiz'));
     }
 
     /**
@@ -59,9 +58,8 @@ class QuizController extends Controller
      */
     public function edit(Quiz $quiz)
     {
-        $highboard = auth('highboard')->user();
-        $committees = Committee::active()->where('field_id', $highboard->field_id)->get();
-        return view('highboard.quizzes.edit', compact('quiz', 'committees'));
+        $committees = Committee::active()->get();
+        return view('admin.quizzes.edit', compact('quiz', 'committees'));
     }
 
     /**
@@ -78,7 +76,7 @@ class QuizController extends Controller
 
         $quiz->update($request->all());
 
-        return redirect()->route('highboard.quizzes.index')->with('success', 'Quiz updated successfully.');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz updated successfully.');
     }
 
     /**
@@ -88,7 +86,7 @@ class QuizController extends Controller
     {
         $quiz->delete();
 
-        return redirect()->route('highboard.quizzes.index')->with('success', 'Quiz deleted successfully.');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz deleted successfully.');
     }
 
     /**
@@ -115,7 +113,7 @@ class QuizController extends Controller
      */
     public function leaderboard(Quiz $quiz)
     {
-        return view('highboard.quizzes.leaderboard', compact('quiz'));
+        return view('admin.quizzes.leaderboard', compact('quiz'));
     }
 
     /**
