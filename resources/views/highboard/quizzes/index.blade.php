@@ -51,8 +51,11 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('highboard.quizzes.leaderboard', $quiz) }}" class="btn btn-info btn-sm" title="View Leaderboard">
-                                                <i class="fas fa-trophy"></i>
+                                                <i class="fas fa-trophy"></i> Leaderboard
                                             </a>
+                                            <a href="#" class="btn btn-outline-danger btn-sm" id="copyQuizLink" data-clipboard-text="{{ route('quiz.show', $quiz) }}">
+                                                <i class="fe fe-copy"></i> Copy Link
+                                            </a> 
                                             <a href="{{ route('highboard.quizzes.show', $quiz) }}" class="btn btn-outline-info btn-sm">View</a>
                                             <a href="{{ route('highboard.quizzes.edit', $quiz) }}" class="btn btn-outline-primary btn-sm">Edit</a>
                                             <form action="{{ route('highboard.quizzes.toggle-active', $quiz) }}" method="POST" class="d-inline">
@@ -85,4 +88,19 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        copyButton = document.getElementById('copyQuizLink');
+        copyButton.addEventListener('click', function() {
+            navigator.clipboard.writeText(copyButton.dataset.clipboardText);
+            // show toast
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Quiz link copied to clipboard',
+            });
+        });
+    </script>
 @endsection

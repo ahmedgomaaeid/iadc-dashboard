@@ -43,8 +43,8 @@ class QuizController extends Controller
             return response()->json(['error' => 'Participant ID is required'], 400);
         }
 
-        // Fetch question from Redis
-        $question = QuizCacheService::getQuestion($quizId, $number);
+        // Fetch question from Redis with participant's randomized order
+        $question = QuizCacheService::getQuestion($quizId, $number, $participantId);
 
         if (!$question) {
             return response()->json(['error' => 'Question not found'], 404);
@@ -91,8 +91,8 @@ class QuizController extends Controller
             return response()->json(['error' => 'Quiz is not active'], 403);
         }
 
-        // Get the question to verify correct answer
-        $question = QuizCacheService::getQuestion($quizId, $questionNumber);
+        // Get the question to verify correct answer (with participant's randomized order)
+        $question = QuizCacheService::getQuestion($quizId, $questionNumber, $participantId);
 
         if (!$question) {
             return response()->json(['error' => 'Question not found'], 404);

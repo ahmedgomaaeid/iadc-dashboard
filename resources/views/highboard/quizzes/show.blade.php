@@ -29,6 +29,9 @@
                     @endif
                 </div>
                 <div class="d-flex gap-2">
+                    <a  class="btn btn-primary" id="copyQuizLink" data-clipboard-text="{{ route('quiz.show', $quiz) }}">
+                        <i class="fas fa-copy me-1"></i> Copy Link
+                    </a>
                     <a href="{{ route('highboard.quizzes.leaderboard', $quiz) }}" class="btn btn-info">
                         <i class="fas fa-trophy me-1"></i> Leaderboard
                     </a>
@@ -95,4 +98,19 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        copyButton = document.getElementById('copyQuizLink');
+        copyButton.addEventListener('click', function() {
+            navigator.clipboard.writeText(copyButton.dataset.clipboardText);
+            // show toast
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Quiz link copied to clipboard',
+            });
+        });
+    </script>
 @endsection

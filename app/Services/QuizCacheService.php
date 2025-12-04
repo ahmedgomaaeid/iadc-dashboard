@@ -165,6 +165,18 @@ class QuizCacheService
             // Also initialize the score to 0
             $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
             Redis::set($scoreKey, 0);
+            
+            // Generate randomized question order for this participant
+            $questionCount = self::getQuizCount($quizId);
+            if ($questionCount > 0) {
+                // Create array of question numbers [1, 2, 3, ...]
+                $questionOrder = range(1, $questionCount);
+                // Shuffle the array
+                shuffle($questionOrder);
+                // Store the randomized order
+                $orderKey = "quiz:{$quizId}:participant:{$participantId}:question_order";
+                Redis::set($orderKey, json_encode($questionOrder));
+            }
 
             return $participantId;
         } catch (\Throwable $e) {
@@ -176,9 +188,40 @@ class QuizCacheService
         }
     }
 
-    public static function getQuestion(int $quizId, int $number): ?array
+    /**
+     * Get question based on participant's randomized order.
+     * @param int $quizId Quiz ID
+     * @param int $number The sequential question number (1, 2, 3, ...) from participant's perspective
+     * @param string|null $participantId Participant ID to get their specific randomized order
+     * @return array|null Question data
+     */
+    public static function getQuestion(int $quizId, int $number, ?string $participantId = null): ?array
     {
         try {
+            // If participant ID is provided, use their randomized order
+            if ($participantId) {
+                $orderKey = "quiz:{$quizId}:participant:{$participantId}:question_order";
+                $orderData = Redis::get($orderKey);
+                
+                if ($orderData) {
+                    $questionOrder = json_decode($orderData, true);
+                    // Get the actual question number from the randomized order
+                    // $number is 1-indexed, so we need to subtract 1 for array access
+                    if (isset($questionOrder[$number - 1])) {
+                        $actualQuestionNumber = $questionOrder[$number - 1];
+                        $questionKey = "quiz:{$quizId}:q:{$actualQuestionNumber}";
+                        $data = Redis::get($questionKey);
+                        if ($data) {
+                            $question = json_decode($data, true);
+                            // Override the number to show the sequential order to participant
+                            $question['number'] = $number;
+                            return $question;
+                        }
+                    }
+                }
+            }
+            
+            // Fallback to sequential order if no participant ID or order not found
             $questionKey = "quiz:{$quizId}:q:{$number}";
             $data = Redis::get($questionKey);
             if ($data) {
@@ -190,6 +233,7 @@ class QuizCacheService
             Log::warning('Failed to get quiz question from Redis', [
                 'quiz_id' => $quizId,
                 'number' => $number,
+                'participant_id' => $participantId ?? 'none',
                 'error' => $e->getMessage(),
             ]);
             return null;
@@ -395,6 +439,10 @@ class QuizCacheService
                 // Delete score
                 $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
                 Redis::del($scoreKey);
+                
+                // Delete question order
+                $orderKey = "quiz:{$quizId}:participant:{$participantId}:question_order";
+                Redis::del($orderKey);
 
                 // Delete all question answers
                 $answerPattern = "quiz:{$quizId}:participant:{$participantId}:q:*:answer";
