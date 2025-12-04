@@ -19,9 +19,8 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-primary-gradient">
+                <div class="card-header bg-success-gradient">
                     <h3 class="card-title text-white"><i class="fe fe-award me-2"></i>Available Quizzes</h3>
-                    <p class="text-white-50 mb-0 small">Private quizzes from your committees</p>
                 </div>
                 <div class="card-body">
                     @if($quizzes->count() > 0)

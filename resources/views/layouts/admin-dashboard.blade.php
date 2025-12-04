@@ -107,7 +107,7 @@
                                                         class="avatar profile-user brround cover-image">
                                                 @else
                                                     <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::guard('admin')->user()->name) }}&size=200&background=random" alt="profile-user"
-                                                        class="avatar profile-user brround cover-image">
+                                                        class="avatar profile-user brround cover-image" onerror="this.onerror=null; this.src='{{ asset('assets/images/users/user.jpg') }}';">
                                                 @endif
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">

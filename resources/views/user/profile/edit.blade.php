@@ -36,9 +36,9 @@
                             <div class="col-md-12 text-center">
                                 <div class="mb-3">
                                     @if($user->image)
-                                        <img src="{{ asset('storage/' . $user->image) }}" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview">
+                                        <img src="{{ asset('storage/' . $user->image) }}" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview" onerror="this.onerror=null; this.src='{{ asset('assets/images/users/user.jpg') }}';">
                                     @else
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=random" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=200&background=random" alt="Profile" class="avatar avatar-xxl brround" id="profile-preview" onerror="this.onerror=null; this.src='{{ asset('assets/images/users/user.jpg') }}';">
                                     @endif
                                 </div>
                                 <div>
