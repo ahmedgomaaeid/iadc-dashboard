@@ -62,6 +62,20 @@
                             </small>
                         </div>
 
+                        <!-- Deadline -->
+                        <div class="mb-4">
+                            <label for="deadline" class="form-label">Deadline (Optional)</label>
+                            <input type="datetime-local" 
+                                   class="form-control @error('deadline') is-invalid @enderror" 
+                                   id="deadline" 
+                                   name="deadline" 
+                                   value="{{ old('deadline', isset($task) && $task->deadline ? $task->deadline->format('Y-m-d\TH:i') : '') }}">
+                            @error('deadline')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Leave empty for no deadline</small>
+                        </div>
+
                         <!-- Attachments -->
                         <div class="mb-4">
                             <label class="form-label">Attachments (Optional)</label>

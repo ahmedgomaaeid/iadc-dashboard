@@ -50,6 +50,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'committee_id' => 'required|exists:committees,id',
             'content' => 'nullable|string',
+            'deadline' => 'nullable|date|after:now',
             'attachments.*' => 'nullable|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif,zip,rar',
         ]);
 
@@ -67,6 +68,7 @@ class TaskController extends Controller
             'committee_id' => $committee->id,
             'title' => $validated['title'],
             'content' => $request->content,
+            'deadline' => $validated['deadline'],
             'tags' => $tags,
             'is_active' => $request->has('is_active') ? true : false,
         ]);
@@ -144,6 +146,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'committee_id' => 'required|exists:committees,id',
             'content' => 'nullable|string',
+            'deadline' => 'nullable|date',
             'attachments.*' => 'nullable|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif,zip,rar',
         ]);
 
@@ -157,6 +160,7 @@ class TaskController extends Controller
             'committee_id' => $committee->id,
             'title' => $validated['title'],
             'content' => $request->content,
+            'deadline' => $validated['deadline'],
             'tags' => $tags,
             'is_active' => $request->has('is_active') ? true : false,
         ]);

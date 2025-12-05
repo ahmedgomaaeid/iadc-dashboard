@@ -67,7 +67,11 @@
                                     <span class="badge bg-warning"><i class="fe fe-clock me-1"></i> Under Review</span>
                                 @endif
                             @else
-                                <span class="badge bg-secondary"><i class="fe fe-minus me-1"></i> Not Submitted</span>
+                                @if($task->deadline && $task->deadline->isPast())
+                                    <span class="badge bg-danger"><i class="fe fe-clock me-1"></i> Closed</span>
+                                @else
+                                    <span class="badge bg-secondary"><i class="fe fe-minus me-1"></i> Not Submitted</span>
+                                @endif
                             @endif
                         </div>
 

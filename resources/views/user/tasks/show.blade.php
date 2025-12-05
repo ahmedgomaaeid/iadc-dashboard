@@ -23,6 +23,17 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <h4 class="card-title">Description</h4>
+                        @if($task->deadline)
+                            <div class="alert alert-info mb-3">
+                                <i class="fe fe-clock me-2"></i>
+                                <strong>Deadline:</strong> {{ $task->deadline->format('M d, Y H:i') }}
+                                @if($task->deadline->isPast())
+                                    <span class="badge bg-danger ms-2">Expired</span>
+                                @else
+                                    <span class="badge bg-success ms-2">{{ $task->deadline->diffForHumans() }}</span>
+                                @endif
+                            </div>
+                        @endif
                         {!! $task->content !!}
                     </div>
 
@@ -100,22 +111,28 @@
                              <div class="alert alert-danger mt-3">
                                 <i class="fe fe-alert-triangle me-1"></i> Your submission was rejected. Please upload again.
                              </div>
-                             <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data" class="mt-3">
-                                @csrf
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Text Content (Optional)</label>
-                                    <textarea class="form-control" name="text_content" rows="4" placeholder="Enter your answer here..."></textarea>
+                             @if($task->deadline && $task->deadline->isPast())
+                                <div class="alert alert-danger mt-3">
+                                    <i class="fe fe-alert-circle me-1"></i> The deadline has passed. You cannot resubmit.
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Upload File (Optional)</label>
-                                    <input type="file" class="form-control" name="file">
-                                    <small class="text-muted">Provide either text content or a file, or both.</small>
-                                </div>
-                                @error('submission')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                                <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-refresh-cw me-1"></i> Resubmit</button>
-                            </form>
+                             @else
+                                 <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data" class="mt-3">
+                                    @csrf
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Text Content (Optional)</label>
+                                        <textarea class="form-control" name="text_content" rows="4" placeholder="Enter your answer here..."></textarea>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Upload File (Optional)</label>
+                                        <input type="file" class="form-control" name="file">
+                                        <small class="text-muted">Provide either text content or a file, or both.</small>
+                                    </div>
+                                    @error('submission')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                    <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-refresh-cw me-1"></i> Resubmit</button>
+                                </form>
+                             @endif
                         @endif
                     @else
                         <div class="text-center mb-4">
@@ -125,22 +142,29 @@
                             <h5 class="mt-3">Upload your solution</h5>
                             <p class="text-muted text-small">Submit your answer as text or file.</p>
                         </div>
-                        <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group mb-4">
-                                <label class="form-label">Text Content (Optional)</label>
-                                <textarea class="form-control" name="text_content" rows="5" placeholder="Type your answer here..."></textarea>
+                        @if($task->deadline && $task->deadline->isPast())
+                            <div class="alert alert-danger mb-4">
+                                <i class="fe fe-alert-circle me-2"></i>
+                                <strong>Submission Closed:</strong> The deadline for this task has passed. You can no longer submit your work.
                             </div>
-                            <div class="form-group mb-4">
-                                <label class="form-label">Upload File (Optional)</label>
-                                <input type="file" class="form-control" name="file">
-                                <small class="text-muted">Provide either text content or a file, or both.</small>
-                            </div>
-                            @error('submission')
-                                <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
-                            <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-send me-1"></i> Submit</button>
-                        </form>
+                        @else
+                            <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-group mb-4">
+                                    <label class="form-label">Text Content (Optional)</label>
+                                    <textarea class="form-control" name="text_content" rows="5" placeholder="Type your answer here..."></textarea>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="form-label">Upload File (Optional)</label>
+                                    <input type="file" class="form-control" name="file">
+                                    <small class="text-muted">Provide either text content or a file, or both.</small>
+                                </div>
+                                @error('submission')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                                <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-send me-1"></i> Submit</button>
+                            </form>
+                        @endif
                     @endif
                 </div>
             </div>

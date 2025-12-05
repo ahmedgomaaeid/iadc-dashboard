@@ -17,11 +17,13 @@ class Task extends Model
         'content',
         'tags',
         'is_active',
+        'deadline',
     ];
 
     protected $casts = [
         'tags' => 'array',
         'is_active' => 'boolean',
+        'deadline' => 'datetime',
     ];
 
     public function board()

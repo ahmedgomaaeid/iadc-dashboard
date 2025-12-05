@@ -65,6 +65,10 @@ class TaskController extends Controller
             abort(403, 'You do not have access to this task.');
         }
 
+        if ($task->deadline && $task->deadline->isPast()) {
+            return back()->withErrors(['submission' => 'The deadline for this task has passed.']);
+        }
+
         // Find or create the submission
         $submission = TaskSubmission::firstOrNew([
             'user_id' => $user->id,

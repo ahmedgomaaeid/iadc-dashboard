@@ -42,7 +42,10 @@ class DashboardController extends Controller
         });
 
         $recentLessons = $lessonsQuery->latest()->take(5)->get();
-        $recentTasks = $tasksQuery->latest()->take(5)->get();
+        $recentTasks = $tasksQuery->where(function($q) {
+            $q->whereNull('deadline')
+              ->orWhere('deadline', '>', now());
+        })->latest()->take(5)->get();
         
         // Get quizzes and filter out ones user has already participated in
         $allQuizzes = $quizzesQuery->latest()->get();

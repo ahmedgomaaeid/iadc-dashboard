@@ -43,6 +43,7 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
+            'deadline' => 'nullable|date|after:now',
             'attachments.*' => 'nullable|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif,zip,rar',
         ]);
 
@@ -57,6 +58,7 @@ class TaskController extends Controller
             'committee_id' => $board->committee_id,
             'title' => $validated['title'],
             'content' => $request->content,
+            'deadline' => $validated['deadline'],
             'tags' => $tags,
             'is_active' => $request->has('is_active') ? true : false,
         ]);
@@ -124,6 +126,7 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
+            'deadline' => 'nullable|date',
             'attachments.*' => 'nullable|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,gif,zip,rar',
         ]);
 
@@ -133,6 +136,7 @@ class TaskController extends Controller
         $task->update([
             'title' => $validated['title'],
             'content' => $request->content,
+            'deadline' => $validated['deadline'],
             'tags' => $tags,
             'is_active' => $request->has('is_active') ? true : false,
         ]);
