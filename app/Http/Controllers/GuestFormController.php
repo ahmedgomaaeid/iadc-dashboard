@@ -11,9 +11,9 @@ class GuestFormController extends Controller
     /**
      * Display the form to guests.
      */
-    public function show($id)
+    public function show($subdomain)
     {
-        $form = DynamicForm::active()->findOrFail($id);
+        $form = DynamicForm::active()->where('subdomain', $subdomain)->firstOrFail();
         $orderedFields = $form->getOrderedFields();
 
         return view('forms.guest-form', compact('form', 'orderedFields'));
@@ -22,9 +22,9 @@ class GuestFormController extends Controller
     /**
      * Store the guest's form submission.
      */
-    public function submit(Request $request, $id)
+    public function submit(Request $request, $subdomain)
     {
-        $form = DynamicForm::active()->findOrFail($id);
+        $form = DynamicForm::active()->where('subdomain', $subdomain)->firstOrFail();
         $orderedFields = $form->getOrderedFields();
 
         // Build validation rules based on form fields

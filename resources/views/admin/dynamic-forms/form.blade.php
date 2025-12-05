@@ -134,6 +134,21 @@
                             placeholder="e.g., Join our community today">
                     </div>
                     <div class="mb-3">
+                        <label for="subdomain" class="form-label">Subdomain <span class="text-danger">*</span></label>
+                        @php
+                            $domain = str_replace(['http://', 'https://'], '', env('APP_URL'));
+                            $domain = str_replace('www.', '', $domain);
+                        @endphp
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="subdomain" name="subdomain" 
+                                value="{{ old('subdomain', $dynamicForm->subdomain ?? '') }}" required
+                                placeholder="e.g., registration-2025" pattern="[a-z0-9-]+"
+                                oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '')">
+                            <span class="input-group-text">.form.{{ $domain }}</span>
+                        </div>
+                        <small class="text-muted">Only lowercase letters, numbers, and hyphens allowed. URL will be: <strong id="urlPreview">https://{subdomain}.form.{{ $domain }}</strong></small>
+                    </div>
+                    <div class="mb-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
                                 {{ old('is_active', $dynamicForm->is_active ?? true) ? 'checked' : '' }}>

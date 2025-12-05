@@ -34,7 +34,7 @@
                             <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Subtitle</th>
+                                    <th>Subdomain</th>
                                     <th>Fields</th>
                                     <th>Submissions</th>
                                     <th>Status</th>
@@ -45,7 +45,7 @@
                                 @forelse($forms as $form)
                                     <tr>
                                         <td class="fw-semibold">{{ $form->title }}</td>
-                                        <td>{{ $form->subtitle ?? '—' }}</td>
+                                        <td><code>/form/{{ $form->subdomain }}</code></td>
                                         <td>
                                             @php $fieldCount = count($form->fields ?? []); @endphp
                                             <span class="badge bg-info">{{ $fieldCount }} field{{ $fieldCount !== 1 ? 's' : '' }}</span>
@@ -61,7 +61,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-outline-danger btn-sm copyFormLink" data-clipboard-text="{{ route('form.show', $form) }}">
+                                            <a href="#" class="btn btn-outline-danger btn-sm copyFormLink" data-clipboard-text="{{ $form->getFormUrl() }}">
                                                 <i class="fe fe-copy"></i> Copy Link
                                             </a>
                                             <a href="{{ route('admin.dynamic-forms.show', $form) }}" class="btn btn-outline-info btn-sm">

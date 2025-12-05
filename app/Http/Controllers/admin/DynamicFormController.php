@@ -40,15 +40,19 @@ class DynamicFormController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
+            'subdomain' => 'required|string|max:100|unique:dynamic_forms,subdomain|regex:/^[a-z0-9-]+$/',
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
             'is_active' => 'boolean',
+        ], [
+            'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
 
         DynamicForm::create([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
+            'subdomain' => $request->subdomain,
             'fields' => $request->fields,
             'is_active' => $request->boolean('is_active', true),
         ]);
@@ -87,15 +91,19 @@ class DynamicFormController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
+            'subdomain' => 'required|string|max:100|unique:dynamic_forms,subdomain,' . $dynamicForm->id . '|regex:/^[a-z0-9-]+$/',
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
             'is_active' => 'boolean',
+        ], [
+            'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
 
         $dynamicForm->update([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
+            'subdomain' => $request->subdomain,
             'fields' => $request->fields,
             'is_active' => $request->boolean('is_active', true),
         ]);

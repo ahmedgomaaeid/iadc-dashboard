@@ -10,6 +10,7 @@ class DynamicForm extends Model
     protected $fillable = [
         'title',
         'subtitle',
+        'subdomain',
         'fields',
         'is_active',
     ];
@@ -63,7 +64,7 @@ class DynamicForm extends Model
             'type' => 'select',
             'required' => true,
             'icon' => 'fa-calendar',
-            'options' => ['Preparation', 'First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Fifth Year', 'Graduation'],
+            'options' => ['Preparation', 'First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduation'],
         ],
         'message' => [
             'label' => 'Message',
@@ -116,5 +117,19 @@ class DynamicForm extends Model
         }
 
         return $orderedFields;
+    }
+
+    /**
+     * Get the full URL for this form using subdomain
+     * Format: https://{subdomain}.form.{domain}
+     */
+    public function getFormUrl(): string
+    {
+        $appUrl = env('APP_URL', 'http://localhost');
+        $scheme = parse_url($appUrl, PHP_URL_SCHEME) ?? 'https';
+        $domain = str_replace(['http://', 'https://'], '', $appUrl);
+        $domain = str_replace('www.', '', $domain);
+        
+        return $scheme . '://' . $this->subdomain . '.form.' . $domain;
     }
 }

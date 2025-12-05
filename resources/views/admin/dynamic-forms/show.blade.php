@@ -39,7 +39,7 @@
                     <p><strong>Total Submissions:</strong> {{ $submissions->total() }}</p>
                     <p><strong>Form Link:</strong></p>
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" value="{{ route('form.show', $dynamicForm) }}" id="formLink" readonly>
+                        <input type="text" class="form-control form-control-sm" value="{{ $dynamicForm->getFormUrl() }}" id="formLink" readonly>
                         <button class="btn btn-outline-primary btn-sm" type="button" onclick="copyLink()">
                             <i class="fe fe-copy"></i>
                         </button>
