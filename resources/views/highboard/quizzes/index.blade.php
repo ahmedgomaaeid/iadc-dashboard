@@ -79,6 +79,9 @@
                                             <a href="#" class="btn btn-outline-danger btn-sm copyQuizLink" data-clipboard-text="{{ route('quiz.show', $quiz) }}">
                                                 <i class="fe fe-copy"></i> Copy Link
                                             </a> 
+                                            <a href="#" class="btn btn-outline-dark btn-sm download-qr" data-url="{{ route('quiz.show', $quiz) }}" data-name="quiz-{{ $quiz->id }}-qr">
+                                                <i class="fas fa-qrcode"></i> QR
+                                            </a> 
                                             <a href="{{ route('highboard.quizzes.show', $quiz) }}" class="btn btn-outline-info btn-sm">View</a>
                                             <a href="{{ route('highboard.quizzes.edit', $quiz) }}" class="btn btn-outline-primary btn-sm">Edit</a>
                                             <form action="{{ route('highboard.quizzes.toggle-active', $quiz) }}" method="POST" class="d-inline">
@@ -114,6 +117,7 @@
 @endsection
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <script>
         document.querySelectorAll('.copyQuizLink').forEach(button => {
             button.addEventListener('click', function(e) {
@@ -126,6 +130,35 @@
                     text: 'Quiz link copied to clipboard',
                     timer: 2000
                 });
+            });
+        });
+
+        document.querySelectorAll('.download-qr').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.dataset.url;
+                const name = this.dataset.name;
+                
+                const qrCode = new QRCodeStyling({
+                    width: 700,
+                    height: 700,
+                    type: "svg",
+                    data: url,
+                    image: "{{ asset('assets/images/brand/logo-2.svg') }}",
+                    dotsOptions: {
+                        color: "#B4120D",
+                        type: "dots"
+                    },
+                    backgroundOptions: {
+                        color: "#fff",
+                    },
+                    imageOptions: {
+                        crossOrigin: "anonymous",
+                        margin: 10
+                    }
+                });
+
+                qrCode.download({ name: name, extension: "png" });
             });
         });
     </script>
