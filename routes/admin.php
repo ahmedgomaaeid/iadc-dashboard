@@ -40,12 +40,12 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
         ->name('members.toggle-status');
     
     // Quiz Management Routes
-    Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class);
-    Route::patch('quizzes/{quiz}/toggle-active', [\App\Http\Controllers\Admin\QuizController::class, 'toggleActive'])
+    Route::resource('quizzes', \App\Http\Controllers\admin\QuizController::class);
+    Route::patch('quizzes/{quiz}/toggle-active', [\App\Http\Controllers\admin\QuizController::class, 'toggleActive'])
         ->name('quizzes.toggle-active');
-    Route::get('quizzes/{quiz}/leaderboard', [\App\Http\Controllers\Admin\QuizController::class, 'leaderboard'])
+    Route::get('quizzes/{quiz}/leaderboard', [\App\Http\Controllers\admin\QuizController::class, 'leaderboard'])
         ->name('quizzes.leaderboard');
-    Route::get('quizzes/{quiz}/leaderboard/export', [\App\Http\Controllers\Admin\QuizController::class, 'exportLeaderboard'])
+    Route::get('quizzes/{quiz}/leaderboard/export', [\App\Http\Controllers\admin\QuizController::class, 'exportLeaderboard'])
         ->name('quizzes.leaderboard.export');
     Route::delete('quizzes/{quiz}/leaderboard/clear', [\App\Http\Controllers\Admin\QuizController::class, 'clearLeaderboard'])
         ->name('quizzes.leaderboard.clear');
@@ -53,10 +53,10 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only([]);
     
     // Dynamic Form Management Routes
-    Route::resource('dynamic-forms', \App\Http\Controllers\Admin\DynamicFormController::class);
-    Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\Admin\DynamicFormController::class, 'toggleActive'])
+    Route::resource('dynamic-forms', \App\Http\Controllers\admin\DynamicFormController::class);
+    Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\admin\DynamicFormController::class, 'toggleActive'])
         ->name('dynamic-forms.toggle-active');
-    Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\Admin\DynamicFormController::class, 'exportSubmissions'])
+    Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\admin\DynamicFormController::class, 'exportSubmissions'])
         ->name('dynamic-forms.export');
     
     
