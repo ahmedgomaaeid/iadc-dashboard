@@ -4,7 +4,7 @@
 @section('subtitle', $form->subtitle ?? 'Fill out the form')
 
 @section('content')
-    <form action="{{ route('form.submit', $form) }}" method="POST" id="guestForm">
+    <form action="{{ route('form.submit', $form->subdomain) }}" method="POST" id="guestForm">
         @csrf
         
         @foreach($orderedFields as $fieldName => $fieldConfig)
