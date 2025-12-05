@@ -206,6 +206,11 @@
                                                 class="side-menu__icon fe fe-award"></i><span
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.dynamic-forms.index') }}"><i
+                                                class="side-menu__icon fe fe-file-text"></i><span
+                                                class="side-menu__label">Dynamic Forms</span></a>
+                                    </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>

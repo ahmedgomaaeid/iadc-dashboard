@@ -52,6 +52,14 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
     Route::resource('quizzes.questions', \App\Http\Controllers\Admin\QuestionController::class)->shallow();
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only([]);
     
+    // Dynamic Form Management Routes
+    Route::resource('dynamic-forms', \App\Http\Controllers\Admin\DynamicFormController::class);
+    Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\Admin\DynamicFormController::class, 'toggleActive'])
+        ->name('dynamic-forms.toggle-active');
+    Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\Admin\DynamicFormController::class, 'exportSubmissions'])
+        ->name('dynamic-forms.export');
+    
+    
     // Admin Impersonation Routes
     Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])
         ->name('login-as-highboard');

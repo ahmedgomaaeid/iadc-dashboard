@@ -15,3 +15,9 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 
 
 Route::get('/quiz/{id}', [ControllersQuizController::class, 'showQuiz'])->name('quiz.show');
+
+// Guest Form Routes
+use App\Http\Controllers\GuestFormController;
+Route::get('/form/{id}', [GuestFormController::class, 'show'])->name('form.show');
+Route::post('/form/{id}', [GuestFormController::class, 'submit'])->name('form.submit');
+
