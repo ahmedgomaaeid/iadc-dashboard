@@ -33,6 +33,14 @@ Route::middleware(['auth:board', 'check.active:board'])->prefix('board')->name('
     Route::delete('tasks/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])
         ->name('tasks.attachments.destroy');
     
+    // Task Submission Management
+    Route::get('tasks-submissions', [TaskController::class, 'submissions'])
+        ->name('tasks.submissions');
+    Route::post('tasks-submissions/{submission}/accept', [TaskController::class, 'acceptSubmission'])
+        ->name('tasks.submissions.accept');
+    Route::post('tasks-submissions/{submission}/reject', [TaskController::class, 'rejectSubmission'])
+        ->name('tasks.submissions.reject');
+    
     // Quiz Management
     Route::resource('quizzes', \App\Http\Controllers\Board\QuizController::class);
     Route::patch('quizzes/{quiz}/toggle-active', [\App\Http\Controllers\Board\QuizController::class, 'toggleActive'])

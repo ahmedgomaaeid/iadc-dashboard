@@ -200,4 +200,67 @@ class TaskController extends Controller
 
         return back()->with('success', 'Attachment deleted successfully.');
     }
+
+    /**
+     * Display all submissions for the board member's committee tasks
+     */
+    public function submissions(Request $request)
+    {
+        $board = Auth::guard('board')->user();
+        
+        // Get task filter
+        $taskId = $request->input('task_id');
+        
+        // Query submissions for tasks in the board's committee
+        $query = \App\Models\TaskSubmission::whereHas('task', function($q) use ($board) {
+            $q->where('committee_id', $board->committee_id);
+        })->with('user', 'task');
+        
+        if ($taskId) {
+            $query->where('task_id', $taskId);
+        }
+        
+        $submissions = $query->latest()->paginate(15);
+        
+        // Get tasks for filter dropdown
+        $tasks = Task::where('committee_id', $board->committee_id)
+            ->orderBy('title')
+            ->get();
+        
+        return view('board.tasks.submissions', compact('submissions', 'tasks', 'taskId'));
+    }
+
+    /**
+     * Accept a submission
+     */
+    public function acceptSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $board = Auth::guard('board')->user();
+        
+        // Verify the submission belongs to a task in the board's committee
+        if ($submission->task->committee_id !== $board->committee_id) {
+            abort(403);
+        }
+        
+        $submission->update(['status' => 'accepted']);
+        
+        return back()->with('success', 'Submission accepted successfully.');
+    }
+
+    /**
+     * Reject a submission
+     */
+    public function rejectSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $board = Auth::guard('board')->user();
+        
+        // Verify the submission belongs to a task in the board's committee
+        if ($submission->task->committee_id !== $board->committee_id) {
+            abort(403);
+        }
+        
+        $submission->update(['status' => 'rejected']);
+        
+        return back()->with('success', 'Submission rejected.');
+    }
 }

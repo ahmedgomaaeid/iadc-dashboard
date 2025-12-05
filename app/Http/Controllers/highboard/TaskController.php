@@ -231,4 +231,77 @@ class TaskController extends Controller
 
         return back()->with('success', 'Attachment deleted successfully.');
     }
+
+    /**
+     * Display all submissions for the highboard member's field tasks
+     */
+    public function submissions(Request $request)
+    {
+        $highboard = Auth::guard('highboard')->user();
+        
+        // Get filters
+        $taskId = $request->input('task_id');
+        $committeeId = $request->input('committee_id');
+        
+        // Query submissions for tasks in the highboard's field
+        $query = \App\Models\TaskSubmission::whereHas('task', function($q) use ($highboard) {
+            $q->whereHas('committee', function($cq) use ($highboard) {
+                $cq->where('field_id', $highboard->field_id);
+            });
+        })->with('user', 'task.committee');
+        
+        if ($taskId) {
+            $query->where('task_id', $taskId);
+        }
+        
+        if ($committeeId) {
+            $query->whereHas('task', function($q) use ($committeeId) {
+                $q->where('committee_id', $committeeId);
+            });
+        }
+        
+        $submissions = $query->latest()->paginate(15);
+        
+        // Get committees and tasks for filter dropdowns
+        $committees = $highboard->field->committees()->active()->get();
+        $tasks = Task::whereHas('committee', function($q) use ($highboard) {
+            $q->where('field_id', $highboard->field_id);
+        })->orderBy('title')->get();
+        
+        return view('highboard.tasks.submissions', compact('submissions', 'tasks', 'committees', 'taskId', 'committeeId'));
+    }
+
+    /**
+     * Accept a submission
+     */
+    public function acceptSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $highboard = Auth::guard('highboard')->user();
+        
+        // Verify the submission belongs to a task in the highboard's field
+        if ($submission->task->committee->field_id !== $highboard->field_id) {
+            abort(403);
+        }
+        
+        $submission->update(['status' => 'accepted']);
+        
+        return back()->with('success', 'Submission accepted successfully.');
+    }
+
+    /**
+     * Reject a submission
+     */
+    public function rejectSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $highboard = Auth::guard('highboard')->user();
+        
+        // Verify the submission belongs to a task in the highboard's field
+        if ($submission->task->committee->field_id !== $highboard->field_id) {
+            abort(403);
+        }
+        
+        $submission->update(['status' => 'rejected']);
+        
+        return back()->with('success', 'Submission rejected.');
+    }
 }

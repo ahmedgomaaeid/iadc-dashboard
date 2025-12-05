@@ -50,8 +50,14 @@ class TaskController extends Controller
     public function submit(Request $request, Task $task)
     {
         $request->validate([
-            'file' => 'required|file|max:10240', // 10MB max
+            'file' => 'nullable|file|max:10240', // 10MB max
+            'text_content' => 'nullable|string',
         ]);
+
+        // Ensure at least one submission type is provided
+        if (!$request->hasFile('file') && !$request->filled('text_content')) {
+            return back()->withErrors(['submission' => 'Please provide either a file or text content.']);
+        }
 
         $user = Auth::user();
 
@@ -59,12 +65,37 @@ class TaskController extends Controller
             abort(403, 'You do not have access to this task.');
         }
 
-        $path = $request->file('file')->store('submissions', 'public');
+        // Find or create the submission
+        $submission = TaskSubmission::firstOrNew([
+            'user_id' => $user->id,
+            'task_id' => $task->id
+        ]);
 
-        TaskSubmission::updateOrCreate(
-            ['user_id' => $user->id, 'task_id' => $task->id],
-            ['file' => $path, 'status' => 'pending']
-        );
+        // Handle file upload
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            
+            if (!$file->isValid()) {
+                return back()->withErrors(['file' => 'File upload failed. Please try again.']);
+            }
+            
+            // Delete old file if it exists
+            if ($submission->file && Storage::disk('public')->exists($submission->file)) {
+                Storage::disk('public')->delete($submission->file);
+            }
+            
+            // Store new file
+            $path = $request->file('file')->store('submissions', 'public');
+            $submission->file = $path;
+        }
+
+        // Update text content
+        $submission->text_content = $request->input('text_content');
+        
+        // Reset status to pending when resubmitting
+        $submission->status = 'pending';
+        
+        $submission->save();
 
         return redirect()->back()->with('success', 'Task submitted successfully!');
     }

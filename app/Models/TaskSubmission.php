@@ -12,6 +12,7 @@ class TaskSubmission extends Model
         'user_id',
         'task_id',
         'file',
+        'text_content',
         'status',
     ];
 

@@ -81,9 +81,20 @@
                             </div>
                         </div>
 
-                        <a href="{{ asset('storage/' . $submission->file) }}" class="btn btn-info btn-block w-100 mb-3" target="_blank">
-                            <i class="fe fe-eye me-1"></i> View Submission
-                        </a>
+                        @if($submission->text_content)
+                            <div class="mb-3">
+                                <h6 class="mb-2"><i class="fe fe-file-text me-1"></i> Text Submission</h6>
+                                <div class="p-3 bg-light rounded">
+                                    {!! nl2br(e($submission->text_content)) !!}
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($submission->file)
+                            <a href="{{ asset('storage/' . $submission->file) }}" class="btn btn-info btn-block w-100 mb-3" target="_blank">
+                                <i class="fe fe-eye me-1"></i> View File Submission
+                            </a>
+                        @endif
                         
                         @if($submission->status == 'rejected')
                              <div class="alert alert-danger mt-3">
@@ -91,10 +102,18 @@
                              </div>
                              <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data" class="mt-3">
                                 @csrf
-                                <div class="form-group">
-                                    <label class="form-label">Upload Solution</label>
-                                    <input type="file" class="form-control" name="file" required>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Text Content (Optional)</label>
+                                    <textarea class="form-control" name="text_content" rows="4" placeholder="Enter your answer here..."></textarea>
                                 </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Upload File (Optional)</label>
+                                    <input type="file" class="form-control" name="file">
+                                    <small class="text-muted">Provide either text content or a file, or both.</small>
+                                </div>
+                                @error('submission')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                                 <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-refresh-cw me-1"></i> Resubmit</button>
                             </form>
                         @endif
@@ -104,14 +123,22 @@
                                 <i class="fe fe-upload-cloud fs-30 text-primary"></i>
                             </span>
                             <h5 class="mt-3">Upload your solution</h5>
-                            <p class="text-muted text-small">Please upload your answer file here.</p>
+                            <p class="text-muted text-small">Submit your answer as text or file.</p>
                         </div>
                         <form action="{{ route('tasks.submit', $task) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group mb-4">
-                                <label class="form-label">Select File</label>
-                                <input type="file" class="form-control" name="file" required>
+                                <label class="form-label">Text Content (Optional)</label>
+                                <textarea class="form-control" name="text_content" rows="5" placeholder="Type your answer here..."></textarea>
                             </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label">Upload File (Optional)</label>
+                                <input type="file" class="form-control" name="file">
+                                <small class="text-muted">Provide either text content or a file, or both.</small>
+                            </div>
+                            @error('submission')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                             <button type="submit" class="btn btn-primary btn-block w-100"><i class="fe fe-send me-1"></i> Submit</button>
                         </form>
                     @endif
