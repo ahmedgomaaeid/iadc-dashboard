@@ -121,15 +121,10 @@ class DynamicForm extends Model
 
     /**
      * Get the full URL for this form using subdomain
-     * Format: https://{subdomain}.form.{domain}
+     * Format: https://{subdomain}.form.iadcsuez.org
      */
     public function getFormUrl(): string
     {
-        $appUrl = env('APP_URL', 'http://localhost');
-        $scheme = parse_url($appUrl, PHP_URL_SCHEME) ?? 'https';
-        $domain = str_replace(['http://', 'https://'], '', $appUrl);
-        $domain = str_replace('www.', '', $domain);
-        
-        return $scheme . '://' . $this->subdomain . '.form.' . $domain;
+        return 'https://' . $this->subdomain . '.form.iadcsuez.org';
     }
 }

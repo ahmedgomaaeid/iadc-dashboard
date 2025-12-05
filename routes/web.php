@@ -18,10 +18,8 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 Route::get('/quiz/{id}', [ControllersQuizController::class, 'showQuiz'])->name('quiz.show');
 
 // Guest Form Routes - Subdomain based
-// URL format: {subdomain}.form.{domain}
-$domain = str_replace(['http://', 'https://'], '', env('APP_URL'));
-$domain = str_replace('www.', '', $domain);
-Route::domain('{subdomain}.form.' . $domain)->group(function () {
+// URL format: {subdomain}.form.iadcsuez.org
+Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
     Route::get('/', [GuestFormController::class, 'show'])->name('form.show');
     Route::post('/', [GuestFormController::class, 'submit'])->name('form.submit');
 });
