@@ -94,4 +94,63 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fe fe-list me-2"></i> New Tasks Submissions</h3>
+                </div>
+                <div class="card-body">
+
+                    @if($submissions->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Task</th>
+                                        <th>Submitted Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($submissions as $submission)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="avatar avatar-sm brround me-2" style="background-image: url({{ $submission->user->image ? asset('storage/' . $submission->user->image) : asset('assets/images/users/default.jpg') }})"></span>
+                                                    <div>
+                                                        <h6 class="mb-0">{{ $submission->user->name }}</h6>
+                                                        <small class="text-muted">{{ $submission->user->email }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('board.tasks.show', $submission->task) }}">
+                                                    {{ Str::limit($submission->task->title, 30) }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $submission->created_at->format('M d, Y H:i') }}</td>
+                                            <td>
+                                                <a href="{{ route('board.tasks.submissions.show', $submission) }}" class="btn btn-sm btn-info me-1">
+                                                    <i class="fe fe-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fe fe-inbox fs-60 text-muted"></i>
+                            <h4 class="mt-3">No Submissions Found</h4>
+                            <p class="text-muted">There are no task submissions yet.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

@@ -276,6 +276,21 @@ class TaskController extends Controller
     }
 
     /**
+     * Show the submission details
+     */
+    public function showSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $highboard = Auth::guard('highboard')->user();
+
+        // Verify the submission belongs to a task in the highboard's field
+        if ($submission->task->committee->field_id !== $highboard->field_id) {
+            abort(403);
+        }
+
+        return view('highboard.tasks.submission_show', compact('submission'));
+    }
+
+    /**
      * Accept a submission
      */
     public function acceptSubmission(\App\Models\TaskSubmission $submission)
@@ -289,7 +304,7 @@ class TaskController extends Controller
         
         $submission->update(['status' => 'accepted']);
         
-        return back()->with('success', 'Submission accepted successfully.');
+        return redirect()->route('highboard.tasks.submissions')->with('success', 'Submission accepted successfully.');
     }
 
     /**
@@ -306,6 +321,6 @@ class TaskController extends Controller
         
         $submission->update(['status' => 'rejected']);
         
-        return back()->with('success', 'Submission rejected.');
+        return redirect()->route('highboard.tasks.submissions')->with('success', 'Submission rejected.');
     }
 }

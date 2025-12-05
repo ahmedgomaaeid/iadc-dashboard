@@ -235,6 +235,21 @@ class TaskController extends Controller
     }
 
     /**
+     * Show the submission details
+     */
+    public function showSubmission(\App\Models\TaskSubmission $submission)
+    {
+        $board = Auth::guard('board')->user();
+
+        // Verify the submission belongs to a task in the board's committee
+        if ($submission->task->committee_id !== $board->committee_id) {
+            abort(403);
+        }
+
+        return view('board.tasks.submission_show', compact('submission'));
+    }
+
+    /**
      * Accept a submission
      */
     public function acceptSubmission(\App\Models\TaskSubmission $submission)
@@ -248,7 +263,7 @@ class TaskController extends Controller
         
         $submission->update(['status' => 'accepted']);
         
-        return back()->with('success', 'Submission accepted successfully.');
+        return redirect()->route('board.tasks.submissions')->with('success', 'Submission accepted successfully.');
     }
 
     /**
@@ -265,6 +280,6 @@ class TaskController extends Controller
         
         $submission->update(['status' => 'rejected']);
         
-        return back()->with('success', 'Submission rejected.');
+        return redirect()->route('board.tasks.submissions')->with('success', 'Submission rejected.');
     }
 }

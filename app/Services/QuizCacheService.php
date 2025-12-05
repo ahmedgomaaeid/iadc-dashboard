@@ -187,15 +187,15 @@ class QuizCacheService
                 'name' => $name,
                 'email' => $email,
             ]);
-            Redis::set($participantKey, $payload);
+            Redis::setex($participantKey, 86400, $payload);
             
             // Store email participation record
             $emailKey = "quiz:{$quizId}:email:" . md5(strtolower($email));
-            Redis::set($emailKey, $participantId);
+            Redis::setex($emailKey, 86400, $participantId);
             
             // Also initialize the score to 0
             $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
-            Redis::set($scoreKey, 0);
+            Redis::setex($scoreKey, 86400, 0);
             
             // Generate randomized question order for this participant
             $questionCount = self::getQuizCount($quizId);
@@ -206,7 +206,7 @@ class QuizCacheService
                 shuffle($questionOrder);
                 // Store the randomized order
                 $orderKey = "quiz:{$quizId}:participant:{$participantId}:question_order";
-                Redis::set($orderKey, json_encode($questionOrder));
+                Redis::setex($orderKey, 86400, json_encode($questionOrder));
             }
 
             return $participantId;

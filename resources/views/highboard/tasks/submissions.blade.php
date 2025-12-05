@@ -116,24 +116,9 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($submission->status == 'pending')
-                                                    <div class="btn-group" role="group">
-                                                        <form action="{{ route('highboard.tasks.submissions.accept', $submission) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Accept this submission?')">
-                                                                <i class="fe fe-check"></i> Accept
-                                                            </button>
-                                                        </form>
-                                                        <form action="{{ route('highboard.tasks.submissions.reject', $submission) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this submission?')">
-                                                                <i class="fe fe-x"></i> Reject
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @else
-                                                    <span class="text-muted">No action needed</span>
-                                                @endif
+                                                <a href="{{ route('highboard.tasks.submissions.show', $submission) }}" class="btn btn-sm btn-info me-1">
+                                                    <i class="fe fe-eye"></i> View
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

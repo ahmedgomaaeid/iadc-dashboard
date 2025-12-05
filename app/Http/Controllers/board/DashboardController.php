@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Board;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\TaskSubmission;
+use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -28,20 +30,17 @@ class DashboardController extends Controller
         // Get inactive members count
         $inactiveMembers = $totalMembers - $activeMembers;
         
-        // Get recent members (last 5)
-        $recentMembers = User::whereHas('committees', function ($query) use ($board) {
-            $query->where('committees.id', $board->committee_id);
-        })
-        ->orderBy('created_at', 'desc')
-        ->take(5)
-        ->get();
+        // get id of my committee tasks and get submited unreived submitted tasks
+        $tasks = Task::where('committee_id', $board->committee_id)->pluck('id');
+        $submissions = TaskSubmission::whereIn('task_id', $tasks)->where('status', 'pending')->latest()->take(5)->get();
+        
         
         return view('board.dashboard.index', compact(
             'board',
             'totalMembers',
             'activeMembers',
             'inactiveMembers',
-            'recentMembers'
+            'submissions'
         ));
     }
 }

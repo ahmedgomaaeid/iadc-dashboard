@@ -36,6 +36,8 @@ Route::middleware(['auth:board', 'check.active:board'])->prefix('board')->name('
     // Task Submission Management
     Route::get('tasks-submissions', [TaskController::class, 'submissions'])
         ->name('tasks.submissions');
+    Route::get('tasks-submissions/{submission}', [TaskController::class, 'showSubmission'])
+        ->name('tasks.submissions.show');
     Route::post('tasks-submissions/{submission}/accept', [TaskController::class, 'acceptSubmission'])
         ->name('tasks.submissions.accept');
     Route::post('tasks-submissions/{submission}/reject', [TaskController::class, 'rejectSubmission'])
