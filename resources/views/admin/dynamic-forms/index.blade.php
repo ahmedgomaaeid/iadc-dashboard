@@ -45,7 +45,7 @@
                                 @forelse($forms as $form)
                                     <tr>
                                         <td class="fw-semibold">{{ $form->title }}</td>
-                                        <td><code>/form/{{ $form->subdomain }}</code></td>
+                                        <td><code>{{ $form->subdomain }}</code></td>
                                         <td>
                                             @php $fieldCount = count($form->fields ?? []); @endphp
                                             <span class="badge bg-info">{{ $fieldCount }} field{{ $fieldCount !== 1 ? 's' : '' }}</span>

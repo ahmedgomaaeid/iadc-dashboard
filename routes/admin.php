@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'admin', 'as' => 'admin.
     Route::resource('members', \App\Http\Controllers\admin\MemberController::class);
     Route::post('members/{id}/toggle-status', [\App\Http\Controllers\admin\MemberController::class, 'toggleStatus'])
         ->name('members.toggle-status');
+    Route::get('members-export', [\App\Http\Controllers\admin\MemberController::class, 'export'])
+        ->name('members.export');
     
     // Quiz Management Routes
     Route::resource('quizzes', \App\Http\Controllers\admin\QuizController::class);

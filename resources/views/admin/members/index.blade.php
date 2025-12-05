@@ -25,9 +25,14 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">All Members</h3>
-                    <a href="{{ route('admin.members.create') }}" class="btn btn-primary">
-                        <i class="fe fe-plus me-2"></i>Add New Member
-                    </a>
+                    <div>
+                        <a href="{{ route('admin.members.export') }}" class="btn btn-success me-2">
+                            <i class="fe fe-download me-2"></i>Export Excel
+                        </a>
+                        <a href="{{ route('admin.members.create') }}" class="btn btn-primary">
+                            <i class="fe fe-plus me-2"></i>Add New Member
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

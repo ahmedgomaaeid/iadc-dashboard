@@ -5,10 +5,12 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Committee;
+use App\Exports\MemberExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MemberController extends Controller
 {
@@ -168,5 +170,14 @@ class MemberController extends Controller
 
         return redirect()->route('admin.members.index')
             ->with('success', "Member {$status} successfully.");
+    }
+
+    /**
+     * Export all members to Excel
+     */
+    public function export()
+    {
+        $filename = 'members_' . date('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new MemberExport(), $filename);
     }
 }
