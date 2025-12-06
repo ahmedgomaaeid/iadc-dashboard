@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -131,7 +131,7 @@ class MemberController extends Controller
         }
 
         $member->update($validated);
-        
+
         // Admin can manage all committees, so just sync directly
         $member->committees()->sync($validated['committees']);
 

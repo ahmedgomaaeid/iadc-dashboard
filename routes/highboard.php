@@ -1,16 +1,16 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\highboard\BoardController;
-use App\Http\Controllers\highboard\CommitteeController;
-use App\Http\Controllers\highboard\DashboardController;
-use App\Http\Controllers\highboard\LessonController;
-use App\Http\Controllers\highboard\MemberController;
-use App\Http\Controllers\highboard\ProfileController;
-use App\Http\Controllers\highboard\TaskController;
-use App\Http\Controllers\highboard\SessionController;
-use App\Http\Controllers\highboard\QuizController;
-use App\Http\Controllers\highboard\QuestionController;
+use App\Http\Controllers\Highboard\BoardController;
+use App\Http\Controllers\Highboard\CommitteeController;
+use App\Http\Controllers\Highboard\DashboardController;
+use App\Http\Controllers\Highboard\LessonController;
+use App\Http\Controllers\Highboard\MemberController;
+use App\Http\Controllers\Highboard\ProfileController;
+use App\Http\Controllers\Highboard\TaskController;
+use App\Http\Controllers\Highboard\SessionController;
+use App\Http\Controllers\Highboard\QuizController;
+use App\Http\Controllers\Highboard\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:highboard')->group(function () {
@@ -21,17 +21,17 @@ Route::middleware('guest:highboard')->group(function () {
 Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboard')->name('highboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [LoginController::class, 'highboardlogout'])->name('logout');
-    
+
     // Committee Management Routes
     Route::resource('committees', CommitteeController::class);
     Route::post('committees/{committee}/toggle-status', [CommitteeController::class, 'toggleStatus'])
         ->name('committees.toggle-status');
-    
+
     // Board Management Routes
     Route::resource('boards', BoardController::class);
     Route::post('boards/{board}/toggle-status', [BoardController::class, 'toggleStatus'])
         ->name('boards.toggle-status');
-    
+
     // Member Management Routes
     Route::resource('members', MemberController::class);
     Route::post('members/{member}/toggle-status', [MemberController::class, 'toggleStatus'])
@@ -61,13 +61,13 @@ Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboa
     // Session Management
     Route::resource('sessions', SessionController::class);
     Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
-    
+
     // Highboard Impersonation Routes
     Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])
         ->name('login-as-board');
     Route::post('login-as-member/{id}', [LoginController::class, 'highboardLoginAsMember'])
         ->name('login-as-member');
-    
+
 
     // Quiz Routes
     Route::resource('quizzes', QuizController::class);
@@ -76,7 +76,7 @@ Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboa
     Route::get('quizzes/{quiz}/leaderboard/export', [QuizController::class, 'exportLeaderboard'])->name('quizzes.leaderboard.export');
     Route::delete('quizzes/{quiz}/leaderboard/clear', [QuizController::class, 'clearLeaderboard'])->name('quizzes.leaderboard.clear');
     Route::resource('quizzes.questions', QuestionController::class)->shallow();
-    
+
     // Profile Routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

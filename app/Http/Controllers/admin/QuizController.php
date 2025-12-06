@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -94,7 +94,7 @@ class QuizController extends Controller
      */
     public function toggleActive(Quiz $quiz)
     {
-        $quiz->is_active = ! (bool) $quiz->is_active;
+        $quiz->is_active = !(bool) $quiz->is_active;
         $quiz->save();
 
         if ($quiz->is_active) {

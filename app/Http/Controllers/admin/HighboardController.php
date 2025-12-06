@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Highboard;
@@ -19,7 +19,7 @@ class HighboardController extends Controller
         $highboards = Highboard::with('field')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('admin.highboards.index', compact('highboards'));
     }
 
@@ -112,7 +112,7 @@ class HighboardController extends Controller
         $highboard->update(['is_active' => !$highboard->is_active]);
 
         $status = $highboard->is_active ? 'activated' : 'deactivated';
-        
+
         return redirect()->route('admin.highboards.index')
             ->with('success', "Highboard member {$status} successfully.");
     }

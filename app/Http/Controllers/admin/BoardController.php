@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Board;
@@ -19,7 +19,7 @@ class BoardController extends Controller
         $boards = Board::with(['committee', 'field'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('admin.boards.index', compact('boards'));
     }
 
@@ -48,7 +48,7 @@ class BoardController extends Controller
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
         $validated['password'] = Hash::make($validated['password']);
-        
+
         // Get the field_id from the selected committee
         $committee = Committee::find($validated['committee_id']);
         $validated['field_id'] = $committee->field_id;
@@ -120,7 +120,7 @@ class BoardController extends Controller
         $board->update(['is_active' => !$board->is_active]);
 
         $status = $board->is_active ? 'activated' : 'deactivated';
-        
+
         return redirect()->route('admin.boards.index')
             ->with('success', "Board member {$status} successfully.");
     }
