@@ -200,15 +200,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Show continuation card
+                        // Auto-redirect to new meeting
                         document.getElementById('warning-banner').style.display = 'none';
-                        document.getElementById('main-content').style.display = 'none';
-                        document.getElementById('continuation-card').classList.add('show');
-                        document.getElementById('new-meeting-link').href = data.session.zoom_start_url;
+                        document.getElementById('main-content').innerHTML = '<div class="card"><div class="card-body text-center py-5"><i class="fe fe-check-circle text-success" style="font-size:48px;"></i><h3 class="mt-3">Redirecting to new meeting...</h3></div></div>';
 
-                        // Reset timer for new meeting
-                        meetingStartTime = null;
-                        warningShown = false;
+                        // Open the new meeting
+                        window.open(data.session.zoom_start_url, '_blank');
+
+                        // Redirect this page to the new session join page
+                        window.location.href = '{{ route("board.sessions.join", "") }}/' + data.session.id;
                     } else {
                         alert('Error: ' + (data.error || 'Failed to create new meeting'));
                         btn.disabled = false;
