@@ -38,10 +38,24 @@
 
     <!-- BACKGROUND-IMAGE -->
     <div class="login-img">
+        <style>
+            /* rotate loader */
+            .loader-img {
+                animation: rotate 2s linear infinite;
+            }
 
+            @keyframes rotate {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
         <!-- GLOABAL LOADER -->
         <div id="global-loader">
-            <img src="{{route('index')}}/assets/images/loader.svg" class="loader-img" alt="Loader">
+            <img src="{{route('index')}}/assets/images/brand/logo-2.svg" class="loader-img" alt="Loader" style="width: 70px;">
         </div>
         <!-- /GLOABAL LOADER -->
 
