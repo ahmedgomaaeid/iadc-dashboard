@@ -23,3 +23,10 @@ Route::post('/quizzes/{quiz}/answerQuestion', [QuizController::class, 'answerQue
 
 // Leaderboard endpoint
 Route::get('/quizzes/{quiz}/leaderboard', [QuizController::class, 'getLeaderboard']);
+
+// Session endpoints
+use App\Http\Controllers\Api\SessionController;
+Route::get('/sessions/{session}/status', [SessionController::class, 'status']);
+Route::get('/sessions/{session}/latest', [SessionController::class, 'latest']);
+Route::post('/sessions/{session}/recreate', [SessionController::class, 'recreate']);
+Route::post('/sessions/{session}/mark-joined', [SessionController::class, 'markJoined']);
