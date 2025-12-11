@@ -13,7 +13,7 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
 
 // Main domain routes
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('welcome');
 })->name('index');
 
 use App\Http\Controllers\ZoomController;
