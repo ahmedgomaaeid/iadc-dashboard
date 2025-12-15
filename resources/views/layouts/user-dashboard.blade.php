@@ -36,10 +36,25 @@
 
 <body class="app sidebar-mini ltr light-mode">
 
-    <!-- GLOBAL-LOADER -->
-    <div id="global-loader">
-        <img src="{{route('index')}}/assets/images/loader.svg" class="loader-img" alt="Loader">
-    </div>
+    <style>
+            /* rotate loader */
+            .loader-img {
+                animation: rotate 2s linear infinite;
+            }
+
+            @keyframes rotate {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+        <!-- GLOABAL LOADER -->
+        <div id="global-loader">
+            <img src="{{route('index')}}/assets/images/brand/logo-2.svg" class="loader-img" alt="Loader" style="width: 70px;">
+        </div>
     <!-- /GLOBAL-LOADER -->
 
     <!-- PAGE -->

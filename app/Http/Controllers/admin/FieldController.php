@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Field;
@@ -16,7 +16,7 @@ class FieldController extends Controller
         $fields = Field::withCount('committees')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('admin.fields.index', compact('fields'));
     }
 
@@ -78,7 +78,7 @@ class FieldController extends Controller
     public function destroy(Field $field)
     {
         $field->update(['is_active' => false]);
-        
+
         // Also deactivate all committees under this field
         $field->committees()->update(['is_active' => false]);
 
@@ -94,7 +94,7 @@ class FieldController extends Controller
         $field->update(['is_active' => !$field->is_active]);
 
         $status = $field->is_active ? 'activated' : 'deactivated';
-        
+
         return redirect()->route('admin.fields.index')
             ->with('success', "Field {$status} successfully.");
     }

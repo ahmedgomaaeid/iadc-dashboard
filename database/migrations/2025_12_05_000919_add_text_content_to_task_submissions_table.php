@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,7 +13,7 @@ return new class extends Migration
         Schema::table('task_submissions', function (Blueprint $table) {
             // Add text_content field for text submissions
             $table->text('text_content')->nullable()->after('task_id');
-            
+
             // Make file nullable so submissions can be text-only, file-only, or both
             $table->string('file')->nullable()->change();
         });

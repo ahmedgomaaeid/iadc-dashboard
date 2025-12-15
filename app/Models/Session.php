@@ -25,12 +25,16 @@ class Session extends Model
         'zoom_join_url',
         'zoom_start_url',
         'zoom_password',
+        'parent_session_id',
+        'is_continuation',
+        'continuation_count',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'creator_joined' => 'boolean',
+        'is_continuation' => 'boolean',
     ];
 
     public function creator()
@@ -41,5 +45,39 @@ class Session extends Model
     public function committee()
     {
         return $this->belongsTo(Committee::class);
+    }
+
+    public function parentSession()
+    {
+        return $this->belongsTo(Session::class, 'parent_session_id');
+    }
+
+    public function continuations()
+    {
+        return $this->hasMany(Session::class, 'parent_session_id');
+    }
+
+    /**
+     * Get the root session (original session in the chain).
+     */
+    public function getRootSession()
+    {
+        $session = $this;
+        while ($session->parent_session_id) {
+            $session = $session->parentSession;
+        }
+        return $session;
+    }
+
+    /**
+     * Get the latest session in the continuation chain.
+     */
+    public function getLatestContinuation()
+    {
+        $latest = $this->getRootSession();
+        while ($latest->continuations()->exists()) {
+            $latest = $latest->continuations()->latest()->first();
+        }
+        return $latest;
     }
 }

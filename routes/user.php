@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\user\DashboardController;
-use App\Http\Controllers\user\LessonController;
-use App\Http\Controllers\user\TaskController;
-use App\Http\Controllers\user\SessionController;
-use App\Http\Controllers\user\ProfileController;
-use App\Http\Controllers\user\QuizController;
+use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\LessonController;
+use App\Http\Controllers\User\TaskController;
+use App\Http\Controllers\User\SessionController;
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\QuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:user')->group(function () {
@@ -16,7 +16,7 @@ Route::middleware('guest:user')->group(function () {
 
 Route::middleware(['auth:user', 'check.active:user'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
-    
+
     // Lessons
     Route::get('/lessons', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');

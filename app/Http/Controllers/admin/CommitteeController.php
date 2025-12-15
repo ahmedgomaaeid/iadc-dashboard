@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Committee;
@@ -17,7 +17,7 @@ class CommitteeController extends Controller
         $committees = Committee::with('field')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('admin.committees.index', compact('committees'));
     }
 
@@ -96,7 +96,7 @@ class CommitteeController extends Controller
         $committee->update(['is_active' => !$committee->is_active]);
 
         $status = $committee->is_active ? 'activated' : 'deactivated';
-        
+
         return redirect()->route('admin.committees.index')
             ->with('success', "Committee {$status} successfully.");
     }
