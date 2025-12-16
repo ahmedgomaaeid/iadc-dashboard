@@ -15,9 +15,27 @@ class MemberExport implements FromCollection, WithHeadings, WithMapping, WithSty
     /**
      * @return \Illuminate\Support\Collection
      */
+    protected $fieldId;
+
+    public function __construct($fieldId = null)
+    {
+        $this->fieldId = $fieldId;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
-        return User::with('committees')->orderBy('created_at', 'desc')->get();
+        $query = User::with('committees')->orderBy('created_at', 'desc');
+
+        if ($this->fieldId) {
+            $query->whereHas('committees', function ($q) {
+                $q->where('field_id', $this->fieldId);
+            });
+        }
+
+        return $query->get();
     }
 
     /**

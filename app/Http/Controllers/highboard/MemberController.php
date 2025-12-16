@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Exports\MemberExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MemberController extends Controller
 {
@@ -21,14 +23,23 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         // Get members who belong to committees in this field
-        $members = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
+        $members = User::whereHas('committees', function ($query) use ($fieldId) {
+            $query->where('field_id', $fieldId);
+        })
             ->with(['committees', 'committees.field'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('highboard.members.index', compact('members'));
+    }
+
+    /**
+     * Export members to Excel
+     */
+    public function export()
+    {
+        $highboard = Auth::guard('highboard')->user();
+        return Excel::download(new MemberExport($highboard->field_id), 'members.xlsx');
     }
 
     /**
@@ -97,9 +108,9 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         // Ensure member belongs to committees in highboard's field
-        $member = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
+        $member = User::whereHas('committees', function ($query) use ($fieldId) {
+            $query->where('field_id', $fieldId);
+        })
             ->findOrFail($id);
 
         $committees = Committee::where('field_id', $fieldId)
@@ -119,9 +130,9 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         // Ensure member belongs to committees in highboard's field
-        $member = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
+        $member = User::whereHas('committees', function ($query) use ($fieldId) {
+            $query->where('field_id', $fieldId);
+        })
             ->findOrFail($id);
 
         $validated = $request->validate([
@@ -157,7 +168,7 @@ class MemberController extends Controller
         }
 
         $member->update($validated);
-        
+
         // Preserve committees from other fields
         // Get committees from other fields that should be preserved
         $otherFieldCommittees = $member->committees()
@@ -184,9 +195,9 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         // Ensure member belongs to committees in highboard's field
-        $member = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
+        $member = User::whereHas('committees', function ($query) use ($fieldId) {
+            $query->where('field_id', $fieldId);
+        })
             ->findOrFail($id);
 
         // Delete image if exists
@@ -209,9 +220,9 @@ class MemberController extends Controller
         $fieldId = $highboard->field_id;
 
         // Ensure member belongs to committees in highboard's field
-        $member = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
+        $member = User::whereHas('committees', function ($query) use ($fieldId) {
+            $query->where('field_id', $fieldId);
+        })
             ->findOrFail($id);
 
         $member->update(['is_active' => !$member->is_active]);

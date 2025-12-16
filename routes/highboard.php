@@ -33,6 +33,7 @@ Route::middleware(['auth:highboard', 'check.active:highboard'])->prefix('highboa
         ->name('boards.toggle-status');
 
     // Member Management Routes
+    Route::get('members/export', [MemberController::class, 'export'])->name('members.export');
     Route::resource('members', MemberController::class);
     Route::post('members/{member}/toggle-status', [MemberController::class, 'toggleStatus'])
         ->name('members.toggle-status');

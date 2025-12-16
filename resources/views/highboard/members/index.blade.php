@@ -25,9 +25,14 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">All Members in Your Field</h3>
-                    <a href="{{ route('highboard.members.create') }}" class="btn btn-primary">
-                        <i class="fe fe-plus me-2"></i>Add New Member
-                    </a>
+                    <div>
+                        <a href="{{ route('highboard.members.export') }}" class="btn btn-success me-2">
+                            <i class="fe fe-download me-2"></i>Export Excel
+                        </a>
+                        <a href="{{ route('highboard.members.create') }}" class="btn btn-primary">
+                            <i class="fe fe-plus me-2"></i>Add New Member
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -74,37 +79,35 @@
                                         <td>{{ $member->created_at->format('Y-m-d H:i') }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('highboard.members.edit', $member) }}" 
-                                                   class="btn btn-sm btn-info" title="Edit">
+                                                <a href="{{ route('highboard.members.edit', $member) }}"
+                                                    class="btn btn-sm btn-info" title="Edit">
                                                     <i class="fe fe-edit"></i>
                                                 </a>
-                                                
-                                                <form action="{{ route('highboard.members.toggle-status', $member) }}" 
-                                                      method="POST" class="d-inline">
+
+                                                <form action="{{ route('highboard.members.toggle-status', $member) }}"
+                                                    method="POST" class="d-inline">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-warning" 
-                                                            title="Toggle Status">
+                                                    <button type="submit" class="btn btn-sm btn-warning" title="Toggle Status">
                                                         <i class="fe fe-{{ $member->is_active ? 'eye-off' : 'eye' }}"></i>
                                                     </button>
                                                 </form>
-                                                
-                                                <form action="{{ route('highboard.login-as-member', $member->id) }}" 
-                                                      method="POST" class="d-inline"
-                                                      onsubmit="return confirm('You will be logged in as {{ $member->name }}. Continue?');">
+
+                                                <form action="{{ route('highboard.login-as-member', $member->id) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('You will be logged in as {{ $member->name }}. Continue?');">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success" 
-                                                            title="Login As This User">
+                                                    <button type="submit" class="btn btn-sm btn-success"
+                                                        title="Login As This User">
                                                         <i class="fe fe-log-in"></i>
                                                     </button>
                                                 </form>
-                                                
-                                                <form action="{{ route('highboard.members.destroy', $member) }}" 
-                                                      method="POST" class="d-inline"
-                                                      onsubmit="return confirm('Are you sure you want to deactivate this member?');">
+
+                                                <form action="{{ route('highboard.members.destroy', $member) }}" method="POST"
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Are you sure you want to deactivate this member?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" 
-                                                            title="Deactivate">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Deactivate">
                                                         <i class="fe fe-trash-2"></i>
                                                     </button>
                                                 </form>
@@ -119,7 +122,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="mt-3">
                         {{ $members->links() }}
                     </div>
