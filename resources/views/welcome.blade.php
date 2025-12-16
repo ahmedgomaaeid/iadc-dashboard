@@ -21,10 +21,10 @@
     <link id="style" href="{{route('index')}}/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- STYLE CSS -->
-    <link href="{{route('index')}}/assets/css/style.css" rel="stylesheet" />
+    <link href="{{route('index')}}/assets/css/style.css?v=1" rel="stylesheet" />
 
     <!--- FONT-ICONS CSS -->
-    <link href="{{route('index')}}/assets/css/icons.css" rel="stylesheet" />
+    <link href="{{route('index')}}/assets/css/icons.css?v=1" rel="stylesheet" />
 
     <!-- COLOR SKIN CSS -->
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="{{route('index')}}/assets/colors/color1.css" />
