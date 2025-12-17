@@ -13,8 +13,8 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
 });
 Route::domain('iadcsuez.org')->group(function () {
     Route::get('/', function () {
-        return view('landing.index');
-    })->name('index');
+        return view('welcome');
+    })->name('landing');
 });
 
 // Main domain routes
