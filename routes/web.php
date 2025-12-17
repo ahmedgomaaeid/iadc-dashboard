@@ -10,12 +10,19 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
     Route::get('/', [GuestFormController::class, 'show'])->name('form.show');
     Route::post('/', [GuestFormController::class, 'submit'])->name('form.submit');
 });
+Route::domain('iadcsuez.org')->group(function () {
+    Route::get('/', function () {
+        return view('landing.index');
+    })->name('landing');
+});
 
 // Main domain routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('index');
 
+Route::domain('dashboard.iadcsuez.org')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('login');
+    })->name('index');
+});
 use App\Http\Controllers\ZoomController;
 Route::get('/zoom/oauth', [ZoomController::class, 'oauth'])->name('zoom.oauth');
 Route::get('/zoom/callback', [ZoomController::class, 'callback'])->name('zoom.callback');
