@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestFormController;
 use App\Http\Controllers\QuizController as ControllersQuizController;
+use App\Http\Controllers\ZoomController;
 
 // Guest Form Routes - Subdomain based (MUST be first!)
 // URL format: {subdomain}.form.iadcsuez.org
@@ -13,17 +14,17 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
 Route::domain('iadcsuez.org')->group(function () {
     Route::get('/', function () {
         return view('landing.index');
-    })->name('landing');
+    })->name('index');
 });
 
 // Main domain routes
 
-Route::domain('dashboard.iadcsuez.org')->group(function () {
+Route::domain(env('APP_DOMAIN'))->group(function () {
     Route::get('/', function () {
         return redirect()->route('login');
     })->name('index');
 });
-use App\Http\Controllers\ZoomController;
+
 Route::get('/zoom/oauth', [ZoomController::class, 'oauth'])->name('zoom.oauth');
 Route::get('/zoom/callback', [ZoomController::class, 'callback'])->name('zoom.callback');
 Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
