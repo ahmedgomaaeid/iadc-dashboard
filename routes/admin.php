@@ -61,6 +61,17 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\Admin\DynamicFormController::class, 'exportSubmissions'])
             ->name('dynamic-forms.export');
 
+        // Event/Visit Management Routes
+        Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+        Route::post('events/{id}/toggle-status', [\App\Http\Controllers\Admin\EventController::class, 'toggleStatus'])
+            ->name('events.toggle-status');
+        Route::delete('events/partners/{id}', [\App\Http\Controllers\Admin\EventController::class, 'destroyPartner'])
+            ->name('events.partners.destroy');
+
+        // Article Management Routes
+        Route::resource('articles', \App\Http\Controllers\Admin\ArticleController::class);
+        Route::post('articles/{id}/toggle-status', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleStatus'])
+            ->name('articles.toggle-status');
 
         // Admin Impersonation Routes
         Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])

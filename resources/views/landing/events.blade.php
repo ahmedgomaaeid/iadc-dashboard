@@ -22,17 +22,17 @@
         <div class="row">
             <h4 class="text-center fw-semibold">Events & Activities </h4>
             <span class="landing-title"></span>
-            <h2 class="text-center fw-semibold">Explor Our <span class="text-primary">Events & Activities</span></h2>
+            <h2 class="text-center fw-semibold">Explore Our <span class="text-primary">Events & Activities</span></h2>
             <div class="pricing-tabs">
                 <div class="pri-tabs-heading text-center">
                     <ul class="nav nav-price">
-                        <li><a class="active show" data-bs-toggle="tab" href="#upcoming">Upcoming Events</a></li>
-                        <li><a data-bs-toggle="tab" href="#past">Past Events </a></li>
+                        <!-- <li><a class="active show" data-bs-toggle="tab" href="#upcoming">Upcoming Events</a></li> -->
+                        <li><a class="active show" data-bs-toggle="tab" href="#past">Past Events </a></li>
                         <li><a data-bs-toggle="tab" href="#visits">Visits</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
-                    @include('landing.events.upcoming')
+                    <!-- @include('landing.events.upcoming') -->
 
                     @include('landing.events.past')
 

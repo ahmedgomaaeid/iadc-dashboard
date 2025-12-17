@@ -1,0 +1,385 @@
+@extends('layouts.admin-dashboard')
+
+@section('title', isset($event) ? 'Edit Event/Visit' : 'Create Event/Visit')
+
+@section('css')
+<style>
+    .partner-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    .partner-card:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    .partner-card .remove-partner {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .existing-partner-card {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        border: 1px solid #a5d6a7;
+    }
+    .partner-type-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .type-main { background: linear-gradient(135deg, #ffd700 0%, #ffb800 100%); color: #000; }
+    .type-diamond { background: linear-gradient(135deg, #b9f2ff 0%, #89cff0 100%); color: #000; }
+    .type-platinum { background: linear-gradient(135deg, #e5e4e2 0%, #c0c0c0 100%); color: #000; }
+    .type-golden { background: linear-gradient(135deg, #ffd700 0%, #daa520 100%); color: #000; }
+    .type-silver { background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: #000; }
+    .type-technical { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+    .type-catering { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff; }
+    .type-transportation { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #000; }
+    .type-printing { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #000; }
+    .image-preview {
+        width: 100%;
+        max-width: 200px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: 2px solid #dee2e6;
+    }
+    .event-image-preview {
+        width: 100%;
+        max-width: 400px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: 3px solid #dee2e6;
+    }
+    #partners-container {
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+</style>
+@endsection
+
+@section('content')
+    <div class="page-header">
+        <h1 class="page-title">{{ isset($event) ? 'Edit Event/Visit' : 'Create Event/Visit' }}</h1>
+        <div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.events.index') }}">Events & Visits</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ isset($event) ? 'Edit' : 'Create' }}
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <form action="{{ isset($event) ? route('admin.events.update', $event) : route('admin.events.store') }}" 
+          method="POST" enctype="multipart/form-data">
+        @csrf
+        @if(isset($event))
+            @method('PUT')
+        @endif
+
+        <div class="row">
+            <!-- Main Event Details -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ isset($event) ? 'Edit Event/Visit' : 'New Event/Visit' }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control @error('name') is-invalid @enderror" 
+                                       id="name" 
+                                       name="name" 
+                                       value="{{ old('name', $event->name ?? '') }}" 
+                                       required>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                                <select class="form-control @error('type') is-invalid @enderror" 
+                                        id="type" 
+                                        name="type" 
+                                        required>
+                                    <option value="event" {{ old('type', $event->type ?? 'event') === 'event' ? 'selected' : '' }}>Event</option>
+                                    <option value="visit" {{ old('type', $event->type ?? '') === 'visit' ? 'selected' : '' }}>Visit</option>
+                                </select>
+                                @error('type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control @error('description') is-invalid @enderror" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4">{{ old('description', $event->description ?? '') }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="date_from" class="form-label">Date From <span class="text-danger">*</span></label>
+                                <input type="date" 
+                                       class="form-control @error('date_from') is-invalid @enderror" 
+                                       id="date_from" 
+                                       name="date_from" 
+                                       value="{{ old('date_from', isset($event) ? $event->date_from->format('Y-m-d') : '') }}" 
+                                       required>
+                                @error('date_from')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="date_to" class="form-label">Date To <small class="text-muted">(Optional)</small></label>
+                                <input type="date" 
+                                       class="form-control @error('date_to') is-invalid @enderror" 
+                                       id="date_to" 
+                                       name="date_to" 
+                                       value="{{ old('date_to', isset($event) && $event->date_to ? $event->date_to->format('Y-m-d') : '') }}">
+                                @error('date_to')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Leave empty for single-day events</small>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="place" class="form-label">Place <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control @error('place') is-invalid @enderror" 
+                                       id="place" 
+                                       name="place" 
+                                       value="{{ old('place', $event->place ?? '') }}" 
+                                       required>
+                                @error('place')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="register_link" class="form-label">Register Button Link</label>
+                                <input type="url" 
+                                       class="form-control @error('register_link') is-invalid @enderror" 
+                                       id="register_link" 
+                                       name="register_link" 
+                                       value="{{ old('register_link', $event->register_link ?? '') }}"
+                                       placeholder="https://example.com/register">
+                                @error('register_link')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3 d-flex align-items-center">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="register_active" 
+                                           name="register_active" 
+                                           value="1"
+                                           {{ old('register_active', $event->register_active ?? true) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="register_active">
+                                        Register Button Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Event Image</label>
+                            <input type="file" 
+                                   class="form-control @error('image') is-invalid @enderror" 
+                                   id="image" 
+                                   name="image"
+                                   accept="image/*"
+                                   onchange="previewEventImage(this)">
+                            @if(isset($event) && $event->image)
+                                <img src="{{ asset('storage/' . $event->image) }}" 
+                                     alt="Current event image" 
+                                     id="event-image-preview" 
+                                     class="event-image-preview">
+                            @else
+                                <img src="" alt="" id="event-image-preview" class="event-image-preview" style="display: none;">
+                            @endif
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="is_active" 
+                                       name="is_active" 
+                                       value="1"
+                                       {{ old('is_active', $event->is_active ?? true) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="is_active">
+                                    Active
+                                </label>
+                            </div>
+                            <small class="text-muted">Inactive events will not be displayed on the public site</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partners Section -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">Partners</h3>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addPartner()">
+                            <i class="fe fe-plus me-1"></i>Add Partner
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Existing Partners -->
+                        @if(isset($event) && $event->partners->count() > 0)
+                            <h6 class="text-muted mb-3">Existing Partners</h6>
+                            @foreach($event->partners as $partner)
+                                <div class="partner-card existing-partner-card">
+                                    <form action="{{ route('admin.events.partners.destroy', $partner->id) }}" 
+                                          method="POST" 
+                                          class="remove-partner"
+                                          onsubmit="return confirm('Are you sure you want to remove this partner?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fe fe-x"></i>
+                                        </button>
+                                    </form>
+                                    <div class="text-center">
+                                        <img src="{{ asset('storage/' . $partner->image) }}" 
+                                             alt="Partner" 
+                                             class="image-preview mb-2">
+                                        <div>
+                                            <span class="partner-type-badge type-{{ $partner->type }}">
+                                                {{ $partner->type_name }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                            <hr>
+                        @endif
+
+                        <!-- New Partners Container -->
+                        <div id="partners-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fe fe-save me-2"></i>{{ isset($event) ? 'Update' : 'Create' }} Event/Visit
+                    </button>
+                    <a href="{{ route('admin.events.index') }}" class="btn btn-secondary btn-lg">
+                        <i class="fe fe-x me-2"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+@endsection
+
+@section('scripts')
+<script>
+    let partnerIndex = 0;
+
+    function addPartner() {
+        const container = document.getElementById('partners-container');
+        const partnerTypes = @json($partnerTypes);
+        
+        let typeOptions = '';
+        for (const [key, value] of Object.entries(partnerTypes)) {
+            typeOptions += `<option value="${key}">${value}</option>`;
+        }
+
+        const partnerHtml = `
+            <div class="partner-card" id="partner-${partnerIndex}">
+                <button type="button" class="btn btn-sm btn-danger remove-partner" onclick="removePartner(${partnerIndex})">
+                    <i class="fe fe-x"></i>
+                </button>
+                <div class="mb-3">
+                    <label class="form-label">Partner Type <span class="text-danger">*</span></label>
+                    <select class="form-control" name="partners[${partnerIndex}][type]" required>
+                        <option value="">Select Type</option>
+                        ${typeOptions}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Partner Logo <span class="text-danger">*</span></label>
+                    <input type="file" 
+                           class="form-control" 
+                           name="partners[${partnerIndex}][image]" 
+                           accept="image/*"
+                           required
+                           onchange="previewPartnerImage(this, ${partnerIndex})">
+                    <img src="" alt="" id="partner-preview-${partnerIndex}" class="image-preview" style="display: none;">
+                </div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', partnerHtml);
+        partnerIndex++;
+    }
+
+    function removePartner(index) {
+        const element = document.getElementById(`partner-${index}`);
+        if (element) {
+            element.remove();
+        }
+    }
+
+    function previewEventImage(input) {
+        const preview = document.getElementById('event-image-preview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function previewPartnerImage(input, index) {
+        const preview = document.getElementById(`partner-preview-${index}`);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+@endsection

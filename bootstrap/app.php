@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware('web')
                 ->group(base_path('routes/admin.php'));
+            if(env('APP_ENV') == 'local') {
+                Route::middleware('web')
+                    ->group(base_path('routes/testsroutes.php'));
+            }
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

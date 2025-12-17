@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestFormController;
 use App\Http\Controllers\QuizController as ControllersQuizController;
 use App\Http\Controllers\ZoomController;
+use App\Http\Controllers\LandingPageController;
 
 // Guest Form Routes - Subdomain based (MUST be first!)
 // URL format: {subdomain}.form.iadcsuez.org
@@ -12,11 +13,9 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
     Route::post('/', [GuestFormController::class, 'submit'])->name('form.submit');
 });
 Route::domain('iadcsuez.org')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('landing');
+    Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 });
-
+Route::get('event/{id}', [LandingPageController::class, 'eventPreview'])->name('event');
 // Main domain routes
 
 Route::domain(env('APP_URL'))->group(function () {
