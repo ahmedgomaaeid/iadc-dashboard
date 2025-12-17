@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function () {
-            Route::domain(env('APP_DOMAIN'))->group(function () {
+            Route::domain(env('APP_URL'))->group(function () {
                 Route::middleware('web')
                 ->group(base_path('routes/user.php'));
 

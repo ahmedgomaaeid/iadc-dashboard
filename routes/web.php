@@ -19,7 +19,7 @@ Route::domain('iadcsuez.org')->group(function () {
 
 // Main domain routes
 
-Route::domain(env('APP_DOMAIN'))->group(function () {
+Route::domain(env('APP_URL'))->group(function () {
     Route::get('/', function () {
         return redirect()->route('login');
     })->name('index');
