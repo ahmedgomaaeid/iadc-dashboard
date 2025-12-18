@@ -44,6 +44,7 @@ class EventController extends Controller
             'date_from' => 'required|date',
             'date_to' => 'nullable|date|after_or_equal:date_from',
             'place' => 'required|string|max:255',
+            'attendees_number' => 'nullable|integer|min:0',
             'register_link' => 'nullable|url|max:500',
             'register_active' => 'boolean',
             'is_active' => 'boolean',
@@ -63,14 +64,16 @@ class EventController extends Controller
         $event = Event::create($validated);
 
         // Handle partners
-        if ($request->hasFile('partners')) {
-            foreach ($request->file('partners') as $index => $partnerData) {
-                if (isset($partnerData['image']) && $request->input("partners.{$index}.type")) {
-                    $partnerImage = $partnerData['image']->store('event-partners', 'public');
+        if ($request->has('partners')) {
+            foreach ($request->input('partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                
+                if ($partnerType && $request->hasFile("partners.{$index}.image")) {
+                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,
-                        'type' => $request->input("partners.{$index}.type"),
+                        'type' => $partnerType,
                     ]);
                 }
             }
@@ -106,6 +109,7 @@ class EventController extends Controller
             'date_from' => 'required|date',
             'date_to' => 'nullable|date|after_or_equal:date_from',
             'place' => 'required|string|max:255',
+            'attendees_number' => 'nullable|integer|min:0',
             'register_link' => 'nullable|url|max:500',
             'register_active' => 'boolean',
             'is_active' => 'boolean',
@@ -129,14 +133,16 @@ class EventController extends Controller
         $event->update($validated);
 
         // Handle new partners
-        if ($request->hasFile('partners')) {
-            foreach ($request->file('partners') as $index => $partnerData) {
-                if (isset($partnerData['image']) && $request->input("partners.{$index}.type")) {
-                    $partnerImage = $partnerData['image']->store('event-partners', 'public');
+        if ($request->has('partners')) {
+            foreach ($request->input('partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                
+                if ($partnerType && $request->hasFile("partners.{$index}.image")) {
+                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,
-                        'type' => $request->input("partners.{$index}.type"),
+                        'type' => $partnerType,
                     ]);
                 }
             }

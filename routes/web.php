@@ -15,7 +15,7 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
 Route::domain('iadcsuez.org')->group(function () {
     Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 });
-Route::get('event/{id}', [LandingPageController::class, 'eventPreview'])->name('event');
+Route::get('event/{id}', [LandingPageController::class, 'eventPreview'])->name('eventPreview');
 // Main domain routes
 
 Route::domain(env('APP_URL'))->group(function () {

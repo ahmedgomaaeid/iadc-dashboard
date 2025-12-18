@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <form action="{{ isset($event) ? route('admin.events.update', $event) : route('admin.events.store') }}" 
+    <form id="event-form" action="{{ isset($event) ? route('admin.events.update', $event) : route('admin.events.store') }}" 
           method="POST" enctype="multipart/form-data">
         @csrf
         @if(isset($event))
@@ -129,10 +129,9 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" 
+                            <textarea class="form-control summernote @error('description') is-invalid @enderror" 
                                       id="description" 
-                                      name="description" 
-                                      rows="4">{{ old('description', $event->description ?? '') }}</textarea>
+                                      name="description">{{ old('description', $event->description ?? '') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -174,6 +173,20 @@
                                        value="{{ old('place', $event->place ?? '') }}" 
                                        required>
                                 @error('place')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="attendees_number" class="form-label">Expected Attendees <small class="text-muted">(Optional)</small></label>
+                                <input type="number" 
+                                       class="form-control @error('attendees_number') is-invalid @enderror" 
+                                       id="attendees_number" 
+                                       name="attendees_number" 
+                                       value="{{ old('attendees_number', $event->attendees_number ?? '') }}"
+                                       min="0"
+                                       placeholder="e.g. 500">
+                                @error('attendees_number')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -261,17 +274,11 @@
                         @if(isset($event) && $event->partners->count() > 0)
                             <h6 class="text-muted mb-3">Existing Partners</h6>
                             @foreach($event->partners as $partner)
-                                <div class="partner-card existing-partner-card">
-                                    <form action="{{ route('admin.events.partners.destroy', $partner->id) }}" 
-                                          method="POST" 
-                                          class="remove-partner"
-                                          onsubmit="return confirm('Are you sure you want to remove this partner?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fe fe-x"></i>
-                                        </button>
-                                    </form>
+                                <div class="partner-card existing-partner-card" id="existing-partner-{{ $partner->id }}">
+                                    <button type="button" class="btn btn-sm btn-danger remove-partner" 
+                                            onclick="deletePartner({{ $partner->id }})">
+                                        <i class="fe fe-x"></i>
+                                    </button>
                                     <div class="text-center">
                                         <img src="{{ asset('storage/' . $partner->image) }}" 
                                              alt="Partner" 
@@ -312,6 +319,38 @@
 @section('scripts')
 <script>
     let partnerIndex = 0;
+
+    $(document).ready(function() {
+        // Initialize Summernote
+        $('#description').summernote({
+            placeholder: 'Write your event description here...',
+            tabsize: 2,
+            height: 250,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'italic', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ],
+            callbacks: {
+                onChange: function(contents, $editable) {
+                    $('#description').val(contents);
+                }
+            }
+        });
+
+        // Ensure content is synced on form submit
+        $('#event-form').on('submit', function() {
+            if ($('#description').summernote('isEmpty')) {
+                $('#description').val('');
+            } else {
+                $('#description').val($('#description').summernote('code'));
+            }
+        });
+    });
 
     function addPartner() {
         const container = document.getElementById('partners-container');
@@ -380,6 +419,30 @@
             };
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    function deletePartner(partnerId) {
+        if (!confirm('Are you sure you want to remove this partner?')) {
+            return;
+        }
+        
+        $.ajax({
+            url: `/admin/events/partners/${partnerId}`,
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                _method: 'DELETE'
+            },
+            success: function(response) {
+                $(`#existing-partner-${partnerId}`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+            },
+            error: function(xhr) {
+                alert('Error deleting partner. Please try again.');
+                console.error(xhr);
+            }
+        });
     }
 </script>
 @endsection

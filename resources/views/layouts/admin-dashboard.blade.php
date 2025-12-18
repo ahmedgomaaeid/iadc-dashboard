@@ -34,6 +34,9 @@
     <!-- COLOR SKIN CSS -->
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="{{route('index')}}/assets/colors/color1.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- SUMMERNOTE CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     @yield('css')
 </head>
 
@@ -315,6 +318,9 @@
 
     <!-- CUSTOM JS -->
     <script src="{{route('index')}}/assets/js/custom.js"></script>
+    
+    <!-- SUMMERNOTE JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     @yield('scripts')
 
 

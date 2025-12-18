@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <form action="{{ isset($article) ? route('admin.articles.update', $article) : route('admin.articles.store') }}" 
+    <form id="article-form" action="{{ isset($article) ? route('admin.articles.update', $article) : route('admin.articles.store') }}" 
           method="POST" enctype="multipart/form-data">
         @csrf
         @if(isset($article))
@@ -77,11 +77,9 @@
 
                         <div class="mb-3">
                             <label for="content" class="form-label">Content</label>
-                            <textarea class="form-control @error('content') is-invalid @enderror" 
+                            <textarea class="form-control summernote @error('content') is-invalid @enderror" 
                                       id="content" 
-                                      name="content" 
-                                      rows="12"
-                                      placeholder="Write your article content here...">{{ old('content', $article->content ?? '') }}</textarea>
+                                      name="content">{{ old('content', $article->content ?? '') }}</textarea>
                             @error('content')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -196,6 +194,40 @@
 
 @section('scripts')
 <script>
+    $(document).ready(function() {
+        // Initialize Summernote
+        $('#content').summernote({
+            placeholder: 'Write your article content here...',
+            tabsize: 2,
+            height: 350,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'italic', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ],
+            callbacks: {
+                onChange: function(contents, $editable) {
+                    $('#content').val(contents);
+                }
+            }
+        });
+
+        // Ensure content is synced on form submit
+        $('#article-form').on('submit', function() {
+            if ($('#content').summernote('isEmpty')) {
+                $('#content').val('');
+            } else {
+                $('#content').val($('#content').summernote('code'));
+            }
+        });
+    });
+
     function selectType(type) {
         // Update hidden input
         document.getElementById('type').value = type;

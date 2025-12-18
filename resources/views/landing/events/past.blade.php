@@ -7,6 +7,9 @@
                     <div class="card  testimonial-card">
                         
                         <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-3">
+                                <i class="fa fa-users fs-12 text-white"></i> +{{ $event->attendees_number }}
+                            </span>
                             <img src="{{ asset('storage/'.$event->image) }}" class="w-100">
                         </div>
                         <div class="card-body">
@@ -20,8 +23,8 @@
                                     <span class="text-primary d-block ms-1">{{ \Carbon\Carbon::parse($event->date_from)->format('d/m/Y') }}</span>
                                 </div>
                                 <div class="float-end fs-12 fw-semibold text-muted text-end"> 
-                                    <a href="https://social.iadcsuez.org" target="_blank"
-                                        class="btn ripple btn-min w-lg mb-3 me-2 btn-primary"><i
+                                    <a href="{{ route('eventPreview', $event->id) }}" target="_blank"
+                                        class="btn ripple btn-min mb-3 me-2 btn-primary"><i
                                             class="fe fe-info me-2"></i> Details
                                     </a>
                                 </div>

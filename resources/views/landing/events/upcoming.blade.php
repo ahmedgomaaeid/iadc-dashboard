@@ -21,7 +21,7 @@
                                     <span class="text-primary d-block ms-1">{{ \Carbon\Carbon::parse($event->date_from)->format('d/m/Y') }}</span>
                                 </div>
                                 <div class="float-end fs-12 fw-semibold text-muted text-end"> 
-                                    <a href="https://social.iadcsuez.org" target="_blank"
+                                    <a href="{{ route('eventPreview', $event->id) }}" target="_blank"
                                         class="btn ripple btn-min w-lg mb-3 me-2 btn-primary"><i
                                             class="fe fe-info me-2"></i> Details
                                     </a>

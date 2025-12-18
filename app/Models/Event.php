@@ -17,6 +17,7 @@ class Event extends Model
         'date_from',
         'date_to',
         'place',
+        'attendees_number',
         'register_link',
         'register_active',
         'is_active',
