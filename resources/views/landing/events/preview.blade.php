@@ -23,14 +23,14 @@
                     <img class="card-img-top " src="{{ asset('storage/' . $event->image) }}" alt="Card image cap">
                     <div class="card-body">
                         <div class="d-md-flex">
-                            <a href="javascript:void(0);" class="d-flex me-4"><i class="fe fe-calendar fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
+                            <a href="javascript:void(0);" class="d-flex me-2 mb-2"><i class="fe fe-calendar fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
                                 <div class="mt-0 mt-3 ms-1 text-muted font-weight-semibold">{{ \Carbon\Carbon::parse($event->date_from)->format('d-m-Y') }} @if($event->date_to) to {{ \Carbon\Carbon::parse($event->date_to)->format('d-m-Y') }} @endif</div>
                             </a>
-                            <a href="javascript:void(0);" class="d-flex me-2 ms-2"><i class="fa fa-location-arrow fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
+                            <a href="javascript:void(0);" class="d-flex me-2 mb-2"><i class="fa fa-location-arrow fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
                                 <div class="mt-0 mt-3 ms-1 text-muted font-weight-semibold">{{ $event->place }} </div>
                             </a>
                             @if($event->attendees_number)
-                                <a href="javascript:void(0);" class="d-flex me-2 ms-2"><i class="fa fa-users fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
+                                <a href="javascript:void(0);" class="d-flex me-2"><i class="fa fa-users fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
                                     <div class="mt-0 mt-3 ms-1 text-muted font-weight-semibold">+{{ $event->attendees_number }}</div>
                                 </a>
                             @endif
