@@ -12,6 +12,9 @@
 
 @section('content')
 <style>
+    body {
+        background-color: #f0f0f5 !important;
+    }
     .article-hero {
         background: linear-gradient(135deg, var(--primary-bg-color) 0%, #764ba2 100%);
         padding: 50px 0 80px;
@@ -164,7 +167,7 @@
                     <img class="card-img-top" 
                          src="{{ asset('storage/' . $article->image) }}" 
                          alt="{{ $article->name }}"
-                         style="height: 350px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                         style="object-fit: cover; border-radius: 15px 15px 0 0;">
                 @endif
                 <div class="card-body p-4 p-md-5">
                     <div class="article-body">

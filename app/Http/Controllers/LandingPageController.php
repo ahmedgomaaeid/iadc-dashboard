@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Article;
+use App\Models\Magazine;
 
 class LandingPageController extends Controller
 {
@@ -14,7 +15,8 @@ class LandingPageController extends Controller
         $past_events = Event::where('date_from', '<', now())->where('type', 'event')->orderBy('id', 'desc')->get();
         $visits = Event::where('type', 'visit')->orderBy('id', 'desc')->get();
         $articles = Article::active()->latest()->take(4)->get();
-        return view('welcome', compact('upcoming_events', 'past_events', 'visits', 'articles'));
+        $magazines = Magazine::active()->latest()->get();
+        return view('welcome', compact('upcoming_events', 'past_events', 'visits', 'articles', 'magazines'));
     }
 
     public function eventPreview($id)

@@ -239,6 +239,11 @@
                                                 class="side-menu__icon fe fe-edit-3"></i><span
                                                 class="side-menu__label">Articles</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.magazines.index') }}"><i
+                                                class="side-menu__icon fe fe-book"></i><span
+                                                class="side-menu__label">Magazines</span></a>
+                                    </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>

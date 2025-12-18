@@ -15,6 +15,10 @@
 
         @include('landing.blog')
 
+        <!-- ROW-3 OPEN -->
+        @include('landing.magazin')
+        <!-- ROW-3 CLOSED -->
+
         <!-- ROW-7 OPEN -->
         <div class="section" id="Faqs">
             <div class="container">
@@ -167,75 +171,7 @@
         </div>
         <!-- ROW-7 CLOSED -->
 
-        <!-- ROW-3 OPEN -->
-        <div class="section bg-landing pb-0 bg-image-style" id="About">
-            <div class="container">
-                <div class="row">
-                    <h4 class="text-center fw-semibold">Our Mission</h4>
-                    <span class="landing-title"></span>
-                    <div class="text-center">
-                        <h2 class="text-center fw-semibold">Our mission is to make work meaningful.
-                        </h2>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="card bg-transparent">
-                            <div class="card-body text-dark">
-                                <div class="statistics-info">
-                                    <div class="row">
-                                        <div class="col-xl-6 col-lg-6 ps-0">
-                                            <div class="text-center reveal revealleft mb-3">
-                                                <img src="{{route('index')}}/assets/images/landing/business-team-working-on-business-plan.png"
-                                                    alt="" class="br-5">
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6 col-lg-6 pe-0 my-auto">
-
-                                            <div class="ps-5 reveal revealright">
-                                                <h2 class="text-start fw-semibold fs-25 mb-6">We are
-                                                    a creative agency with a passion for design.
-                                                </h2>
-                                                <div class="d-flex">
-                                                    <span><svg style="width:20px;height:20px"
-                                                            viewBox="0 0 24 24">
-                                                            <path fill="#6c5ffc"
-                                                                d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
-                                                        </svg></span>
-                                                    <div class="ms-5 mb-4">
-                                                        <h5 class="fw-bold">Quality & Clean Code
-                                                        </h5>
-                                                        <p>The Sash admin code is maintained very
-                                                            cleanly and well-structured with proper
-                                                            comments.</p>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex">
-                                                    <span><svg style="width:20px;height:20px"
-                                                            viewBox="0 0 24 24">
-                                                            <path fill="#6c5ffc"
-                                                                d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
-                                                        </svg></span>
-                                                    <div class="ms-5 mb-4">
-                                                        <h5 class="fw-bold">Well Documented</h5>
-                                                        <p>
-                                                            The documentation provides clear-cut
-                                                            material for the Sash admin template.
-                                                            The documentation is explained or
-                                                            instructed in such a way that every user
-                                                            can understand.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- ROW-3 CLOSED -->
+        
 
         <!-- ROW-4 OPEN -->
         <div class="section testimonial-owl-landing">

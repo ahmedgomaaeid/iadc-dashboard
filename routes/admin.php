@@ -73,6 +73,11 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::post('articles/{id}/toggle-status', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleStatus'])
             ->name('articles.toggle-status');
 
+        // Magazine Management Routes
+        Route::resource('magazines', \App\Http\Controllers\Admin\MagazineController::class);
+        Route::post('magazines/{id}/toggle-status', [\App\Http\Controllers\Admin\MagazineController::class, 'toggleStatus'])
+            ->name('magazines.toggle-status');
+
         // Admin Impersonation Routes
         Route::post('login-as-highboard/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsHighboard'])
             ->name('login-as-highboard');
