@@ -49,4 +49,10 @@ class LandingPageController extends Controller
             ->get();
         return view('landing.articles.preview', compact('article', 'relatedArticles'));
     }
+
+    public function magazineViewer($id)
+    {
+        $magazine = Magazine::active()->findOrFail($id);
+        return view('landing.magazines.viewer', compact('magazine'));
+    }
 }

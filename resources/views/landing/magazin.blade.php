@@ -52,8 +52,7 @@
                                                     Explore the latest insights, research findings, and industry updates in petroleum engineering.
                                                 </p> -->
                                                 <div class="magazine-actions">
-                                                    <a href="{{ asset('storage/' . $magazine->pdf_file) }}" 
-                                                       target="_blank" 
+                                                    <a href="{{ route('magazineViewer', $magazine->id) }}" 
                                                        class="btn btn-primary btn-lg">
                                                         <i class="fe fe-eye me-2"></i>Read Online
                                                     </a>
