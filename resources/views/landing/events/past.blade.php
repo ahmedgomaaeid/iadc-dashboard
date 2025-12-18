@@ -7,9 +7,11 @@
                     <div class="card  testimonial-card">
                         
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-primary position-absolute top-0 start-0 m-3">
-                                <i class="fa fa-users fs-12 text-white"></i> +{{ $event->attendees_number }}
-                            </span>
+                            @if ($event->attendees_number)
+                                <span class="badge bg-primary position-absolute top-0 start-0 m-3">
+                                    <i class="fa fa-user fs-12 text-white"></i> +{{ $event->attendees_number }}
+                                </span>
+                            @endif
                             <img src="{{ asset('storage/'.$event->image) }}" class="w-100">
                         </div>
                         <div class="card-body">

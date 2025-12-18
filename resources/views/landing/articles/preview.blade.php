@@ -1,5 +1,9 @@
 @extends('layouts.landing')
 
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+@endsection
+
 @section('header')
 <div class="jumps-prevent" style="padding-top: 67.5px;"></div>
 @endsection
@@ -48,7 +52,7 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-bg-color) 0%, #764ba2 100%);
+        /* background: linear-gradient(135deg, var(--primary-bg-color) 0%, #764ba2 100%); */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -132,7 +136,7 @@
                 
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <div class="d-flex align-items-center">
-                        <div class="author-avatar-lg me-2">
+                        <div class="author-avatar-lg bg-success-gradient me-2">
                             {{ strtoupper(substr($article->author, 0, 1)) }}
                         </div>
                         <div>
@@ -174,22 +178,22 @@
                             <span class="fw-semibold me-3">Share:</span>
                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
                                target="_blank" 
-                               class="share-btn btn btn-primary me-1">
+                               class="share-btn btn btn-primary me-1 d-inline-flex align-items-center">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
                             <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->name) }}" 
                                target="_blank" 
-                               class="share-btn btn btn-info me-1">
+                               class="share-btn btn btn-info me-1 d-inline-flex align-items-center">
                                 <i class="fab fa-twitter"></i>
                             </a>
                             <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(request()->url()) }}&title={{ urlencode($article->name) }}" 
                                target="_blank" 
-                               class="share-btn btn btn-primary me-1">
+                               class="share-btn btn btn-primary me-1 d-inline-flex align-items-center">
                                 <i class="fab fa-linkedin-in"></i>
                             </a>
                             <a href="https://wa.me/?text={{ urlencode($article->name . ' - ' . request()->url()) }}" 
                                target="_blank" 
-                               class="share-btn btn btn-success">
+                               class="share-btn btn btn-success d-inline-flex align-items-center">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
                         </div>

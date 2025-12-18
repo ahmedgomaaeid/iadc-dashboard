@@ -13,7 +13,7 @@
         
         <div class="row">
             @forelse($articles as $article)
-                <div class="col-lg-6 col-xl-3 col-md-6 mb-4 reveal">
+                <div class="col-lg-6 col-xl-4 col-md-6 mb-4 reveal">
                     <div class="card testimonial-card h-100 article-card">
                         <div class="position-relative overflow-hidden">
                             @if($article->image)
@@ -54,7 +54,7 @@
                             <div class="mt-auto pt-3 border-top">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <div class="author-avatar me-2">
+                                        <div class="author-avatar me-2 bg-success-gradient">
                                             {{ strtoupper(substr($article->author, 0, 1)) }}
                                         </div>
                                         <div>
@@ -122,10 +122,10 @@
         transition: all 0.3s ease;
         border: none;
         overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12) !important;
     }
     .article-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     }
     .article-img {
         height: 180px;
@@ -148,7 +148,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-bg-color) 0%, #764ba2 100%);
+        /* background: linear-gradient(135deg, var(--primary-bg-color) 0%, #764ba2 100%); */
         display: flex;
         align-items: center;
         justify-content: center;

@@ -35,6 +35,7 @@
         />
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    @yield('css')
 </head>
 
 <body class="app sidebar-mini ltr landing-page horizontal">
