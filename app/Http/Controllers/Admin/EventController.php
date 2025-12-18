@@ -1,0 +1,210 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\EventPartner;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class EventController extends Controller
+{
+    /**
+     * Display a listing of events.
+     */
+    public function index()
+    {
+        $events = Event::with('partners')
+            ->orderBy('date_from', 'desc')
+            ->paginate(15);
+
+        return view('admin.events.index', compact('events'));
+    }
+
+    /**
+     * Show the form for creating a new event.
+     */
+    public function create()
+    {
+        $partnerTypes = EventPartner::TYPES;
+        return view('admin.events.form', ['event' => null, 'partnerTypes' => $partnerTypes]);
+    }
+
+    /**
+     * Store a newly created event in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'description' => 'nullable|string',
+            'type' => 'required|in:event,visit',
+            'date_from' => 'required|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+            'place' => 'required|string|max:255',
+            'attendees_number' => 'nullable|integer|min:0',
+            'register_link' => 'nullable|url|max:500',
+            'register_active' => 'boolean',
+            'is_active' => 'boolean',
+            'partners' => 'nullable|array',
+            'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+        ]);
+
+        // Handle event image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $validated['register_active'] = $request->has('register_active');
+        $validated['is_active'] = $request->has('is_active');
+
+        $event = Event::create($validated);
+
+        // Handle partners
+        if ($request->has('partners')) {
+            foreach ($request->input('partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                
+                if ($partnerType && $request->hasFile("partners.{$index}.image")) {
+                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
+                    EventPartner::create([
+                        'event_id' => $event->id,
+                        'image' => $partnerImage,
+                        'type' => $partnerType,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event created successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified event.
+     */
+    public function edit($id)
+    {
+        $event = Event::with('partners')->findOrFail($id);
+        $partnerTypes = EventPartner::TYPES;
+
+        return view('admin.events.form', compact('event', 'partnerTypes'));
+    }
+
+    /**
+     * Update the specified event in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'description' => 'nullable|string',
+            'type' => 'required|in:event,visit',
+            'date_from' => 'required|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+            'place' => 'required|string|max:255',
+            'attendees_number' => 'nullable|integer|min:0',
+            'register_link' => 'nullable|url|max:500',
+            'register_active' => 'boolean',
+            'is_active' => 'boolean',
+            'partners' => 'nullable|array',
+            'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+        ]);
+
+        // Handle event image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($event->image) {
+                Storage::disk('public')->delete($event->image);
+            }
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $validated['register_active'] = $request->has('register_active');
+        $validated['is_active'] = $request->has('is_active');
+
+        $event->update($validated);
+
+        // Handle new partners
+        if ($request->has('partners')) {
+            foreach ($request->input('partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                
+                if ($partnerType && $request->hasFile("partners.{$index}.image")) {
+                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
+                    EventPartner::create([
+                        'event_id' => $event->id,
+                        'image' => $partnerImage,
+                        'type' => $partnerType,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event updated successfully.');
+    }
+
+    /**
+     * Remove the specified event from storage.
+     */
+    public function destroy($id)
+    {
+        $event = Event::findOrFail($id);
+
+        // Delete event image
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
+        }
+
+        // Delete partner images
+        foreach ($event->partners as $partner) {
+            if ($partner->image) {
+                Storage::disk('public')->delete($partner->image);
+            }
+        }
+
+        $event->delete();
+
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event deleted successfully.');
+    }
+
+    /**
+     * Toggle event active status.
+     */
+    public function toggleStatus($id)
+    {
+        $event = Event::findOrFail($id);
+        $event->update(['is_active' => !$event->is_active]);
+
+        $status = $event->is_active ? 'activated' : 'deactivated';
+
+        return redirect()->route('admin.events.index')
+            ->with('success', "Event {$status} successfully.");
+    }
+
+    /**
+     * Delete a specific partner.
+     */
+    public function destroyPartner($id)
+    {
+        $partner = EventPartner::findOrFail($id);
+
+        // Delete partner image
+        if ($partner->image) {
+            Storage::disk('public')->delete($partner->image);
+        }
+
+        $partner->delete();
+
+        return back()->with('success', 'Partner removed successfully.');
+    }
+}
