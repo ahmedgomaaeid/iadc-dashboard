@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('newsletter_subscribers', function (Blueprint $table) {
             $table->id();
+            $table->string('email')->unique();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

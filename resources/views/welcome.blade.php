@@ -39,7 +39,7 @@
                                                 <div class="services-statistics reveal my-5">
                                                     <div class="row text-center justify-content-center">
                                                         <div class="col-xl-3 col-md-6 col-lg-6">
-                                                            <a href="https://maps.app.goo.gl/ZC9Gewysqv4Y2w3z9" class="text-dark">
+                                                            <a href="https://maps.app.goo.gl/ZC9Gewysqv4Y2w3z9" target="_blank" class="text-dark">
                                                                 <div class="card">
                                                                     <div class="card-body p-0">
                                                                         <div class="counter-status">
@@ -98,7 +98,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </a>
                                         </div>
                                     </div>
 </div>

@@ -232,37 +232,41 @@
                                             <a href="index.html"><img loading="lazy" alt="" class="logo mb-3"
                                                     src="{{route('index')}}/assets/images/brand/logo-3.png"></a>
                                             <p>Join our community to stay up to date with our latest initiatives. Enter your email to ensure you never miss an update.</p>
-                                            <div class="form-group">
+                                            <form id="newsletterForm" class="form-group">
+                                                @csrf
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control"
+                                                    <input type="email" id="newsletter-email" class="form-control"
                                                         placeholder="Enter your email"
-                                                        aria-label="Example text with button addon"
-                                                        aria-describedby="button-addon1">
-                                                    <button class="btn btn-primary" type="button"
-                                                        id="button-addon2">Submit</button>
+                                                        aria-label="Newsletter email"
+                                                        required>
+                                                    <button class="btn btn-primary" type="submit" id="newsletter-submit">
+                                                        <span id="newsletter-text">Subscribe</span>
+                                                        <span id="newsletter-loading" class="d-none">
+                                                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                                                        </span>
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
                                         <div class="btn-list mt-6">
-                                            <button type="button" class="btn btn-icon rounded-pill"><i
-                                                    class="fa fa-facebook"></i></button>
-                                            <button type="button" class="btn btn-icon rounded-pill"><i
-                                                    class="fa fa-youtube"></i></button>
-                                            <button type="button" class="btn btn-icon rounded-pill"><i
-                                                    class="fa fa-twitter"></i></button>
-                                            <button type="button" class="btn btn-icon rounded-pill"><i
-                                                    class="fa fa-instagram"></i></button>
+                                            <a href="https://www.facebook.com/iadcsuez" target="_blank" class="btn btn-icon rounded-pill"><i
+                                                    class="fa fa-facebook"></i></a>
+                                            <a href="https://www.youtube.com/@iadcsu" target="_blank" class="btn btn-icon rounded-pill"><i
+                                                    class="fa fa-youtube"></i></a>
+                                            <a href="https://www.linkedin.com/company/iadc-suez-university" target="_blank" class="btn btn-icon rounded-pill"><i
+                                                    class="fa fa-linkedin"></i></a>
+                                            <a href="https://www.instagram.com/iadcsusc" target="_blank" class="btn btn-icon rounded-pill"><i
+                                                    class="fa fa-instagram"></i></a>
                                         </div>
                                         <hr>
                                     </div>
                                 </div>
                             </div>
-                            <footer class="main-footer px-0 pb-0 text-center">
+                            <footer class="main-footer px-0 pb-0 text-center d-none">
                                 <div class="row ">
                                     <div class="col-md-12 col-sm-12">
-                                        Copyright © <span id="year"></span> <a href="javascript:void(0)">Sash</a>.
-                                        Designed with <span class="fa fa-heart text-danger"></span> by <a
-                                            href="javascript:void(0)"> Spruko </a> All rights reserved.
+                                        Copyright © <span id="year"></span> <a href="javascript:void(0)">IADC Suez</a>.
+                                         All rights reserved.
                                     </div>
                                 </div>
                             </footer>
@@ -309,6 +313,85 @@
 
     <!-- CUSTOM JS -->
     <script src="{{route('index')}}/assets/js/landing.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Newsletter Form Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const emailInput = document.getElementById('newsletter-email');
+                    const submitBtn = document.getElementById('newsletter-submit');
+                    const submitText = document.getElementById('newsletter-text');
+                    const submitLoading = document.getElementById('newsletter-loading');
+                    const email = emailInput.value.trim();
+                    
+                    if (!email) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Email Required',
+                            text: 'Please enter your email address.',
+                            confirmButtonColor: '#ab1f2e'
+                        });
+                        return;
+                    }
+                    
+                    // Show loading
+                    submitBtn.disabled = true;
+                    submitText.classList.add('d-none');
+                    submitLoading.classList.remove('d-none');
+                    
+                    fetch('{{ route("newsletter.subscribe") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('#newsletterForm input[name="_token"]').value
+                        },
+                        body: JSON.stringify({ email: email })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Subscribed!',
+                                text: data.message,
+                                confirmButtonColor: '#ab1f2e'
+                            });
+                            emailInput.value = '';
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: data.message || 'Something went wrong.',
+                                confirmButtonColor: '#ab1f2e'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again.',
+                            confirmButtonColor: '#ab1f2e'
+                        });
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitText.classList.remove('d-none');
+                        submitLoading.classList.add('d-none');
+                    });
+                });
+            }
+        });
+    </script>
 
     @yield('scripts')
 

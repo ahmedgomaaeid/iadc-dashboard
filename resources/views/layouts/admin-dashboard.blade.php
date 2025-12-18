@@ -256,6 +256,18 @@
                                             @endif
                                         </a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.newsletter-subscribers.index') }}"><i
+                                                class="side-menu__icon fe fe-mail"></i><span
+                                                class="side-menu__label">Newsletter</span>
+                                            @php
+                                                $subscriberCount = \App\Models\NewsletterSubscriber::active()->count();
+                                            @endphp
+                                            @if($subscriberCount > 0)
+                                                <span class="badge bg-success side-badge">{{ $subscriberCount }}</span>
+                                            @endif
+                                        </a>
+                                    </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>

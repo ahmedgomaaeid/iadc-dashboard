@@ -96,6 +96,16 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::delete('contact-messages/{id}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])
             ->name('contact-messages.destroy');
 
+        // Newsletter Subscribers Routes
+        Route::get('newsletter-subscribers', [\App\Http\Controllers\Admin\NewsletterSubscriberController::class, 'index'])
+            ->name('newsletter-subscribers.index');
+        Route::post('newsletter-subscribers/{id}/toggle-status', [\App\Http\Controllers\Admin\NewsletterSubscriberController::class, 'toggleStatus'])
+            ->name('newsletter-subscribers.toggle-status');
+        Route::delete('newsletter-subscribers/{id}', [\App\Http\Controllers\Admin\NewsletterSubscriberController::class, 'destroy'])
+            ->name('newsletter-subscribers.destroy');
+        Route::get('newsletter-subscribers/export', [\App\Http\Controllers\Admin\NewsletterSubscriberController::class, 'export'])
+            ->name('newsletter-subscribers.export');
+
         // Profile Routes
         Route::get('profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
