@@ -30,11 +30,11 @@
                                 <div class="mt-0 mt-3 ms-1 text-muted font-weight-semibold">{{ $event->place }} </div>
                             </a>
                             @if($event->attendees_number)
-                                <a href="javascript:void(0);" class="d-flex me-2"><i class="fa fa-users fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
+                                <a href="javascript:void(0);" class="d-flex me-2 mb-2"><i class="fa fa-users fs-16 me-1 p-3 bg-primary-transparent text-primary bradius"></i>
                                     <div class="mt-0 mt-3 ms-1 text-muted font-weight-semibold">+{{ $event->attendees_number }}</div>
                                 </a>
                             @endif
-                            @if($event->register_active)
+                            @if($event->register_active && $event->register_link)
                                 <div class="ms-auto">
                                     <a href="{{ $event->register_link }}" class="btn btn-primary">
                                         <i class="fe fe-user-plus"></i> Register Now

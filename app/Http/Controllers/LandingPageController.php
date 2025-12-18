@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Models\Article;
 
 class LandingPageController extends Controller
 {
@@ -12,11 +13,38 @@ class LandingPageController extends Controller
         $upcoming_events = Event::where('date_from', '>=', now())->where('type', 'event')->orderBy('id', 'desc')->get();
         $past_events = Event::where('date_from', '<', now())->where('type', 'event')->orderBy('id', 'desc')->get();
         $visits = Event::where('type', 'visit')->orderBy('id', 'desc')->get();
-        return view('welcome', compact('upcoming_events', 'past_events', 'visits'));
+        $articles = Article::active()->latest()->take(4)->get();
+        return view('welcome', compact('upcoming_events', 'past_events', 'visits', 'articles'));
     }
+
     public function eventPreview($id)
     {
         $event = Event::with('partners')->findOrFail($id);
         return view('landing.events.preview', compact('event'));
+    }
+
+    public function articlesList(Request $request)
+    {
+        $query = Article::active();
+        
+        if ($request->has('type') && array_key_exists($request->type, Article::TYPES)) {
+            $query->where('type', $request->type);
+        }
+        
+        $articles = $query->latest()->paginate(12);
+        $types = Article::TYPES;
+        return view('landing.articles.index', compact('articles', 'types'));
+    }
+
+    public function articlePreview($id)
+    {
+        $article = Article::active()->findOrFail($id);
+        $relatedArticles = Article::active()
+            ->where('id', '!=', $id)
+            ->where('type', $article->type)
+            ->latest()
+            ->take(3)
+            ->get();
+        return view('landing.articles.preview', compact('article', 'relatedArticles'));
     }
 }
