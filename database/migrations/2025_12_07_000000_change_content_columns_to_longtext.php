@@ -11,15 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('lessons', function (Blueprint $table) {
-            $table->longText('content')->change();
+            $table->longText('content')->nullable()->change();
         });
 
         Schema::table('tasks', function (Blueprint $table) {
-            $table->longText('content')->change();
+            $table->longText('content')->nullable()->change();
         });
 
         Schema::table('task_submissions', function (Blueprint $table) {
-            $table->longText('text_content')->change();
+            $table->longText('text_content')->nullable()->change();
         });
     }
 
@@ -29,15 +29,15 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('lessons', function (Blueprint $table) {
-            $table->text('content')->change();
+            $table->text('content')->nullable()->change();
         });
 
         Schema::table('tasks', function (Blueprint $table) {
-            $table->text('content')->change();
+            $table->text('content')->nullable()->change();
         });
 
         Schema::table('task_submissions', function (Blueprint $table) {
-            $table->text('text_content')->change();
+            $table->text('text_content')->nullable()->change();
         });
     }
 };

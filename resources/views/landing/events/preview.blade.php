@@ -4,6 +4,8 @@
 <div class="jumps-prevent" style="padding-top: 67.5px;"></div>
 @endsection
 
+@section('title', 'IADC Suez - '.$event->name)
+
 @section('content')
     <style>
         body {

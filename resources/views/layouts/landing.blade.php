@@ -15,7 +15,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{route('index')}}/assets/images/brand/logo-2.svg" />
 
     <!-- TITLE -->
-    <title>IADC Suez University Student Chapter</title>
+    <title>@yield('title', 'IADC Suez University Student Chapter')</title>
 
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="{{route('index')}}/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
