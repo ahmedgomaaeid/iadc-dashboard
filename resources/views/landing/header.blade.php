@@ -2,7 +2,7 @@
                     <div class="container px-sm-0">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 mb-5 pb-5 animation-zidex pos-relative">
-                                <h4 class="fw-semibold mt-7">Manage Your Business</h4>
+                                <h4 class="fw-semibold mt-7"></h4>
                                 <h1 class="text-start fw-bold">IADC Suez University Student Chapter <br><span
                                         class="text-primary" id="typewriter-text"
                                         data-text="Explore Your Potential"></span></h1>

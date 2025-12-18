@@ -244,6 +244,18 @@
                                                 class="side-menu__icon fe fe-book"></i><span
                                                 class="side-menu__label">Magazines</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.contact-messages.index') }}"><i
+                                                class="side-menu__icon fe fe-message-square"></i><span
+                                                class="side-menu__label">Contact Messages</span>
+                                            @php
+                                                $unreadMessagesCount = \App\Models\ContactMessage::unread()->count();
+                                            @endphp
+                                            @if($unreadMessagesCount > 0)
+                                                <span class="badge bg-danger side-badge">{{ $unreadMessagesCount }}</span>
+                                            @endif
+                                        </a>
+                                    </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>

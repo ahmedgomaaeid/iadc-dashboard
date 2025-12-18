@@ -5,6 +5,7 @@ use App\Http\Controllers\GuestFormController;
 use App\Http\Controllers\QuizController as ControllersQuizController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\ContactController;
 
 // Guest Form Routes - Subdomain based (MUST be first!)
 // URL format: {subdomain}.form.iadcsuez.org
@@ -19,6 +20,7 @@ Route::get('event/{id}', [LandingPageController::class, 'eventPreview'])->name('
 Route::get('articles', [LandingPageController::class, 'articlesList'])->name('articlesList');
 Route::get('article/{id}', [LandingPageController::class, 'articlePreview'])->name('articlePreview');
 Route::get('magazine/{id}', [LandingPageController::class, 'magazineViewer'])->name('magazineViewer');
+Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
 // Main domain routes
 
 Route::domain(env('APP_URL'))->group(function () {

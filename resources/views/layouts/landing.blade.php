@@ -200,13 +200,9 @@
                                 <div class="row">
                                     <div class="col-lg-4 col-sm-12 col-md-12 reveal revealleft">
                                         <h6>About</h6>
-                                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                            doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-                                            veritatis et quasi architecto beatae vitae dicta sunt
-                                            explicabo.
+                                        <p>Founded in January 2024 and affiliated with the International Association of Drilling Contractors (IADC), our chapter is your gateway to a world of opportunities in the drilling industry. We aim to build a community of passionate students, bridge the gap between academia and industry through expert insights, practical experiences, and career opportunities, and advocate for sustainable and innovative drilling practices.
                                         </p>
-                                        <p class="mb-5 mb-lg-2">Duis aute irure dolor in reprehenderit in voluptate
-                                            velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat .
+                                        <p class="mb-5 mb-lg-2">
                                         </p>
                                     </div>
                                     <div class="col-lg-2 col-sm-6 col-md-4 reveal revealleft">
@@ -235,8 +231,7 @@
                                         <div class="">
                                             <a href="index.html"><img loading="lazy" alt="" class="logo mb-3"
                                                     src="{{route('index')}}/assets/images/brand/logo-3.png"></a>
-                                            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                                                dolore eu fugiat nulla pariatur Excepteur sint occaecat.</p>
+                                            <p>Join our community to stay up to date with our latest initiatives. Enter your email to ensure you never miss an update.</p>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control"
@@ -314,6 +309,8 @@
 
     <!-- CUSTOM JS -->
     <script src="{{route('index')}}/assets/js/landing.js"></script>
+
+    @yield('scripts')
 
 </body>
 

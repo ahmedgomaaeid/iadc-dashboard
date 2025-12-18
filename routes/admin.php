@@ -84,6 +84,18 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::post('login-as-board/{id}', [\App\Http\Controllers\Auth\LoginController::class, 'loginAsBoard'])
             ->name('login-as-board');
 
+        // Contact Messages Routes
+        Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])
+            ->name('contact-messages.index');
+        Route::get('contact-messages/{id}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])
+            ->name('contact-messages.show');
+        Route::post('contact-messages/{id}/mark-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markAsRead'])
+            ->name('contact-messages.mark-read');
+        Route::post('contact-messages/{id}/mark-unread', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markAsUnread'])
+            ->name('contact-messages.mark-unread');
+        Route::delete('contact-messages/{id}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])
+            ->name('contact-messages.destroy');
+
         // Profile Routes
         Route::get('profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
