@@ -3,8 +3,8 @@
         <div class="swiper pagination-dynamic text-start swiper-initialized swiper-horizontal swiper-pointer-events">
             <div class="swiper-wrapper">
                 @foreach ($visits as $event)
-                    <div class="swiper-slide">
-                    <div class="card  testimonial-card">
+                    <div class="swiper-slide mb-4">
+                    <div class="card  testimonial-card h-100 article-card">
                         
                         <div class="d-flex align-items-center mb-3">
                             @if ($event->attendees_number)
@@ -30,7 +30,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center"> 
-                                    <span class="text-muted">Date :
+                                    <span class="text-dark">Date :
                                     </span> 
                                     <span class="text-primary d-block ms-1">{{ \Carbon\Carbon::parse($event->date_from)->format('d/m/Y') }}</span>
                                 </div>

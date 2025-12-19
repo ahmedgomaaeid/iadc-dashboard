@@ -31,7 +31,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center"> 
-                                    <span class="text-muted">Date :
+                                    <span class="text-dark">Date :
                                     </span> 
                                     <span class="text-primary d-block ms-1">{{ \Carbon\Carbon::parse($event->date_from)->format('d/m/Y') }}</span>
                                 </div>
