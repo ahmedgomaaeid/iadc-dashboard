@@ -1,8 +1,6 @@
 @extends('layouts.landing')
 
-@section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-@endsection
+
 
 @section('header')
 <div class="jumps-prevent" style="padding-top: 67.5px;"></div>
@@ -182,22 +180,22 @@
                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
                                target="_blank" 
                                class="share-btn btn btn-primary me-1 d-inline-flex align-items-center">
-                                <i class="fab fa-facebook-f"></i>
+                                <i class="fa fa-facebook"></i>
                             </a>
                             <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->name) }}" 
                                target="_blank" 
                                class="share-btn btn btn-info me-1 d-inline-flex align-items-center">
-                                <i class="fab fa-twitter"></i>
+                                <i class="fa fa-twitter"></i>
                             </a>
                             <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(request()->url()) }}&title={{ urlencode($article->name) }}" 
                                target="_blank" 
                                class="share-btn btn btn-primary me-1 d-inline-flex align-items-center">
-                                <i class="fab fa-linkedin-in"></i>
+                                <i class="fa fa-linkedin"></i>
                             </a>
                             <a href="https://wa.me/?text={{ urlencode($article->name . ' - ' . request()->url()) }}" 
                                target="_blank" 
                                class="share-btn btn btn-success d-inline-flex align-items-center">
-                                <i class="fab fa-whatsapp"></i>
+                                <i class="fa fa-whatsapp"></i>
                             </a>
                         </div>
                         <a href="{{ route('articlesList') }}" class="btn btn-outline-primary">

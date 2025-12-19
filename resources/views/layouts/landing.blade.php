@@ -90,10 +90,7 @@
                                 <div class="collapse navbar-collapse bg-white px-0" id="navbarSupportedContent-4">
                                     <!-- SEARCH -->
                                     <div class="header-nav-right p-5">
-                                        <a href="register.html" class="btn ripple btn-min w-sm btn-outline-primary me-2"
-                                            target="_blank">New User
-                                        </a>
-                                        <a href="login.html" class="btn ripple btn-min w-sm btn-primary me-2"
+                                        <a href="{{ route('login') }}" class="btn ripple btn-min w-sm btn-primary me-2"
                                             target="_blank">Login
                                         </a>
                                     </div>
@@ -113,7 +110,7 @@
                         <div class="container">
                             <div class="row">
                                 <div class="main-sidemenu navbar px-0">
-                                    <a class="navbar-brand ps-0 d-none d-lg-block" style="width: 150px;"
+                                    <a class="navbar-brand ps-0 d-none d-lg-block" style="width: 128px;"
                                         href="{{ route('index') }}">
                                         <img alt="" class="logo-2"
                                             src="{{route('index')}}/assets/images/brand/logo-3.png">
@@ -156,10 +153,7 @@
                                                 d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
                                         </svg></div>
                                     <div class="header-nav-right d-none d-lg-block">
-                                        <a href="register.html" class="btn ripple btn-min w-sm btn-outline-primary me-2"
-                                            target="_blank">New User
-                                        </a>
-                                        <a href="login.html" class="btn ripple btn-min w-sm btn-primary me-2"
+                                        <a href="{{ route('login') }}" class="btn ripple btn-min w-sm btn-primary me-2"
                                             target="_blank">Login
                                         </a>
                                     </div>

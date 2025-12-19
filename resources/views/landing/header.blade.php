@@ -17,8 +17,8 @@
                                     class="btn ripple btn-min w-lg mb-3 me-2 btn-primary"><i
                                         class="fe fe-play me-2"></i> Follow Us
                                 </a>
-                                <a href="" class="btn ripple btn-min w-lg btn-outline-primary mb-3 me-2"
-                                    target="_blank"><i class="fe fe-eye me-2"></i>Discover More
+                                <a href="{{ route('login') }}" class="btn ripple btn-min w-lg btn-outline-primary mb-3 me-2"
+                                    target="_blank"><i class="fe fe-eye me-2"></i>Dashboard
                                 </a>
                             </div>
                             <div class="col-xl-6 col-lg-6 my-auto">
