@@ -233,7 +233,7 @@
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
                                 <h4 class="team-card-name">Eslam Hesham</h4>
-                                <p class="team-card-role text-primary">PR & Tresury Manager</p>
+                                <p class="team-card-role text-primary">PR & Treasury Manager</p>
                                 <a href="https://www.linkedin.com/in/esham-22b06a275" target="_blank" class="linkedin-btn">
                                     <i class="fa fa-linkedin"></i>
                                     Connect
@@ -389,7 +389,7 @@
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
                                 <h4 class="team-card-name">Ahmed Mostafa</h4>
-                                <p class="team-card-role text-primary">Vice PR & Tresury Manager</p>
+                                <p class="team-card-role text-primary">Vice PR & Treasury Manager</p>
                                 <a href="https://www.linkedin.com/in/ahmedmostafash" target="_blank" class="linkedin-btn">
                                     <i class="fa fa-linkedin"></i>
                                     Connect
