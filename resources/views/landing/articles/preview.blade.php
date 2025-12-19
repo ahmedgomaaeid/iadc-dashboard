@@ -137,7 +137,7 @@
                         @break
                     @case('reservoir')
                         <span class="category-badge bg-info text-white mb-3">
-                            <i class="fa fa-water me-2"></i> Reservoir
+                            <i class="fe fe-layers me-2"></i> Reservoir
                         </span>
                         @break
                     @case('sustainability')
@@ -238,7 +238,7 @@
                             <i class="fa fa-industry me-1"></i> Production
                         </a>
                         <a href="{{ route('articlesList', ['type' => 'reservoir']) }}" class="btn btn-sm {{ $article->type == 'reservoir' ? 'btn-info' : 'btn-outline-info' }}">
-                            <i class="fa fa-water me-1"></i> Reservoir
+                            <i class="fe fe-layers me-1"></i> Reservoir
                         </a>
                         <a href="{{ route('articlesList', ['type' => 'sustainability']) }}" class="btn btn-sm {{ $article->type == 'sustainability' ? 'btn-warning' : 'btn-outline-warning' }}">
                             <i class="fa fa-leaf me-1"></i> Sustainability

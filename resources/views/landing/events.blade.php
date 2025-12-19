@@ -15,7 +15,6 @@
 .swiper-pagination-bullet:active {
   background: var(--primary-bg-color) !important;
 }
-
 </style>
 <div class="bg-landing section bg-image-style" id="Events">
     <div class="container">

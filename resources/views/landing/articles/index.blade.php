@@ -106,7 +106,7 @@
                                 <i class="fa fa-industry me-1"></i>
                                 @break
                             @case('reservoir')
-                                <i class="fa fa-water me-1"></i>
+                                <i class="fe fe-layers me-1"></i>
                                 @break
                             @case('sustainability')
                                 <i class="fa fa-leaf me-1"></i>
@@ -134,7 +134,7 @@
                                     <i class="fa fa-industry me-1"></i> Production
                                     @break
                                 @case('reservoir')
-                                    <i class="fa fa-water me-1"></i> Reservoir
+                                    <i class="fe fe-layers me-1"></i> Reservoir
                                     @break
                                 @case('sustainability')
                                     <i class="fa fa-leaf me-1"></i> Sustainability
