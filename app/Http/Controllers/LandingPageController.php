@@ -14,7 +14,7 @@ class LandingPageController extends Controller
         $upcoming_events = Event::where('date_from', '>=', now())->where('type', 'event')->orderBy('id', 'desc')->get();
         $past_events = Event::where('date_from', '<', now())->where('type', 'event')->orderBy('id', 'desc')->get();
         $visits = Event::where('type', 'visit')->orderBy('id', 'desc')->get();
-        $articles = Article::active()->latest()->take(4)->get();
+        $articles = Article::active()->latest()->take(3)->get();
         $magazines = Magazine::active()->latest()->get();
         return view('welcome', compact('upcoming_events', 'past_events', 'visits', 'articles', 'magazines'));
     }
