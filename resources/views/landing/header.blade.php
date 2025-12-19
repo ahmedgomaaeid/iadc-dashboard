@@ -22,7 +22,7 @@
                                 </a>
                             </div>
                             <div class="col-xl-6 col-lg-6 my-auto">
-                                <img src="{{route('index')}}/assets/images/landing/main.jpg" alt="">
+                                <img src="{{route('index')}}/assets/images/landing/main.jpg" alt="IADC Suez University Student Chapter - Petroleum Engineering Students Community">
                             </div>
                         </div>
                     </div>

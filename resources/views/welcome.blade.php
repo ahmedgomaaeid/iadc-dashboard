@@ -6,20 +6,12 @@
 
 @section('content')
     <div class="">
-
         @include('landing.statstics')
-
         @include('landing.about')
-
         @include('landing.events')
-
         @include('landing.blog')
-
-        
         @include('landing.magazin')
-       
         @include('landing.team')
-
         @include('landing.contact')
     </div>
 @endsection

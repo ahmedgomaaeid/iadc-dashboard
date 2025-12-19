@@ -7,12 +7,41 @@
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="IADC Student Chapter Website">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="description" content="@yield('meta_description', 'IADC Suez University Student Chapter - Your gateway to the drilling industry. Join our community of petroleum engineering students for expert insights, practical training, career opportunities, and sustainable drilling practices.')">
     <meta name="author" content="Ahmed Gomaa Eid">
-    <meta name="keywords" content="iadc, iadcsuez, iadc suez, suez university">
+    <meta name="keywords" content="@yield('meta_keywords', 'IADC, IADC Suez, IADC Suez University, Student Chapter, drilling industry, petroleum engineering, oil and gas, Suez University, drilling contractors, energy sector, sustainable drilling, petroleum students, drilling training, IADC student chapter Egypt')">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@yield('canonical_url', route('index'))" />
+    
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn) -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="@yield('og_url', route('index'))">
+    <meta property="og:title" content="@yield('og_title', 'IADC Suez University Student Chapter | Drilling Industry Leaders')">
+    <meta property="og:description" content="@yield('og_description', 'IADC Suez University Student Chapter - Your gateway to the drilling industry. Join our community for expert insights, practical training, and career opportunities in petroleum engineering.')">
+    <meta property="og:image" content="@yield('og_image', route('index') . '/assets/images/brand/og-image.jpg')">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="IADC Suez University Student Chapter">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="@yield('twitter_url', route('index'))">
+    <meta name="twitter:title" content="@yield('twitter_title', 'IADC Suez University Student Chapter')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Your gateway to the drilling industry. Join our community for expert insights, practical training, and career opportunities.')">
+    <meta name="twitter:image" content="@yield('twitter_image', route('index') . '/assets/images/brand/og-image.jpg')">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#ab1f2e">
+    <meta name="msapplication-TileColor" content="#ab1f2e">
+    <meta name="geo.region" content="EG">
+    <meta name="geo.placename" content="Suez, Egypt">
 
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="{{route('index')}}/assets/images/brand/logo-2.svg" />
+    <link rel="apple-touch-icon" href="{{route('index')}}/assets/images/brand/logo-2.svg">
 
     <!-- TITLE -->
     <title>@yield('title', 'IADC Suez University Student Chapter')</title>
@@ -36,6 +65,43 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
     @yield('css')
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "IADC Suez University Student Chapter",
+        "alternateName": "IADC Suez",
+        "url": "{{ route('index') }}",
+        "logo": "{{ route('index') }}/assets/images/brand/logo-3.png",
+        "description": "IADC Suez University Student Chapter is your gateway to the drilling industry. Founded in 2024, we bridge the gap between academia and the field. We empower students through expert insights and practical training.",
+        "foundingDate": "2024-01",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Suez",
+            "addressCountry": "Egypt"
+        },
+        "parentOrganization": {
+            "@type": "Organization",
+            "name": "International Association of Drilling Contractors",
+            "alternateName": "IADC"
+        },
+        "sameAs": [
+            "https://www.facebook.com/iadcsuez",
+            "https://www.youtube.com/@iadcsu",
+            "https://www.linkedin.com/company/iadc-suez-university",
+            "https://www.instagram.com/iadcsusc"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+201094908582",
+            "email": "contact@iadcsuez.org",
+            "contactType": "customer service"
+        }
+    }
+    </script>
+    @yield('structured_data')
 </head>
 
 <body class="app sidebar-mini ltr landing-page horizontal">
@@ -74,9 +140,9 @@
                         <!-- sidebar-toggle-->
                         <a class="logo-horizontal " href="{{ route('index') }}">
                             <img src="{{route('index')}}/assets/images/brand/logo.png"
-                                class="header-brand-img desktop-logo" alt="logo">
+                                class="header-brand-img desktop-logo" alt="IADC Suez University Student Chapter Logo">
                             <img src="{{route('index')}}/assets/images/brand/logo-3.png"
-                                class="header-brand-img light-logo1" alt="logo">
+                                class="header-brand-img light-logo1" alt="IADC Suez University Student Chapter Logo">
                         </a>
                         <!-- LOGO -->
                         <div class="d-flex order-lg-2 ms-auto header-right-icons">
@@ -112,7 +178,7 @@
                                 <div class="main-sidemenu navbar px-0">
                                     <a class="navbar-brand ps-0 d-none d-lg-block" style="width: 128px;"
                                         href="{{ route('index') }}">
-                                        <img alt="" class="logo-2"
+                                        <img alt="IADC Suez University Student Chapter" class="logo-2"
                                             src="{{route('index')}}/assets/images/brand/logo-3.png">
                                     </a>
                                     <div class="slide-left disabled" id="slide-left"><svg
@@ -141,6 +207,10 @@
                                         <li class="slide">
                                             <a class="side-menu__item" data-bs-toggle="slide" href="#Publications"><span
                                                     class="side-menu__label">Publications</span></a>
+                                        </li>
+                                        <li class="slide">
+                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Team"><span
+                                                    class="side-menu__label">Our Team</span></a>
                                         </li>
                                         <li class="slide">
                                             <a class="side-menu__item" data-bs-toggle="slide" href="#Contact"><span
@@ -208,7 +278,7 @@
                                     </div>
                                     <div class="col-lg-4 col-sm-12 col-md-6 reveal revealleft">
                                         <div class="">
-                                            <a href="{{ route('index') }}"><img loading="lazy" alt="" class="logo mb-3"
+                                            <a href="{{ route('index') }}"><img loading="lazy" alt="IADC Suez University Student Chapter Logo" class="logo mb-3"
                                                     src="{{route('index')}}/assets/images/brand/logo-3.png"></a>
                                             <p>Join our community to stay up to date with our latest initiatives. Enter your email to ensure you never miss an update.</p>
                                             <form id="newsletterForm" class="form-group">
@@ -228,13 +298,13 @@
                                             </form>
                                         </div>
                                         <div class="btn-list mt-6">
-                                            <a href="https://www.facebook.com/iadcsuez" target="_blank" class="btn btn-icon rounded-pill"><i
+                                            <a href="https://www.facebook.com/iadcsuez" target="_blank" rel="noopener noreferrer" class="btn btn-icon rounded-pill" aria-label="Follow IADC Suez on Facebook"><i
                                                     class="fa fa-facebook"></i></a>
-                                            <a href="https://www.youtube.com/@iadcsu" target="_blank" class="btn btn-icon rounded-pill"><i
+                                            <a href="https://www.youtube.com/@iadcsu" target="_blank" rel="noopener noreferrer" class="btn btn-icon rounded-pill" aria-label="Subscribe to IADC Suez YouTube Channel"><i
                                                     class="fa fa-youtube"></i></a>
-                                            <a href="https://www.linkedin.com/company/iadc-suez-university" target="_blank" class="btn btn-icon rounded-pill"><i
+                                            <a href="https://www.linkedin.com/company/iadc-suez-university" target="_blank" rel="noopener noreferrer" class="btn btn-icon rounded-pill" aria-label="Connect with IADC Suez on LinkedIn"><i
                                                     class="fa fa-linkedin"></i></a>
-                                            <a href="https://www.instagram.com/iadcsusc" target="_blank" class="btn btn-icon rounded-pill"><i
+                                            <a href="https://www.instagram.com/iadcsusc" target="_blank" rel="noopener noreferrer" class="btn btn-icon rounded-pill" aria-label="Follow IADC Suez on Instagram"><i
                                                     class="fa fa-instagram"></i></a>
                                         </div>
                                         <hr>

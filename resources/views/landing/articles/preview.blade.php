@@ -8,6 +8,20 @@
 
 @section('title', 'IADC Suez - ' . $article->name)
 
+@section('meta_description', Str::limit(strip_tags($article->content), 160))
+@section('meta_keywords', 'IADC, Suez University, ' . $article->type . ', ' . $article->name)
+
+@section('og_title', $article->name)
+@section('og_description', Str::limit(strip_tags($article->content), 200))
+@section('og_url', request()->url())
+@if($article->image)
+@section('og_image', asset('storage/' . $article->image))
+@section('twitter_image', asset('storage/' . $article->image))
+@endif
+
+@section('twitter_title', $article->name)
+@section('twitter_description', Str::limit(strip_tags($article->content), 200))
+
 @section('content')
 <style>
     body {

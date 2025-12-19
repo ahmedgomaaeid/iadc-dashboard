@@ -32,7 +32,7 @@
                     </ul>
                 </div>
                 <div class="tab-content">
-                    <!-- @include('landing.events.upcoming') -->
+                    {{-- @include('landing.events.upcoming') --}}
 
                     @include('landing.events.past')
 
