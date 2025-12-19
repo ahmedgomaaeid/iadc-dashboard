@@ -130,24 +130,20 @@
                                                     class="side-menu__label">Home</span></a>
                                         </li>
                                         <li class="slide">
-                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Features"><span
-                                                    class="side-menu__label">Features</span></a>
-                                        </li>
-                                        <li class="slide">
                                             <a class="side-menu__item" data-bs-toggle="slide" href="#About"><span
-                                                    class="side-menu__label">About</span></a>
+                                                    class="side-menu__label">About Us</span></a>
                                         </li>
                                         <li class="slide">
-                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Faqs"><span
-                                                    class="side-menu__label">Faq's</span></a>
+                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Events"><span
+                                                    class="side-menu__label">Events</span></a>
                                         </li>
                                         <li class="slide">
-                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Blog"><span
-                                                    class="side-menu__label">Blog</span></a>
+                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Articles"><span
+                                                    class="side-menu__label">Knowledge Hub</span></a>
                                         </li>
                                         <li class="slide">
-                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Clients"><span
-                                                    class="side-menu__label">Clients</span></a>
+                                            <a class="side-menu__item" data-bs-toggle="slide" href="#Publications"><span
+                                                    class="side-menu__label">Publications</span></a>
                                         </li>
                                         <li class="slide">
                                             <a class="side-menu__item" data-bs-toggle="slide" href="#Contact"><span
@@ -198,38 +194,27 @@
                         <div class="card-body">
                             <div class="top-footer">
                                 <div class="row">
-                                    <div class="col-lg-4 col-sm-12 col-md-12 reveal revealleft">
+                                    <div class="col-lg-5 col-sm-12 col-md-12 reveal revealleft">
                                         <h6>About</h6>
                                         <p>Founded in January 2024 and affiliated with the International Association of Drilling Contractors (IADC), our chapter is your gateway to a world of opportunities in the drilling industry. We aim to build a community of passionate students, bridge the gap between academia and industry through expert insights, practical experiences, and career opportunities, and advocate for sustainable and innovative drilling practices.
                                         </p>
                                         <p class="mb-5 mb-lg-2">
                                         </p>
                                     </div>
-                                    <div class="col-lg-2 col-sm-6 col-md-4 reveal revealleft">
+                                    <div class="col-lg-3 col-sm-12 col-md-5 reveal revealleft">
                                         <h6>Pages</h6>
                                         <ul class="list-unstyled mb-5 mb-lg-0">
-                                            <li><a href="index.html">Dashboard</a></li>
-                                            <li><a href="alerts.html">Elements</a></li>
-                                            <li><a href="form-elements.html">Forms</a></li>
-                                            <li><a href="charts.html">Charts</a></li>
-                                            <li><a href="datatable.html">Tables</a></li>
-                                            <li><a href="file-attachments.html">Other Pages</a></li>
+                                            <li><a href="#Home">Home</a></li>
+                                            <li><a href="#About">About Us</a></li>
+                                            <li><a href="#Events">Events</a></li>
+                                            <li><a href="#Articles">Knowledge Hub</a></li>
+                                            <li><a href="#Publications">Publications</a></li>
+                                            <li><a href="#Contact">Contact</a></li>
                                         </ul>
                                     </div>
-                                    <div class="col-lg-2 col-sm-6 col-md-4 reveal revealleft">
-                                        <h6>Information</h6>
-                                        <ul class="list-unstyled mb-5 mb-lg-0">
-                                            <li><a href="about.html">Our Team</a></li>
-                                            <li><a href="about.html">Contact US</a></li>
-                                            <li><a href="about.html">About</a></li>
-                                            <li><a href="services.html">Services</a></li>
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="terms.html">Terms and Services</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-lg-4 col-sm-12 col-md-4 reveal revealleft">
+                                    <div class="col-lg-4 col-sm-12 col-md-6 reveal revealleft">
                                         <div class="">
-                                            <a href="index.html"><img loading="lazy" alt="" class="logo mb-3"
+                                            <a href="{{ route('index') }}"><img loading="lazy" alt="" class="logo mb-3"
                                                     src="{{route('index')}}/assets/images/brand/logo-3.png"></a>
                                             <p>Join our community to stay up to date with our latest initiatives. Enter your email to ensure you never miss an update.</p>
                                             <form id="newsletterForm" class="form-group">

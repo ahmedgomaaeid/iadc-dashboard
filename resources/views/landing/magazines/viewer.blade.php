@@ -377,9 +377,6 @@
         .loader {
             width: 60px;
             height: 60px;
-            border: 3px solid #e2e8f0;
-            border-top-color: #ab1f2e;
-            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         
@@ -460,7 +457,7 @@
 <body>
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loader"></div>
+            <img src="{{route('index')}}/assets/images/brand/logo-2.svg" alt="" class="loader">
         <div class="loading-text">Loading Magazine...</div>
         <div class="loading-progress">
             <div class="loading-progress-bar" id="progressBar"></div>

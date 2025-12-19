@@ -17,7 +17,7 @@
 }
 
 </style>
-<div class="bg-landing section bg-image-style">
+<div class="bg-landing section bg-image-style" id="Events">
     <div class="container">
         <div class="row">
             <h4 class="text-center fw-semibold">Events & Activities </h4>

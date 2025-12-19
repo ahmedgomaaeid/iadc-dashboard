@@ -1,4 +1,4 @@
-<div class="section" id="Blog">
+<div class="section" id="Articles">
     <div class="container">
         <div class="row">
             <h4 class="text-center fw-semibold">Knowledge Hub</h4>
