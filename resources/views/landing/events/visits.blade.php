@@ -12,11 +12,21 @@
                                     <i class="fa fa-user fs-12 text-white"></i> +{{ $event->attendees_number }}
                                 </span>
                             @endif
-                            <img src="{{ asset('storage/'.$event->image) }}" class="w-100">
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <span class="text-muted"> {{  $event->name }} </span>
+                            <a href="{{ route('eventPreview', $event->id) }}" class="w-100">
+                                <img class="w-100 article-img" 
+                                     src="{{ $event->image ? asset('storage/' . $event->image) : asset('assets/images/media/12.jpg') }}" 
+                                     alt="{{ $event->name }}">
+                            </a>                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <h5 class="fw-semibold mb-2">
+                                    <a href="{{ route('eventPreview', $event->id) }}" class="text-dark article-title">
+                                        {{ Str::limit($event->name, 45) }}
+                                    </a>
+                                </h5>
+                                <p class="text-muted fs-13 mb-0">
+                                    {{ Str::limit(strip_tags($event->description), 80) }}
+                                </p>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center"> 
