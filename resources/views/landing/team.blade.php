@@ -401,6 +401,23 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
+                                <img src="{{ asset('assets/images/users/helmy.webp') }}" alt="Mohamed Helmy - Vice Secretary Manager of IADC Suez University Student Chapter">
+                            </div>
+                            <div class="team-card-content">
+                                <div class="team-card-divider"></div>
+                                <h4 class="team-card-name">Mohamed Helmy</h4>
+                                <p class="team-card-role text-primary">Vice Secretary Manager</p>
+                                <a href="https://www.linkedin.com/in/helmyy1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="linkedin-btn">
+                                    <i class="fa fa-linkedin"></i>
+                                    Connect
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="team-card">
+                            <div class="team-card-image">
                                 <img src="{{ asset('assets/images/users/mohamed ali.webp') }}" alt="Mohamed Ali - Vice IT Manager of IADC Suez University Student Chapter">
                             </div>
                             <div class="team-card-content">
