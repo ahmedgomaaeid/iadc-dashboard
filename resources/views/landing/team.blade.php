@@ -446,10 +446,11 @@ document.addEventListener('DOMContentLoaded', function() {
     new Swiper('.team-swiper', {
         slidesPerView: 1,
         spaceBetween: 30,
-        loop: false,
+        loop: true,
         pagination: {
             el: '.team-swiper .swiper-pagination',
             clickable: true,
+            dynamicBullets: true,
         },
         breakpoints: {
             576: {
