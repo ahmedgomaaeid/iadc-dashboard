@@ -49,7 +49,10 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <span class="fw-semibold">Questions</span>
-                    <a href="{{ route('admin.quizzes.questions.create', $quiz) }}" class="btn btn-primary btn-sm">Add Question</a>
+                    <div class="d-flex gap-2">
+                         <button class="btn btn-success btn-sm" onclick="importQuestionsAi()">Add Questions as Text</button>
+                        <a href="{{ route('admin.quizzes.questions.create', $quiz) }}" class="btn btn-primary btn-sm">Add Question</a>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -112,5 +115,60 @@
                 text: 'Quiz link copied to clipboard',
             });
         });
+
+        function importQuestionsAi() {
+            Swal.fire({
+                title: 'Add Questions as Text',
+                input: 'textarea',
+                inputLabel: 'Paste text containing questions and answers and correct answers',
+                inputPlaceholder: 'Paste your text here...',
+                inputAttributes: {
+                    'aria-label': 'Paste your text here'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Generate',
+                showLoaderOnConfirm: true,
+                preConfirm: (text) => {
+                    return fetch('{{ route('admin.quizzes.questions.ai-import', $quiz) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ questions_text: text })
+                    })
+                    .then(response => {
+                         if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.message || response.statusText) });
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                     if(result.value.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: result.value.message,
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                         Swal.fire({
+                            title: 'Error!',
+                            text: result.value.message || 'Something went wrong',
+                            icon: 'error'
+                        });
+                    }
+                }
+            })
+        }
     </script>
 @endsection

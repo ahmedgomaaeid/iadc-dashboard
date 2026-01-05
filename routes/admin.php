@@ -51,6 +51,8 @@ Route::domain(env('APP_URL'))->group(function () {
             ->name('quizzes.leaderboard.export');
         Route::delete('quizzes/{quiz}/leaderboard/clear', [\App\Http\Controllers\Admin\QuizController::class, 'clearLeaderboard'])
             ->name('quizzes.leaderboard.clear');
+        Route::post('quizzes/{quiz}/questions/ai-import', [\App\Http\Controllers\Admin\QuizController::class, 'storeQuestionsFromText'])
+            ->name('quizzes.questions.ai-import');
         Route::resource('quizzes.questions', \App\Http\Controllers\Admin\QuestionController::class)->shallow();
         Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only([]);
 

@@ -203,4 +203,28 @@ class QuizController extends Controller
             return back()->with('info', 'No leaderboard data found to clear.');
         }
     }
+
+    /**
+     * Store questions generated from text via AI.
+     */
+    public function storeQuestionsFromText(Request $request, Quiz $quiz, \App\Services\AiOrderQuestions $aiService)
+    {
+        $board = auth('board')->user();
+        
+        // Ensure board can only add questions to quizzes from their committee
+        if ($quiz->committee_id !== $board->committee_id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this quiz.'], 403);
+        }
+
+        $request->validate([
+            'questions_text' => 'required|string',
+        ]);
+
+        try {
+            $count = $aiService->process($request->questions_text, $quiz->id);
+            return response()->json(['success' => true, 'message' => "$count questions added successfully."]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

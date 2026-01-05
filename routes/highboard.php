@@ -76,6 +76,7 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::get('quizzes/{quiz}/leaderboard', [QuizController::class, 'leaderboard'])->name('quizzes.leaderboard');
         Route::get('quizzes/{quiz}/leaderboard/export', [QuizController::class, 'exportLeaderboard'])->name('quizzes.leaderboard.export');
         Route::delete('quizzes/{quiz}/leaderboard/clear', [QuizController::class, 'clearLeaderboard'])->name('quizzes.leaderboard.clear');
+        Route::post('quizzes/{quiz}/questions/ai-import', [QuizController::class, 'storeQuestionsFromText'])->name('quizzes.questions.ai-import');
         Route::resource('quizzes.questions', QuestionController::class)->shallow();
 
         // Profile Routes
