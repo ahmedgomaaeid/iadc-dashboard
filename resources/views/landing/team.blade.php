@@ -187,11 +187,11 @@
         <div class="row d-flex justify-content-center">
             <div class="team-card col-md-4 col-lg-4 col-sm-6 col-12">
                 <div class="team-card-image">
-                    <img src="{{ asset('assets/images/users/nevin.jpeg') }}" alt="Nevin Aly - Faculty Advisor of IADC Suez University Student Chapter">
+                    <img src="{{ asset('assets/images/users/Dr nevin.webp') }}" alt="Dr Nevin Aly - Faculty Advisor of IADC Suez University Student Chapter">
                 </div>
                 <div class="team-card-content">
                     <div class="team-card-divider"></div>
-                    <h4 class="team-card-name">Nevin Aly</h4>
+                    <h4 class="team-card-name">Dr Nevin Aly</h4>
                     <p class="team-card-role text-primary">Faculty Advisor</p>
                     <a href="https://linkedin.com/in/nevin-aly-53488769" target="_blank" class="linkedin-btn">
                         <i class="fa fa-linkedin"></i>
