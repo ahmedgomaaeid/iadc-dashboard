@@ -182,9 +182,28 @@
     <div class="container">
         <div class="text-center reveal">
             <p class="section-subtitle">Meet The Team</p>
+            <h2 class="section-title">IADC Suez <span class="text-primary">Faculty Advisor</span></h2>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="team-card col-md-4 col-lg-4 col-sm-6 col-12">
+                <div class="team-card-image">
+                    <img src="{{ asset('assets/images/users/nevin.jpeg') }}" alt="Nevin Aly - Faculty Advisor of IADC Suez University Student Chapter">
+                </div>
+                <div class="team-card-content">
+                    <div class="team-card-divider"></div>
+                    <h4 class="team-card-name">Nevin Aly</h4>
+                    <p class="team-card-role text-primary">Faculty Advisor</p>
+                    <a href="https://linkedin.com/in/nevin-aly-53488769" target="_blank" class="linkedin-btn">
+                        <i class="fa fa-linkedin"></i>
+                        Connect
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center reveal" style="margin-top: 40px;">
             <h2 class="section-title">IADC Suez <span class="text-primary">Highboard</span></h2>
         </div>
-        
         <div class="team-swiper-container">
             <div class="swiper team-swiper">
                 <div class="swiper-wrapper">
