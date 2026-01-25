@@ -17,12 +17,14 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // Skip security headers for Zoom session join pages
-        // The Zoom Web SDK requires loading cross-origin resources
+        // Skip security headers for pages that require cross-origin resources
+        // - Zoom session join pages (Zoom Web SDK)
+        // - Lesson show pages (YouTube embeds)
         $routeName = $request->route() ? $request->route()->getName() : '';
         $isSessionJoinPage = str_contains($routeName, 'sessions.join');
+        $isLessonShowPage = str_contains($routeName, 'lessons.show');
         
-        if (!$isSessionJoinPage) {
+        if (!$isSessionJoinPage && !$isLessonShowPage) {
             $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
             $response->headers->set('Cross-Origin-Embedder-Policy', 'require-corp');
         }
