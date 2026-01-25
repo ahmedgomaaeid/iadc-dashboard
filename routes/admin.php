@@ -38,6 +38,8 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::resource('members', \App\Http\Controllers\Admin\MemberController::class);
         Route::post('members/{id}/toggle-status', [\App\Http\Controllers\Admin\MemberController::class, 'toggleStatus'])
             ->name('members.toggle-status');
+        Route::post('members/bulk-status', [\App\Http\Controllers\Admin\MemberController::class, 'bulkStatus'])
+            ->name('members.bulk-status');
         Route::get('members-export', [\App\Http\Controllers\Admin\MemberController::class, 'export'])
             ->name('members.export');
 

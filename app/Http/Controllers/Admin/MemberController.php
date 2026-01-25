@@ -17,14 +17,43 @@ class MemberController extends Controller
     /**
      * Display a listing of all members
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get all members with their committees
-        $members = User::with(['committees', 'committees.field'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = User::with(['committees', 'committees.field'])
+            ->orderBy('created_at', 'desc');
 
-        return view('admin.members.index', compact('members'));
+        // Search by name, email, or phone
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by committee
+        if ($request->filled('committee_id')) {
+            $query->whereHas('committees', function($q) use ($request) {
+                $q->where('committees.id', $request->committee_id);
+            });
+        }
+        
+        // Filter by status (optional, if you want to add status filter too)
+        if ($request->filled('status')) {
+             if ($request->status === 'active') {
+                 $query->where('is_active', true);
+             } elseif ($request->status === 'inactive') {
+                 $query->where('is_active', false);
+             }
+        }
+
+        $members = $query->paginate(15)->withQueryString();
+
+        // Get committees for filter
+        $committees = Committee::active()->orderBy('name')->get();
+
+        return view('admin.members.index', compact('members', 'committees'));
     }
 
     /**
@@ -160,7 +189,7 @@ class MemberController extends Controller
     /**
      * Toggle member active status
      */
-    public function toggleStatus($id)
+    public function toggleStatus(Request $request, $id)
     {
         $member = User::findOrFail($id);
 
@@ -168,8 +197,37 @@ class MemberController extends Controller
 
         $status = $member->is_active ? 'activated' : 'deactivated';
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Member {$status} successfully.",
+                'is_active' => $member->is_active
+            ]);
+        }
+
         return redirect()->route('admin.members.index')
             ->with('success', "Member {$status} successfully.");
+    }
+
+    /**
+     * Bulk update status
+     */
+    public function bulkStatus(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+            'active' => 'required|boolean'
+        ]);
+
+        User::whereIn('id', $request->ids)->update(['is_active' => $request->active]);
+
+        $status = $request->active ? 'activated' : 'deactivated';
+
+        return response()->json([
+            'success' => true,
+            'message' => count($request->ids) . " members {$status} successfully."
+        ]);
     }
 
     /**
