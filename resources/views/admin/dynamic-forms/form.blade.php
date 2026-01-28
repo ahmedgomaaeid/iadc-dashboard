@@ -190,6 +190,11 @@
                         <label for="custom_field_label" class="form-label">Field Label</label>
                         <input type="text" class="form-control" id="custom_field_label" placeholder="e.g. Flight Number">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="custom_field_placeholder" class="form-label">Placeholder</label>
+                        <input type="text" class="form-control" id="custom_field_placeholder" placeholder="e.g. Enter your flight number">
+                    </div>
                     
                     <div class="mb-3">
                         <label for="custom_field_required" class="form-label form-check-label d-flex align-items-center">
@@ -306,7 +311,8 @@
                         label: field.label,
                         type: field.type || 'text',
                         required: field.required,
-                        icon: field.icon || 'fa-pen'
+                        icon: field.icon || 'fa-pen',
+                        placeholder: field.placeholder || ''
                     };
                 }
 
@@ -339,8 +345,10 @@
 
     function addCustomField() {
         const labelInput = document.getElementById('custom_field_label');
+        const placeholderInput = document.getElementById('custom_field_placeholder');
         const requiredInput = document.getElementById('custom_field_required');
         const label = labelInput.value.trim();
+        const placeholder = placeholderInput.value.trim();
         
         if (!label) {
             alert('Please enter a field label');
@@ -356,11 +364,13 @@
             type: 'text',
             required: requiredInput.checked,
             icon: 'fa-pen', // Default icon for custom fields
+            placeholder: placeholder,
             order: selectedFields.length + 1
         });
 
         // Reset inputs
         labelInput.value = '';
+        placeholderInput.value = '';
         requiredInput.checked = false;
 
         renderSelectedFields();

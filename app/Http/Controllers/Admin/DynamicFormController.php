@@ -45,7 +45,9 @@ class DynamicFormController extends Controller
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
             // Allow label and other attributes for custom fields
+            // Allow label and other attributes for custom fields
             'fields.*.label' => 'nullable|string',
+            'fields.*.placeholder' => 'nullable|string',
             'fields.*.required' => 'boolean',
             'is_active' => 'boolean',
         ], [
@@ -98,7 +100,9 @@ class DynamicFormController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
+            // Allow label and other attributes for custom fields
             'fields.*.label' => 'nullable|string',
+            'fields.*.placeholder' => 'nullable|string',
             'fields.*.required' => 'boolean',
             'is_active' => 'boolean',
         ], [
