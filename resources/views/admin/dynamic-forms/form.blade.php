@@ -108,7 +108,7 @@
     </div>
 @endif
 
-<form action="{{ $formAction }}" method="POST" id="dynamicFormBuilder">
+<form action="{{ $formAction }}" method="POST" id="dynamicFormBuilder" enctype="multipart/form-data">
     @csrf
     @if($isEdit)
         @method('PUT')
@@ -132,6 +132,16 @@
                         <input type="text" class="form-control" id="subtitle" name="subtitle" 
                             value="{{ old('subtitle', $dynamicForm->subtitle ?? '') }}"
                             placeholder="e.g., Join our community today">
+                    </div>
+                    <div class="mb-3">
+                        <label for="form_image" class="form-label">Form Image <span class="text-muted">(Optional)</span></label>
+                        <input type="file" class="form-control" id="form_image" name="form_image" accept="image/*">
+                        <small class="text-muted">Recommended: Landscape orientation. Max size: 2MB.</small>
+                        @if(isset($dynamicForm) && $dynamicForm->form_image)
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $dynamicForm->form_image) }}" alt="Current Form Image" class="img-thumbnail" style="max-height: 150px;">
+                            </div>
+                        @endif
                     </div>
                     <div class="mb-3">
                         <label for="subdomain" class="form-label">Subdomain <span class="text-danger">*</span></label>

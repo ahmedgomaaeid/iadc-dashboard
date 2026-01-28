@@ -11,6 +11,7 @@ class DynamicForm extends Model
         'title',
         'subtitle',
         'subdomain',
+        'form_image',
         'fields',
         'is_active',
     ];

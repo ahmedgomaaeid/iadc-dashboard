@@ -2,9 +2,11 @@
 
 @section('title', $form->title)
 @section('subtitle', $form->subtitle ?? 'Fill out the form')
-@section('form-img')
-    <img src="{{ asset('assets/images/testimg.jpeg') }}" alt="Form Image" class="w-100">
-@endsection
+@if($form->form_image)
+    @section('form-img')
+        <img src="{{ asset('storage/' . $form->form_image) }}" alt="Form Image" class="w-100">
+    @endsection
+@endif
 
 @section('content')
     <form action="{{ route('form.submit', $form->subdomain) }}" method="POST" id="guestForm">

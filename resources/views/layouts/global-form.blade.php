@@ -146,8 +146,8 @@
                     <div class="card-header">
                         <h1><i class="fas fa-graduation-cap"></i>@yield('subtitle', 'Registration')</h1>
                         <p>@yield('title', 'IADC Suez')</p>
-                        @yield('form-img', '')
                     </div>
+                    @yield('form-img', '')
 
                     <div class="card-body">
                         @if(session('success'))

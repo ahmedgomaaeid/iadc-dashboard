@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DynamicForm;
 use App\Exports\DynamicFormSubmissionExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DynamicFormController extends Controller
@@ -41,10 +42,10 @@ class DynamicFormController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'subdomain' => 'required|string|max:100|unique:dynamic_forms,subdomain|regex:/^[a-z0-9-]+$/',
+            'form_image' => 'nullable|image|max:2048',
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
-            // Allow label and other attributes for custom fields
             // Allow label and other attributes for custom fields
             'fields.*.label' => 'nullable|string',
             'fields.*.placeholder' => 'nullable|string',
@@ -54,13 +55,19 @@ class DynamicFormController extends Controller
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
 
-        DynamicForm::create([
+        $data = [
             'title' => $request->title,
             'subtitle' => $request->subtitle,
             'subdomain' => $request->subdomain,
             'fields' => $request->fields,
             'is_active' => $request->boolean('is_active', true),
-        ]);
+        ];
+
+        if ($request->hasFile('form_image')) {
+            $data['form_image'] = $request->file('form_image')->store('dynamic-forms', 'public');
+        }
+
+        DynamicForm::create($data);
 
         return redirect()->route('admin.dynamic-forms.index')
             ->with('success', 'Dynamic form created successfully.');
@@ -97,6 +104,7 @@ class DynamicFormController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'subdomain' => 'required|string|max:100|unique:dynamic_forms,subdomain,' . $dynamicForm->id . '|regex:/^[a-z0-9-]+$/',
+            'form_image' => 'nullable|image|max:2048',
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
@@ -109,13 +117,23 @@ class DynamicFormController extends Controller
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
 
-        $dynamicForm->update([
+        $data = [
             'title' => $request->title,
             'subtitle' => $request->subtitle,
             'subdomain' => $request->subdomain,
             'fields' => $request->fields,
             'is_active' => $request->boolean('is_active', true),
-        ]);
+        ];
+
+        if ($request->hasFile('form_image')) {
+            // Delete old image if exists
+            if ($dynamicForm->form_image) {
+                Storage::disk('public')->delete($dynamicForm->form_image);
+            }
+            $data['form_image'] = $request->file('form_image')->store('dynamic-forms', 'public');
+        }
+
+        $dynamicForm->update($data);
 
         return redirect()->route('admin.dynamic-forms.index')
             ->with('success', 'Dynamic form updated successfully.');
