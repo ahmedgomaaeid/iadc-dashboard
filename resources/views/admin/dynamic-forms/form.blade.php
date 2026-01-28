@@ -179,6 +179,30 @@
                     @endforeach
                 </div>
             </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">Custom Fields</h3>
+                    <p class="text-muted mb-0 small">Add fields with your own labels</p>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="custom_field_label" class="form-label">Field Label</label>
+                        <input type="text" class="form-control" id="custom_field_label" placeholder="e.g. Flight Number">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="custom_field_required" class="form-label form-check-label d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input me-2" id="custom_field_required">
+                            Required Field
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary w-100" onclick="addCustomField()">
+                        <i class="fas fa-plus me-2"></i>Add Custom Field
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-6">
@@ -271,8 +295,21 @@
             // Sort by order
             selectedFields.sort((a, b) => a.order - b.order);
             
+            
             selectedFields.forEach((field, index) => {
-                const config = availableFields[field.name];
+                // Determine config: either from availableFields or custom config stored in field object
+                let config = availableFields[field.name];
+                
+                // If it's a custom field (not in availableFields), use the stored config
+                if (!config && field.name.startsWith('custom_')) {
+                    config = {
+                        label: field.label,
+                        type: field.type || 'text',
+                        required: field.required,
+                        icon: field.icon || 'fa-pen'
+                    };
+                }
+
                 if (!config) return;
                 
                 const div = document.createElement('div');
@@ -300,14 +337,46 @@
         updateFieldsInput();
     }
 
+    function addCustomField() {
+        const labelInput = document.getElementById('custom_field_label');
+        const requiredInput = document.getElementById('custom_field_required');
+        const label = labelInput.value.trim();
+        
+        if (!label) {
+            alert('Please enter a field label');
+            return;
+        }
+
+        const timestamp = new Date().getTime();
+        const fieldName = `custom_${timestamp}`;
+        
+        selectedFields.push({
+            name: fieldName,
+            label: label,
+            type: 'text',
+            required: requiredInput.checked,
+            icon: 'fa-pen', // Default icon for custom fields
+            order: selectedFields.length + 1
+        });
+
+        // Reset inputs
+        labelInput.value = '';
+        requiredInput.checked = false;
+
+        renderSelectedFields();
+    }
+
     function removeField(fieldName) {
         const index = selectedFields.findIndex(f => f.name === fieldName);
         if (index > -1) {
             selectedFields.splice(index, 1);
             
-            const fieldItem = document.querySelector(`.card-body > .field-item[data-field="${fieldName}"]`);
-            if (fieldItem) {
-                fieldItem.classList.remove('selected');
+            // Handle clearing checkbox if it was a predefined field
+            if (document.getElementById(`check_${fieldName}`)) {
+                const fieldItem = document.querySelector(`.card-body > .field-item[data-field="${fieldName}"]`);
+                if (fieldItem) {
+                    fieldItem.classList.remove('selected');
+                }
                 const checkbox = document.getElementById(`check_${fieldName}`);
                 if (checkbox) checkbox.checked = false;
             }
@@ -318,13 +387,22 @@
 
     function updateFieldsOrder() {
         const items = container.querySelectorAll('.field-item[data-field]');
-        selectedFields = [];
+        const newSelectedFields = [];
+        
         items.forEach((item, index) => {
-            selectedFields.push({
-                name: item.dataset.field,
-                order: index + 1
-            });
+            const fieldName = item.dataset.field;
+            // Find existing field data to preserve custom props (label, etc.)
+            const existingField = selectedFields.find(f => f.name === fieldName);
+            
+            if (existingField) {
+                newSelectedFields.push({
+                    ...existingField, // Keep all properties (important for custom fields)
+                    order: index + 1
+                });
+            }
         });
+        
+        selectedFields = newSelectedFields;
         renderSelectedFields();
     }
 

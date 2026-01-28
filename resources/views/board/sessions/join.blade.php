@@ -161,10 +161,18 @@
             document.getElementById('elapsed-time').textContent =
                 String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 
-            // Show warning at 40 minutes (2400 seconds)
+            // Show warning and auto-recreate at 40 minutes (2400 seconds)
             if (elapsed >= 2400 && !warningShown) {
-                showWarning();
                 warningShown = true;
+                showWarning();
+                
+                // Auto-trigger recreation
+                var btn = document.getElementById('continue-meeting-btn');
+                btn.innerHTML = '<i class="fe fe-loader fe-spin me-2"></i>Auto-recreating in 3s...';
+                
+                setTimeout(function() {
+                    continueMeeting();
+                }, 3000);
             }
 
             // Update remaining time in warning banner
@@ -183,6 +191,8 @@
 
         function showWarning() {
             document.getElementById('warning-banner').classList.add('show');
+            document.getElementById('warning-banner').querySelector('h4').textContent = "Meeting Recreating...";
+            document.getElementById('warning-banner').querySelector('p').textContent = "The 40-minute limit has been reached. Automatically creating a new meeting...";
         }
 
         function continueMeeting() {

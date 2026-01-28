@@ -113,6 +113,20 @@ class DynamicForm extends Model
             $fieldName = $field['name'];
             if (isset(self::AVAILABLE_FIELDS[$fieldName])) {
                 $orderedFields[$fieldName] = self::AVAILABLE_FIELDS[$fieldName];
+            } else {
+                // Handle custom fields
+                $orderedFields[$fieldName] = [
+                    'label' => $field['label'] ?? ucfirst(str_replace('_', ' ', $fieldName)),
+                    'type' => $field['type'] ?? 'text', // Default to text for custom fields
+                    'required' => filter_var($field['required'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'icon' => $field['icon'] ?? 'fa-pen', // Default icon
+                    'placeholder' => $field['placeholder'] ?? '',
+                ];
+                
+                // Allow options for select fields if we add that support later or via JSON editor manually
+                if (isset($field['options'])) {
+                    $orderedFields[$fieldName]['options'] = $field['options'];
+                }
             }
         }
 

@@ -44,6 +44,9 @@ class DynamicFormController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
+            // Allow label and other attributes for custom fields
+            'fields.*.label' => 'nullable|string',
+            'fields.*.required' => 'boolean',
             'is_active' => 'boolean',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
@@ -95,6 +98,8 @@ class DynamicFormController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
+            'fields.*.label' => 'nullable|string',
+            'fields.*.required' => 'boolean',
             'is_active' => 'boolean',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
