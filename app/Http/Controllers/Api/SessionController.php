@@ -41,6 +41,7 @@ class SessionController extends Controller
     public function latest(Session $session)
     {
         $latestSession = $session->getLatestContinuation();
+        $rootSession = $session->getRootSession();
 
         return response()->json([
             'id' => $latestSession->id,
@@ -52,6 +53,7 @@ class SessionController extends Controller
             'is_continuation' => $latestSession->is_continuation,
             'continuation_count' => $latestSession->continuation_count,
             'is_same' => $latestSession->id === $session->id,
+            'is_finally_ended' => $rootSession->is_finally_ended ?? false,
         ]);
     }
 
@@ -164,6 +166,39 @@ class SessionController extends Controller
         }
 
         $session->update(['creator_joined' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark session as finally ended (no continuation).
+     */
+    public function markEnded(Session $session)
+    {
+        // Determine the authenticated user
+        $user = null;
+        $creatorType = null;
+
+        if (Auth::guard('board')->check()) {
+            $user = Auth::guard('board')->user();
+            $creatorType = 'App\Models\Board';
+        } elseif (Auth::guard('highboard')->check()) {
+            $user = Auth::guard('highboard')->user();
+            $creatorType = 'App\Models\Highboard';
+        }
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Check if user is the creator
+        if ($session->creator_id !== $user->id || $session->creator_type !== $creatorType) {
+            return response()->json(['error' => 'Only the session creator can end the meeting'], 403);
+        }
+
+        // Get the root session and mark it as finally ended
+        $rootSession = $session->getRootSession();
+        $rootSession->update(['is_finally_ended' => true]);
 
         return response()->json(['success' => true]);
     }

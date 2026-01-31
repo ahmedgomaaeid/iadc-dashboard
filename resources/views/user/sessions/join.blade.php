@@ -83,6 +83,18 @@
         </div>
     </div>
 
+    <!-- Meeting Finally Ended Card (shown when host ends meeting permanently) -->
+    <div class="card" id="meeting-ended-card" style="display:none; background: linear-gradient(135deg, #f44336, #c62828); color: white;">
+        <div class="card-body text-center py-5">
+            <i class="fe fe-x-circle" style="font-size: 48px;"></i>
+            <h3 class="mt-3">Meeting Has Ended</h3>
+            <p class="mb-4">The host has ended this meeting. Thank you for attending!</p>
+            <a href="{{ route('user.sessions.index') }}" class="btn btn-light btn-lg">
+                <i class="fe fe-arrow-left me-2"></i>Back to Sessions
+            </a>
+        </div>
+    </div>
+
     <!-- Join Button Card (hidden when meeting starts) -->
     <div class="row" id="join-card">
         <div class="col-12">
@@ -141,10 +153,64 @@
         var sessionId = {{ $session->id }};
         var pollInterval = null;
         var currentMeetingId = "{{ $session->zoom_meeting_id }}";
+        var isWaitingForContinuation = new URLSearchParams(window.location.search).get('waiting') === '1';
+        var shouldAutoJoin = new URLSearchParams(window.location.search).get('autojoin') === '1';
+
+        // Build leave URL with waiting parameter
+        function getLeaveUrl() {
+            var url = new URL(window.location.href);
+            url.searchParams.set('waiting', '1');
+            return url.toString();
+        }
+
+        // Check for continuation on page load (in case page was reloaded after meeting ended)
+        function checkForContinuationOnLoad() {
+            if (!isWaitingForContinuation) {
+                return; // Not waiting, proceed normally
+            }
+
+            console.log('Page loaded in waiting mode, checking for continuation...');
+            
+            fetch('/api/sessions/' + sessionId + '/latest')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Continuation check:', data);
+                    
+                    // If meeting is permanently ended, show ended card
+                    if (data.is_finally_ended) {
+                        showMeetingEndedCard();
+                        return;
+                    }
+                    
+                    // If there's a newer session and creator has joined, redirect to it
+                    if (!data.is_same && data.creator_joined) {
+                        console.log('Continuation found, redirecting...');
+                        window.location.href = '/sessions/' + data.id + '/join';
+                        return;
+                    }
+                    
+                    // Still waiting - show waiting card and start polling
+                    showWaitingForContinuation();
+                })
+                .catch(err => {
+                    console.error('Error checking for continuation:', err);
+                    // On error, still show waiting card
+                    showWaitingForContinuation();
+                });
+        }
+
+        // Run continuation check on page load
+        checkForContinuationOnLoad();
 
         // Wait for the page to fully load before initializing Zoom SDK
         window.addEventListener('load', function () {
             console.log('Page loaded, initializing Zoom SDK...');
+
+            // If waiting for continuation, don't initialize Zoom SDK
+            if (isWaitingForContinuation) {
+                console.log('Waiting mode active, skipping Zoom SDK init');
+                return;
+            }
 
             try {
                 if (typeof ZoomMtg === 'undefined') {
@@ -166,7 +232,7 @@
                     meetingNumber: "{{ $session->zoom_meeting_id }}",
                     userName: "{{ $user->name }}",
                     passWord: "{{ $session->zoom_password ?? '' }}",
-                    leaveUrl: "{{ route('user.sessions.index') }}",
+                    leaveUrl: getLeaveUrl(), // URL with waiting=1 parameter
                     role: 0,
                     userEmail: "{{ $user->email }}",
                     signature: "{{ $signature }}",
@@ -180,6 +246,14 @@
                 });
 
                 console.log('Join button event listener registered successfully');
+
+                // Auto-join if redirected from continuation
+                if (shouldAutoJoin) {
+                    console.log('Auto-join enabled, joining meeting automatically...');
+                    setTimeout(function() {
+                        joinMeeting(meetingConfig);
+                    }, 1000); // Small delay to ensure everything is ready
+                }
 
                 // Handle meeting status changes
                 ZoomMtg.inMeetingServiceListener('onMeetingStatus', function (data) {
@@ -287,6 +361,14 @@
                     .then(data => {
                         console.log('Poll response:', data);
 
+                        // Check if meeting is permanently ended
+                        if (data.is_finally_ended) {
+                            console.log('Meeting has been permanently ended by host.');
+                            clearInterval(pollInterval);
+                            showMeetingEndedCard();
+                            return;
+                        }
+
                         // Check if there's a new session and creator has joined
                         if (!data.is_same && data.creator_joined) {
                             console.log('New session found, creator has joined. Joining new meeting...');
@@ -302,17 +384,19 @@
             }, 5000); // Poll every 5 seconds
         }
 
-        function joinNewMeeting(sessionData) {
-            // Update UI
+        function showMeetingEndedCard() {
             document.getElementById('waiting-card').classList.remove('show');
-            document.getElementById('join-card').style.display = 'block';
+            document.getElementById('meeting-container').style.display = 'none';
+            document.getElementById('join-card').style.display = 'none';
+            document.getElementById('meeting-ended-card').style.display = 'block';
+        }
 
-            // Update meeting config with new session data
-            meetingConfig.meetingNumber = sessionData.zoom_meeting_id;
-            meetingConfig.passWord = sessionData.zoom_password;
-
-            // Need to get new signature - redirect to the new session page
-            window.location.href = '/sessions/' + sessionData.id + '/join';
+        function joinNewMeeting(sessionData) {
+            // Hide waiting card
+            document.getElementById('waiting-card').classList.remove('show');
+            
+            // Redirect to the new session page with autojoin parameter
+            window.location.href = '/sessions/' + sessionData.id + '/join?autojoin=1';
         }
     </script>
 @endsection

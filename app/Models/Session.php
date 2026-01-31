@@ -28,6 +28,7 @@ class Session extends Model
         'parent_session_id',
         'is_continuation',
         'continuation_count',
+        'is_finally_ended',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class Session extends Model
         'end_time' => 'datetime',
         'creator_joined' => 'boolean',
         'is_continuation' => 'boolean',
+        'is_finally_ended' => 'boolean',
     ];
 
     public function creator()

@@ -61,15 +61,20 @@
 
     <!-- Warning Banner (shows at 40 minutes) -->
     <div class="warning-banner" id="warning-banner">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
                 <h4 class="mb-1"><i class="fe fe-alert-triangle me-2"></i>Meeting Ending Soon</h4>
                 <p class="mb-0">Free Zoom meetings are limited to 45 minutes. Time remaining: <span class="meeting-timer"
                         id="time-remaining">5:00</span></p>
             </div>
-            <button class="btn btn-light btn-lg" id="continue-meeting-btn" onclick="continueMeeting()">
-                <i class="fe fe-refresh-cw me-2"></i>Continue Meeting
-            </button>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light btn-lg" id="continue-meeting-btn" onclick="continueMeeting()">
+                    <i class="fe fe-refresh-cw me-2"></i>Continue Meeting
+                </button>
+                <button class="btn btn-danger btn-lg" id="end-meeting-btn" onclick="endMeeting()">
+                    <i class="fe fe-x-circle me-2"></i>End Meeting
+                </button>
+            </div>
         </div>
     </div>
 
@@ -191,14 +196,13 @@
 
         function showWarning() {
             document.getElementById('warning-banner').classList.add('show');
-            document.getElementById('warning-banner').querySelector('h4').textContent = "Meeting Recreating...";
-            document.getElementById('warning-banner').querySelector('p').textContent = "The 40-minute limit has been reached. Automatically creating a new meeting...";
         }
 
         function continueMeeting() {
             var btn = document.getElementById('continue-meeting-btn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fe fe-loader fe-spin me-2"></i>Creating...';
+            document.getElementById('end-meeting-btn').disabled = true;
 
             fetch('/api/sessions/' + sessionId + '/recreate', {
                 method: 'POST',
@@ -223,12 +227,51 @@
                         alert('Error: ' + (data.error || 'Failed to create new meeting'));
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fe fe-refresh-cw me-2"></i>Continue Meeting';
+                        document.getElementById('end-meeting-btn').disabled = false;
                     }
                 })
                 .catch(err => {
                     alert('Error creating new meeting: ' + err.message);
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fe fe-refresh-cw me-2"></i>Continue Meeting';
+                    document.getElementById('end-meeting-btn').disabled = false;
+                });
+        }
+
+        function endMeeting() {
+            if (!confirm('Are you sure you want to end the meeting permanently? Members will be notified that the meeting has ended.')) {
+                return;
+            }
+
+            var btn = document.getElementById('end-meeting-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fe fe-loader fe-spin me-2"></i>Ending...';
+            document.getElementById('continue-meeting-btn').disabled = true;
+
+            fetch('/api/sessions/' + sessionId + '/mark-ended', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('warning-banner').style.display = 'none';
+                        document.getElementById('main-content').innerHTML = '<div class="card"><div class="card-body text-center py-5"><i class="fe fe-check-circle text-success" style="font-size:48px;"></i><h3 class="mt-3">Meeting Ended</h3><p class="text-muted">The meeting has been ended. Members have been notified.</p><a href="{{ route("board.sessions.index") }}" class="btn btn-primary mt-3">Back to Sessions</a></div></div>';
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to end meeting'));
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fe fe-x-circle me-2"></i>End Meeting';
+                        document.getElementById('continue-meeting-btn').disabled = false;
+                    }
+                })
+                .catch(err => {
+                    alert('Error ending meeting: ' + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fe fe-x-circle me-2"></i>End Meeting';
+                    document.getElementById('continue-meeting-btn').disabled = false;
                 });
         }
 

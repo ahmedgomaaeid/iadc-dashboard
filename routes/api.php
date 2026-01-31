@@ -28,5 +28,9 @@ Route::get('/quizzes/{quiz}/leaderboard', [QuizController::class, 'getLeaderboar
 use App\Http\Controllers\Api\SessionController;
 Route::get('/sessions/{session}/status', [SessionController::class, 'status']);
 Route::get('/sessions/{session}/latest', [SessionController::class, 'latest']);
-Route::post('/sessions/{session}/recreate', [SessionController::class, 'recreate']);
-Route::post('/sessions/{session}/mark-joined', [SessionController::class, 'markJoined']);
+
+Route::middleware(['web'])->group(function () {
+    Route::post('/sessions/{session}/recreate', [SessionController::class, 'recreate']);
+    Route::post('/sessions/{session}/mark-joined', [SessionController::class, 'markJoined']);
+    Route::post('/sessions/{session}/mark-ended', [SessionController::class, 'markEnded']);
+});
