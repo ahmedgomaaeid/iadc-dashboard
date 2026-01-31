@@ -96,9 +96,12 @@ class SessionController extends Controller
             // Update root session's continuation count
             $rootSession->update(['continuation_count' => $continuationCount]);
 
+            // remove (Part X) from title
+            $title = str_replace('(Part ' . ($continuationCount) . ')', '', $session->title);
+
             // Create new Zoom meeting
             $meetingData = [
-                'title' => $session->title . ' (Part ' . ($continuationCount + 1) . ')',
+                'title' => $title . ' (Part ' . ($continuationCount + 1) . ')',
                 'start_time' => Carbon::now(),
             ];
 

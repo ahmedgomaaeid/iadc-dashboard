@@ -17,22 +17,115 @@
         #zmmtg-root {
             display: none;
             width: 100%;
-            min-height: 500px;
+            min-height: 600px;
+            height: calc(100vh - 200px);
             position: relative !important;
             background-color: #000;
             border-radius: 12px;
             overflow: hidden;
         }
 
+        /* Ensure Zoom toolbar and bottom buttons are visible */
+        #zmmtg-root > div {
+            height: 100% !important;
+        }
+
+        /* Fix Zoom fullscreen to use the Zoom SDK's native fullscreen */
+        #zmmtg-root:fullscreen,
+        #zmmtg-root:-webkit-full-screen,
+        #zmmtg-root:-moz-full-screen,
+        #zmmtg-root:-ms-fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            border-radius: 0;
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            z-index: 99999;
+        }
+
         @media (min-width: 768px) {
             #zmmtg-root {
-                min-height: 600px;
+                min-height: 650px;
+                height: calc(100vh - 180px);
             }
         }
 
         @media (min-width: 1200px) {
             #zmmtg-root {
                 min-height: 700px;
+                height: calc(100vh - 160px);
+            }
+        }
+
+        /* Mobile: Make meeting fullscreen in landscape */
+        @media (max-width: 768px) {
+            #zmmtg-root {
+                min-height: 400px;
+                height: calc(100vh - 120px);
+                border-radius: 0;
+            }
+
+            /* Hide header and other elements when meeting is active on mobile */
+            body.meeting-active .page-header,
+            body.meeting-active .app-sidebar,
+            body.meeting-active .app-header,
+            body.meeting-active .breadcrumb {
+                display: none !important;
+            }
+
+            body.meeting-active .app-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            body.meeting-active #meeting-container {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            body.meeting-active .meeting-card {
+                border-radius: 0 !important;
+                margin: 0 !important;
+            }
+
+            body.meeting-active .meeting-card .card-header {
+                display: none !important;
+            }
+
+            body.meeting-active #zmmtg-root {
+                height: 100vh !important;
+                width: 100vw !important;
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                z-index: 9999;
+            }
+        }
+
+        /* Landscape mode on mobile - force full screen */
+        @media (max-width: 992px) and (orientation: landscape) {
+            body.meeting-active {
+                overflow: hidden !important;
+            }
+
+            body.meeting-active .page-header,
+            body.meeting-active .app-sidebar,
+            body.meeting-active .app-header,
+            body.meeting-active .breadcrumb,
+            body.meeting-active .meeting-card .card-header {
+                display: none !important;
+            }
+
+            body.meeting-active #zmmtg-root {
+                height: 100vh !important;
+                width: 100vw !important;
+                min-height: 100vh !important;
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                z-index: 99999;
+                border-radius: 0 !important;
             }
         }
 
@@ -317,6 +410,9 @@
                 font-size: 2rem;
             }
         }
+        #wc-loading {
+            display: none !important;
+        }
     </style>
 @endsection
 
@@ -574,12 +670,19 @@
                         }
 
                         document.getElementById('join-card').style.display = 'none';
+                        document.getElementById('autojoining-card').classList.remove('show');
                         document.getElementById('meeting-container').style.display = 'block';
                         document.getElementById('zmmtg-root').style.display = 'block';
+                        
+                        // Add meeting-active class for mobile fullscreen
+                        document.body.classList.add('meeting-active');
 
                         console.log('Zoom interface shown');
                     } else if (data.meetingStatus === 3) {
-                        // Meeting ended - show waiting card and poll for new meeting
+                        // Meeting ended - remove meeting-active class
+                        document.body.classList.remove('meeting-active');
+                        
+                        // Show waiting card and poll for new meeting
                         console.log('Meeting ended, starting to poll for continuation...');
                         showWaitingForContinuation();
                     }
@@ -650,10 +753,14 @@
         }
 
         function showWaitingForContinuation() {
+            // Remove meeting-active class to restore normal layout
+            document.body.classList.remove('meeting-active');
+            
             // Hide meeting container and show waiting card
             document.getElementById('meeting-container').style.display = 'none';
             document.getElementById('join-card').style.display = 'none';
             document.getElementById('zmmtg-root').style.display = 'none';
+            document.getElementById('autojoining-card').classList.remove('show');
             document.getElementById('waiting-card').classList.add('show');
 
             // Start polling for new session
