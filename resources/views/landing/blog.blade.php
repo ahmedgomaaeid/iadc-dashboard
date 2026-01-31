@@ -36,8 +36,8 @@
                             @endif
                             <a href="{{ route('articlePreview', $article->id) }}">
                                 <img class="w-100 article-img" 
-                                     src="{{ $article->image ? asset('storage/' . $article->image) : asset('assets/images/media/12.jpg') }}" 
-                                     alt="{{ $article->name }}">
+                                     src="{{ $article->image ? asset('storage/' . $article->image) : asset('assets/images/media/12.webp') }}" 
+                                     alt="{{ $article->name }}" loading="lazy">
                             </a>
                         </div>
                         <div class="card-body d-flex flex-column">

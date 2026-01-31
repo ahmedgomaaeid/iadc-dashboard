@@ -14,8 +14,8 @@
                             @endif
                             <a href="{{ route('eventPreview', $event->id) }}" class="w-100">
                                 <img class="w-100 article-img" 
-                                     src="{{ $event->image ? asset('storage/' . $event->image) : asset('assets/images/media/12.jpg') }}" 
-                                     alt="{{ $event->name }}">
+                                     src="{{ $event->image ? asset('storage/' . $event->image) : asset('assets/images/media/12.webp') }}" 
+                                     alt="{{ $event->name }}" loading="lazy">
                             </a>
                         </div>
                         <div class="card-body d-flex flex-column">

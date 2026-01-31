@@ -14,7 +14,7 @@
                     <div class="card features main-features main-features-1 wow fadeInUp reveal revealleft"
                         data-wow-delay="0.1s">
                         <div class="bg-img mb-2 text-left">
-                            <img src="{{route('index')}}/assets/images/landing/vision.png" alt="IADC Suez University Student Chapter Vision - Enabling students to explore their potential">
+                            <img src="{{route('index')}}/assets/images/landing/vision.webp" alt="IADC Suez University Student Chapter Vision - Enabling students to explore their potential" loading="lazy">
                             
                         </div>
                         <div class="text-left">
@@ -30,7 +30,7 @@
                     <div class="card  features main-features main-features-2 wow fadeInUp reveal revealleft"
                         data-wow-delay="0.1s">
                         <div class="bg-img mb-2 text-left">
-                            <img src="{{route('index')}}/assets/images/landing/mission.png" style="width:200px; padding-top:15px;" alt="IADC Suez University Student Chapter Mission - Bridging academia and industry">
+                            <img src="{{route('index')}}/assets/images/landing/mission.webp" style="width:200px; padding-top:15px;" alt="IADC Suez University Student Chapter Mission - Bridging academia and industry" loading="lazy">
                             
                         </div>
                         <div class="text-left">

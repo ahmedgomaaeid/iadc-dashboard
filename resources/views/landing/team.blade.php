@@ -187,7 +187,7 @@
         <div class="row d-flex justify-content-center">
             <div class="team-card col-md-4 col-lg-4 col-sm-6 col-12">
                 <div class="team-card-image">
-                    <img src="{{ asset('assets/images/users/Dr nevin.webp') }}" alt="Dr Nevin Aly - Faculty Advisor of IADC Suez University Student Chapter">
+                    <img src="{{ asset('assets/images/users/Dr nevin.webp') }}" alt="Dr Nevin Aly - Faculty Advisor of IADC Suez University Student Chapter" loading="lazy">
                 </div>
                 <div class="team-card-content">
                     <div class="team-card-divider"></div>
@@ -211,7 +211,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/amr.webp') }}" alt="Amr Eldeeb">
+                                <img src="{{ asset('assets/images/users/amr.webp') }}" alt="Amr Eldeeb" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -229,7 +229,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/Ahmed Mobasher.webp') }}" alt="Ahmed Mobasher - Vice Chairman of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/Ahmed Mobasher.webp') }}" alt="Ahmed Mobasher - Vice Chairman of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -247,7 +247,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/hesham.webp') }}" alt="Eslam Hesham - PR and Treasury Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/hesham.webp') }}" alt="Eslam Hesham - PR and Treasury Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -265,7 +265,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/gomaa.webp') }}" alt="Ahmed Gomaa - IT Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/gomaa.webp') }}" alt="Ahmed Gomaa - IT Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -283,7 +283,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/Saad.webp') }}" alt="Saad Waseem - Technical Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/Saad.webp') }}" alt="Saad Waseem - Technical Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -301,7 +301,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/Hussien.webp') }}" alt="Hussien Mousa - Secretary Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/Hussien.webp') }}" alt="Hussien Mousa - Secretary Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -318,7 +318,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/youssif.webp') }}" alt="Youssef Sayed - Operations Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/youssif.webp') }}" alt="Youssef Sayed - Operations Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -335,7 +335,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/ahmed farouk.webp') }}" alt="Ahmed Farouk - Marketing Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/ahmed farouk.webp') }}" alt="Ahmed Farouk - Marketing Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -352,7 +352,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/rewan.webp') }}" alt="Rewan Ramadan - HR Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/rewan.webp') }}" alt="Rewan Ramadan - HR Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -369,7 +369,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/fatma.webp') }}" alt="Fatma Amer - Vice Marketing Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/fatma.webp') }}" alt="Fatma Amer - Vice Marketing Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -386,7 +386,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/mamdoh.webp') }}" alt="Mahmoud Mamdouh - Vice Technical Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/mamdoh.webp') }}" alt="Mahmoud Mamdouh - Vice Technical Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -403,7 +403,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/ahmed mostafa.webp') }}" alt="Ahmed Mostafa - Vice PR and Treasury Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/ahmed mostafa.webp') }}" alt="Ahmed Mostafa - Vice PR and Treasury Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -420,7 +420,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/helmy.webp') }}" alt="Mohamed Helmy - Vice Secretary Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/helmy.webp') }}" alt="Mohamed Helmy - Vice Secretary Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
@@ -437,7 +437,7 @@
                     <div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
-                                <img src="{{ asset('assets/images/users/mohamed ali.webp') }}" alt="Mohamed Ali - Vice IT Manager of IADC Suez University Student Chapter">
+                                <img src="{{ asset('assets/images/users/mohamed ali.webp') }}" alt="Mohamed Ali - Vice IT Manager of IADC Suez University Student Chapter" loading="lazy">
                             </div>
                             <div class="team-card-content">
                                 <div class="team-card-divider"></div>
