@@ -17,10 +17,23 @@
         #zmmtg-root {
             display: none;
             width: 100%;
-            min-height: 600px;
+            min-height: 500px;
             position: relative !important;
             background-color: #000;
-            border-radius: 8px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            #zmmtg-root {
+                min-height: 600px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            #zmmtg-root {
+                min-height: 700px;
+            }
         }
 
         .loading-overlay {
@@ -29,31 +42,280 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 9998;
+            backdrop-filter: blur(5px);
         }
 
         .loading-spinner {
             color: white;
             font-size: 18px;
+            text-align: center;
         }
 
-        .waiting-card {
+        .loading-spinner i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Status Cards Base Styling */
+        .status-card {
             display: none;
-            background: linear-gradient(135deg, #2196f3, #1976d2);
-            color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
         }
 
-        .waiting-card.show {
+        .status-card.show {
             display: block;
         }
 
-        .spinner-grow {
-            width: 3rem;
-            height: 3rem;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Waiting Card */
+        .waiting-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .waiting-card .card-body {
+            padding: 3rem 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .waiting-card .card-body {
+                padding: 4rem 2rem;
+            }
+        }
+
+        .waiting-card .status-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .waiting-card .status-icon i {
+            font-size: 2rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* Meeting Ended Card */
+        .meeting-ended-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .meeting-ended-card .card-body {
+            padding: 3rem 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .meeting-ended-card .card-body {
+                padding: 4rem 2rem;
+            }
+        }
+
+        .meeting-ended-card .status-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .meeting-ended-card .status-icon i {
+            font-size: 2rem;
+        }
+
+        /* Auto-joining Card */
+        .autojoining-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .autojoining-card .card-body {
+            padding: 3rem 1.5rem;
+        }
+
+        /* Join Card */
+        .join-card {
+            border-radius: 16px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .join-card .card-body {
+            padding: 2.5rem 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .join-card .card-body {
+                padding: 3rem 2rem;
+            }
+        }
+
+        .join-card .meeting-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .join-card .meeting-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .join-card .btn-join {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .join-card .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .join-card .btn-join:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+
+        /* Meeting Container */
+        .meeting-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .meeting-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+
+        .meeting-card .card-header .card-title {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .live-badge {
+            background: #38ef7d !important;
+            animation: livePulse 2s infinite;
+            font-weight: 600;
+        }
+
+        @keyframes livePulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Progress dots for waiting */
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .progress-dots span {
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: dotPulse 1.5s infinite;
+        }
+
+        .progress-dots span:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .progress-dots span:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(1);
+                background: rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                transform: scale(1.3);
+                background: rgba(255, 255, 255, 1);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .status-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .status-card p {
+                font-size: 0.9rem;
+            }
+
+            .join-card .meeting-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .join-card .meeting-icon i {
+                font-size: 2rem;
+            }
         }
     </style>
 @endsection
@@ -70,26 +332,53 @@
         </div>
     </div>
 
-    <!-- Waiting for Host to Rejoin Card (shown when meeting ends) -->
-    <div class="card waiting-card" id="waiting-card">
-        <div class="card-body text-center py-5">
-            <div class="spinner-grow text-light mb-3" role="status">
-                <span class="visually-hidden">Loading...</span>
+    <!-- Auto-joining Card (shown when auto-join is in progress) -->
+    <div class="card status-card autojoining-card" id="autojoining-card" style="display:none;">
+        <div class="card-body text-center">
+            <div class="status-icon" style="background: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i class="fe fe-zap" style="font-size: 2rem;"></i>
             </div>
-            <h3 class="mt-3">Meeting Ended</h3>
-            <p class="mb-2">The meeting has ended due to the 45-minute limit.</p>
-            <p class="mb-4">Waiting for the host to start a new meeting...</p>
-            <p class="small opacity-75">You will automatically join when the host starts the new meeting.</p>
+            <h3 class="mt-3 mb-3">Joining Meeting...</h3>
+            <p class="mb-2 opacity-90">You're being connected to the continuation meeting.</p>
+            <p class="small opacity-75">Please wait, this will only take a moment.</p>
+            <div class="progress-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting for Host to Rejoin Card (shown when meeting ends) -->
+    <div class="card status-card waiting-card" id="waiting-card">
+        <div class="card-body text-center">
+            <div class="status-icon">
+                <i class="fe fe-clock"></i>
+            </div>
+            <h3 class="mb-3">Meeting Session Ended</h3>
+            <p class="mb-2 opacity-90">The meeting has ended due to the 45-minute limit.</p>
+            <p class="mb-0 opacity-75">Waiting for the host to start the continuation...</p>
+            <div class="progress-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p class="small opacity-75 mt-4">
+                <i class="fe fe-info me-1"></i>
+                You will automatically join when the host starts the new meeting.
+            </p>
         </div>
     </div>
 
     <!-- Meeting Finally Ended Card (shown when host ends meeting permanently) -->
-    <div class="card" id="meeting-ended-card" style="display:none; background: linear-gradient(135deg, #f44336, #c62828); color: white;">
-        <div class="card-body text-center py-5">
-            <i class="fe fe-x-circle" style="font-size: 48px;"></i>
-            <h3 class="mt-3">Meeting Has Ended</h3>
-            <p class="mb-4">The host has ended this meeting. Thank you for attending!</p>
-            <a href="{{ route('user.sessions.index') }}" class="btn btn-light btn-lg">
+    <div class="card status-card meeting-ended-card" id="meeting-ended-card">
+        <div class="card-body text-center">
+            <div class="status-icon">
+                <i class="fe fe-check"></i>
+            </div>
+            <h3 class="mb-3">Meeting Has Concluded</h3>
+            <p class="mb-4 opacity-90">The host has ended this meeting session.<br>Thank you for attending!</p>
+            <a href="{{ route('user.sessions.index') }}" class="btn btn-light btn-lg px-4">
                 <i class="fe fe-arrow-left me-2"></i>Back to Sessions
             </a>
         </div>
@@ -97,16 +386,27 @@
 
     <!-- Join Button Card (hidden when meeting starts) -->
     <div class="row" id="join-card">
-        <div class="col-12">
-            <div class="card">
+        <div class="col-12 col-lg-8 col-xl-6 mx-auto">
+            <div class="card join-card">
                 <div class="card-body text-center">
-                    <h3 class="mb-4">Join Meeting</h3>
-                    <p class="text-muted mb-4">Click the button below to join the meeting.</p>
+                    <div class="meeting-icon">
+                        <i class="fe fe-video"></i>
+                    </div>
+                    <h3 class="mb-3">Ready to Join</h3>
+                    <p class="text-muted mb-4">{{ $session->title }}</p>
 
-                    <button id="join-meeting" class="btn btn-primary btn-lg">
-                        <i class="fe fe-video me-2"></i> Join Meeting
+                    <button id="join-meeting" class="btn btn-primary btn-lg btn-join">
+                        <i class="fe fe-video me-2"></i>Join Meeting
                     </button>
-                    <div id="error-message" class="text-danger mt-3" style="display:none;"></div>
+                    
+                    <div id="error-message" class="alert alert-danger mt-4" style="display:none;"></div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <small class="text-muted">
+                            <i class="fe fe-shield me-1"></i>
+                            Your audio and video are off by default
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,14 +415,14 @@
     <!-- Zoom Meeting Card (shown when meeting starts) -->
     <div class="row" id="meeting-container" style="display:none;">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fe fe-video me-2"></i> {{ $session->title }}</h3>
-                    <div class="card-options">
-                        <span class="badge bg-success">
-                            <i class="fe fe-circle me-1"></i> Live
-                        </span>
-                    </div>
+            <div class="card meeting-card">
+                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <h3 class="card-title mb-0">
+                        <i class="fe fe-video me-2"></i>{{ $session->title }}
+                    </h3>
+                    <span class="badge live-badge">
+                        <i class="fe fe-radio me-1"></i>LIVE
+                    </span>
                 </div>
                 <div class="card-body p-0">
                     <div id="zmmtg-root"></div>
@@ -133,8 +433,11 @@
 
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner">
-            <i class="fa fa-spinner fa-spin fa-3x"></i>
-            <p class="mt-3">Joining meeting...</p>
+            <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Connecting to meeting...</p>
+            <small class="opacity-75">Please wait</small>
         </div>
     </div>
 @endsection
@@ -250,9 +553,14 @@
                 // Auto-join if redirected from continuation
                 if (shouldAutoJoin) {
                     console.log('Auto-join enabled, joining meeting automatically...');
+                    // Show auto-joining card
+                    document.getElementById('join-card').style.display = 'none';
+                    document.getElementById('autojoining-card').style.display = 'block';
+                    document.getElementById('autojoining-card').classList.add('show');
+                    
                     setTimeout(function() {
                         joinMeeting(meetingConfig);
-                    }, 1000); // Small delay to ensure everything is ready
+                    }, 1500); // Small delay to ensure everything is ready
                 }
 
                 // Handle meeting status changes
@@ -386,9 +694,10 @@
 
         function showMeetingEndedCard() {
             document.getElementById('waiting-card').classList.remove('show');
+            document.getElementById('autojoining-card').classList.remove('show');
             document.getElementById('meeting-container').style.display = 'none';
             document.getElementById('join-card').style.display = 'none';
-            document.getElementById('meeting-ended-card').style.display = 'block';
+            document.getElementById('meeting-ended-card').classList.add('show');
         }
 
         function joinNewMeeting(sessionData) {

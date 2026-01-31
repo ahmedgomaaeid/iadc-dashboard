@@ -4,45 +4,225 @@
 
 @section('css')
     <style>
+        /* Warning Banner */
         .warning-banner {
-            background: linear-gradient(135deg, #ff9800, #f57c00);
+            background: linear-gradient(135deg, #ff9f43 0%, #ee5a24 100%);
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
+            padding: 20px 25px;
+            border-radius: 16px;
             margin-bottom: 20px;
             display: none;
+            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.3);
         }
 
         .warning-banner.show {
             display: block;
-            animation: pulse 2s infinite;
+            animation: slideDown 0.5s ease-out;
         }
 
-        @keyframes pulse {
-
-            0%,
-            100% {
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
                 opacity: 1;
-            }
-
-            50% {
-                opacity: 0.8;
+                transform: translateY(0);
             }
         }
 
-        .meeting-timer {
-            font-size: 24px;
-            font-weight: bold;
+        .warning-banner h4 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
 
+        .warning-banner .meeting-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 12px;
+            border-radius: 8px;
+        }
+
+        .warning-banner .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .warning-banner .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .warning-banner .btn-light {
+            background: white;
+            color: #ee5a24;
+        }
+
+        .warning-banner .btn-danger {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+        }
+
+        .warning-banner .btn-danger:hover {
+            background: white;
+            color: #ee5a24;
+        }
+
+        /* Continuation Card */
         .continuation-card {
             display: none;
-            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
         }
 
         .continuation-card.show {
             display: block;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .continuation-card .card-body {
+            padding: 3rem 2rem;
+        }
+
+        .continuation-card .status-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .continuation-card .status-icon i {
+            font-size: 2rem;
+        }
+
+        /* Host Card */
+        .host-card {
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .host-card .card-body {
+            padding: 3rem 2rem;
+        }
+
+        .host-card .meeting-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .host-card .meeting-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .host-card .btn-launch {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .host-card .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Meeting Details */
+        .meeting-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .meeting-details .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .meeting-details .detail-item:not(:last-child) {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .meeting-details .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .meeting-details .detail-value {
+            font-weight: 600;
+            font-family: monospace;
+            background: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+
+        /* Timer Display */
+        .timer-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .timer-display .timer-label {
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-display .meeting-timer {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .warning-banner {
+                padding: 15px;
+            }
+            
+            .warning-banner .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .host-card .card-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .host-card .meeting-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .host-card .meeting-icon i {
+                font-size: 2rem;
+            }
         }
     </style>
 @endsection
@@ -54,24 +234,23 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('highboard.sessions.index') }}">Sessions</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Join Session</li>
+                <li class="breadcrumb-item active" aria-current="page">Host Session</li>
             </ol>
         </div>
     </div>
 
     <!-- Warning Banner (shows at 40 minutes) -->
     <div class="warning-banner" id="warning-banner">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div>
-                <h4 class="mb-1"><i class="fe fe-alert-triangle me-2"></i>Meeting Ending Soon</h4>
-                <p class="mb-0">Free Zoom meetings are limited to 45 minutes. Time remaining: <span class="meeting-timer"
-                        id="time-remaining">5:00</span></p>
+                <h4><i class="fe fe-alert-triangle me-2"></i>Meeting Ending Soon</h4>
+                <p class="mb-0">Free Zoom meetings are limited to 45 minutes. Time remaining: <span class="meeting-timer" id="time-remaining">5:00</span></p>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-light btn-lg" id="continue-meeting-btn" onclick="continueMeeting()">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-light" id="continue-meeting-btn" onclick="continueMeeting()">
                     <i class="fe fe-refresh-cw me-2"></i>Continue Meeting
                 </button>
-                <button class="btn btn-danger btn-lg" id="end-meeting-btn" onclick="endMeeting()">
+                <button class="btn btn-danger" id="end-meeting-btn" onclick="endMeeting()">
                     <i class="fe fe-x-circle me-2"></i>End Meeting
                 </button>
             </div>
@@ -80,46 +259,59 @@
 
     <!-- Continuation Success Card -->
     <div class="card continuation-card" id="continuation-card">
-        <div class="card-body text-center py-5">
-            <i class="fe fe-check-circle" style="font-size: 48px;"></i>
-            <h3 class="mt-3">New Meeting Created!</h3>
-            <p class="mb-4">A new meeting has been created. Click below to join.</p>
-            <a href="#" id="new-meeting-link" class="btn btn-light btn-lg" target="_blank">
+        <div class="card-body text-center">
+            <div class="status-icon">
+                <i class="fe fe-check"></i>
+            </div>
+            <h3 class="mb-3">New Meeting Created!</h3>
+            <p class="opacity-90 mb-4">A continuation meeting has been created successfully.</p>
+            <a href="#" id="new-meeting-link" class="btn btn-light btn-lg px-4" target="_blank">
                 <i class="fe fe-video me-2"></i>Join New Meeting
             </a>
-            <p class="mt-3 small">Members will automatically join when you start the new meeting.</p>
+            <p class="mt-4 small opacity-75">
+                <i class="fe fe-users me-1"></i>
+                Members will automatically join when you start the new meeting.
+            </p>
         </div>
     </div>
 
     <div class="row" id="main-content">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body text-center"
-                    style="min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                    <h3 class="mb-4">Ready to start the meeting?</h3>
-                    <p class="text-muted mb-4">As the host, please launch the meeting using the Zoom application to enable
-                        auto-recording and host controls.</p>
+        <div class="col-12 col-lg-8 col-xl-6 mx-auto">
+            <div class="card host-card">
+                <div class="card-body text-center">
+                    <div class="meeting-icon">
+                        <i class="fe fe-video"></i>
+                    </div>
+                    <h3 class="mb-3">Ready to Host</h3>
+                    <p class="text-muted mb-4">Launch the meeting using the Zoom application for full host controls and auto-recording.</p>
 
                     @if($session->zoom_start_url)
-                        <a href="{{ $session->zoom_start_url }}" class="btn btn-primary btn-lg mb-3" target="_blank"
+                        <a href="{{ $session->zoom_start_url }}" class="btn btn-primary btn-lg btn-launch mb-3" target="_blank"
                             id="launch-zoom-btn" onclick="markAsJoined()">
-                            <i class="fe fe-video me-2"></i>Launch Zoom App
+                            <i class="fe fe-external-link me-2"></i>Launch Zoom App
                         </a>
-                        <p class="small text-muted">This will open the Zoom application on your device.</p>
+                        <p class="small text-muted">Opens in your Zoom application</p>
                     @else
                         <div class="alert alert-warning">
+                            <i class="fe fe-alert-triangle me-2"></i>
                             Zoom meeting details are missing. Please contact support.
                         </div>
                     @endif
 
-                    <div class="mt-4">
-                        <p><strong>Meeting ID:</strong> {{ $session->zoom_meeting_id }}</p>
-                        <p><strong>Password:</strong> {{ $session->zoom_password }}</p>
+                    <div class="meeting-details">
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fe fe-hash me-2"></i>Meeting ID</span>
+                            <span class="detail-value">{{ $session->zoom_meeting_id }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fe fe-lock me-2"></i>Password</span>
+                            <span class="detail-value">{{ $session->zoom_password }}</span>
+                        </div>
                     </div>
 
                     <!-- Timer Display -->
-                    <div class="mt-4 p-3 bg-light rounded" id="timer-display">
-                        <p class="mb-1 text-muted">Meeting Duration</p>
+                    <div class="timer-display" id="timer-display">
+                        <p class="timer-label mb-1"><i class="fe fe-clock me-1"></i>Meeting Duration</p>
                         <span class="meeting-timer" id="elapsed-time">00:00</span>
                     </div>
                 </div>
