@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class MemberController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     /**
      * Display a listing of all members
      */
@@ -91,7 +92,7 @@ class MemberController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('users', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'users');
         }
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
@@ -143,11 +144,7 @@ class MemberController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($member->image) {
-                Storage::disk('public')->delete($member->image);
-            }
-            $validated['image'] = $request->file('image')->store('users', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'users', $member->image);
         }
 
         $validated['is_active'] = $request->has('is_active') ? true : false;

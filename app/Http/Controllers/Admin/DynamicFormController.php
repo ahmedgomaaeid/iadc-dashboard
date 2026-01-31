@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DynamicFormController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     /**
      * Display a listing of dynamic forms.
      */
@@ -64,7 +65,7 @@ class DynamicFormController extends Controller
         ];
 
         if ($request->hasFile('form_image')) {
-            $data['form_image'] = $request->file('form_image')->store('dynamic-forms', 'public');
+            $data['form_image'] = $this->uploadImage($request->file('form_image'), 'dynamic-forms');
         }
 
         DynamicForm::create($data);
@@ -126,11 +127,7 @@ class DynamicFormController extends Controller
         ];
 
         if ($request->hasFile('form_image')) {
-            // Delete old image if exists
-            if ($dynamicForm->form_image) {
-                Storage::disk('public')->delete($dynamicForm->form_image);
-            }
-            $data['form_image'] = $request->file('form_image')->store('dynamic-forms', 'public');
+            $data['form_image'] = $this->uploadImage($request->file('form_image'), 'dynamic-forms', $dynamicForm->form_image);
         }
 
         $dynamicForm->update($data);

@@ -11,6 +11,7 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     public function edit()
     {
         $user = Auth::guard('board')->user();
@@ -29,11 +30,7 @@ class ProfileController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($user->image && Storage::disk('public')->exists($user->image)) {
-                Storage::disk('public')->delete($user->image);
-            }
-            $path = $request->file('image')->store('profiles/board', 'public');
-            $validated['image'] = $path;
+            $validated['image'] = $this->uploadImage($request->file('image'), 'profiles/board', $user->image);
         }
 
         $user->update($validated);

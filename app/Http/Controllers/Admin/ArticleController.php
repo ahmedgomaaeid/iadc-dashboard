@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     /**
      * Display a listing of articles.
      */
@@ -45,7 +46,7 @@ class ArticleController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('articles', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'articles');
         }
 
         $validated['is_active'] = $request->has('is_active');
@@ -85,11 +86,9 @@ class ArticleController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($article->image) {
-                Storage::disk('public')->delete($article->image);
-            }
-            $validated['image'] = $request->file('image')->store('articles', 'public');
+            // Delete old image handled by trait if passed, but here we can just pass it directly if we want, or keep logic. 
+            // The trait handles deletion if we pass the old path.
+            $validated['image'] = $this->uploadImage($request->file('image'), 'articles', $article->image);
         }
 
         $validated['is_active'] = $request->has('is_active');

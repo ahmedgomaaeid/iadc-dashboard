@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     /**
      * Display a listing of events.
      */
@@ -55,7 +56,7 @@ class EventController extends Controller
 
         // Handle event image upload
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('events', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'events');
         }
 
         $validated['register_active'] = $request->has('register_active');
@@ -69,7 +70,7 @@ class EventController extends Controller
                 $partnerType = $partnerInput['type'] ?? null;
                 
                 if ($partnerType && $request->hasFile("partners.{$index}.image")) {
-                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
+                    $partnerImage = $this->uploadImage($request->file("partners.{$index}.image"), 'event-partners');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,
@@ -120,11 +121,7 @@ class EventController extends Controller
 
         // Handle event image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($event->image) {
-                Storage::disk('public')->delete($event->image);
-            }
-            $validated['image'] = $request->file('image')->store('events', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'events', $event->image);
         }
 
         $validated['register_active'] = $request->has('register_active');
@@ -138,7 +135,7 @@ class EventController extends Controller
                 $partnerType = $partnerInput['type'] ?? null;
                 
                 if ($partnerType && $request->hasFile("partners.{$index}.image")) {
-                    $partnerImage = $request->file("partners.{$index}.image")->store('event-partners', 'public');
+                    $partnerImage = $this->uploadImage($request->file("partners.{$index}.image"), 'event-partners');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,

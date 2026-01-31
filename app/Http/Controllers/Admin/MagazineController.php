@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class MagazineController extends Controller
 {
+    use \App\Traits\ImageUploadTrait;
     /**
      * Display a listing of the magazines.
      */
@@ -40,7 +41,7 @@ class MagazineController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('magazines/covers', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'magazines/covers');
         }
 
         // Handle PDF upload
@@ -81,11 +82,7 @@ class MagazineController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($magazine->image) {
-                Storage::disk('public')->delete($magazine->image);
-            }
-            $validated['image'] = $request->file('image')->store('magazines/covers', 'public');
+            $validated['image'] = $this->uploadImage($request->file('image'), 'magazines/covers', $magazine->image);
         }
 
         // Handle PDF upload
