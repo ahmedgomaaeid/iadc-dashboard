@@ -98,6 +98,78 @@
     .sortable-chosen {
         box-shadow: 0 8px 25px rgba(180, 18, 13, 0.3);
     }
+    /* Gallery Styles */
+    .gallery-item {
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: grab;
+        transition: all 0.3s ease;
+    }
+    .gallery-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .gallery-item img {
+        width: 180px;
+        height: 135px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+    }
+    .gallery-item .remove-gallery-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(220, 53, 69, 0.9);
+        border: none;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .gallery-item:hover .remove-gallery-image {
+        opacity: 1;
+    }
+    .gallery-item .gallery-order {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        background: rgba(180, 18, 13, 0.9);
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 8px;
+    }
+    #gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        min-height: 100px;
+        padding: 10px;
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    #gallery-container.dragover {
+        border-color: #B4120D;
+        background: #fff5f5;
+    }
+    .gallery-empty-state {
+        width: 100%;
+        text-align: center;
+        color: #adb5bd;
+        padding: 20px;
+    }
 </style>
 @endsection
 
@@ -274,6 +346,47 @@
                             @enderror
                         </div>
 
+                        <!-- Gallery Images Section -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fe fe-image me-1"></i>Event Gallery 
+                                <small class="text-muted">(Multiple images, drag to reorder)</small>
+                            </label>
+                            <input type="file" 
+                                   class="form-control @error('gallery.*') is-invalid @enderror" 
+                                   id="gallery" 
+                                   name="gallery[]"
+                                   accept="image/*"
+                                   multiple
+                                   onchange="previewNewGalleryImages(this)">
+                            @error('gallery.*')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                            
+                            <div id="gallery-container">
+                                @if(isset($event) && $event->images->count() > 0)
+                                    @foreach($event->images as $index => $image)
+                                        <div class="gallery-item" data-image-id="{{ $image->id }}">
+                                            <img src="{{ asset('storage/' . $image->image) }}" alt="Gallery image">
+                                            <button type="button" class="remove-gallery-image" onclick="deleteGalleryImage({{ $image->id }})">
+                                                <i class="fe fe-x"></i>
+                                            </button>
+                                            <span class="gallery-order">{{ $index + 1 }}</span>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="gallery-empty-state" id="gallery-empty-state">
+                                        <i class="fe fe-image" style="font-size: 32px;"></i>
+                                        <p class="mb-0 mt-2">No gallery images yet</p>
+                                        <small>Upload images to create a carousel</small>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Preview for new uploads -->
+                            <div id="new-gallery-preview" class="mt-2" style="display: flex; flex-wrap: wrap;"></div>
+                        </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" 
@@ -398,6 +511,20 @@
                 handle: '.drag-handle',
                 onEnd: function() {
                     updatePartnerOrder();
+                }
+            });
+        }
+
+        // Initialize Sortable for gallery images
+        const galleryContainer = document.getElementById('gallery-container');
+        if (galleryContainer) {
+            new Sortable(galleryContainer, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                filter: '.gallery-empty-state',
+                onEnd: function() {
+                    updateGalleryOrder();
                 }
             });
         }
@@ -547,6 +674,134 @@
                 badge.textContent = index + 1;
             }
         });
+    }
+
+    // Gallery Functions
+    function updateGalleryOrder() {
+        const container = document.getElementById('gallery-container');
+        if (!container) return;
+
+        const galleryItems = container.querySelectorAll('.gallery-item[data-image-id]');
+        const order = [];
+
+        // Update order badges and collect IDs
+        galleryItems.forEach((item, index) => {
+            const imageId = item.dataset.imageId;
+            order.push(imageId);
+
+            // Update the order badge
+            const badge = item.querySelector('.gallery-order');
+            if (badge) {
+                badge.textContent = index + 1;
+            }
+        });
+
+        if (order.length === 0) return;
+
+        // Save the new order via AJAX
+        $.ajax({
+            url: '{{ route("admin.events.images.update-order") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                order: order
+            },
+            success: function(response) {
+                console.log('Gallery order updated successfully');
+            },
+            error: function(xhr) {
+                console.error('Error updating gallery order:', xhr);
+                alert('Error updating gallery order. Please try again.');
+            }
+        });
+    }
+
+    function deleteGalleryImage(imageId) {
+        if (!confirm('Are you sure you want to remove this image?')) {
+            return;
+        }
+        
+        $.ajax({
+            url: `/admin/events/images/${imageId}`,
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                _method: 'DELETE'
+            },
+            success: function(response) {
+                const item = document.querySelector(`.gallery-item[data-image-id="${imageId}"]`);
+                if (item) {
+                    item.style.transition = 'opacity 0.3s, transform 0.3s';
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        item.remove();
+                        updateGalleryOrderBadges();
+                        checkGalleryEmpty();
+                    }, 300);
+                }
+            },
+            error: function(xhr) {
+                alert('Error deleting image. Please try again.');
+                console.error(xhr);
+            }
+        });
+    }
+
+    function updateGalleryOrderBadges() {
+        const container = document.getElementById('gallery-container');
+        if (!container) return;
+
+        const galleryItems = container.querySelectorAll('.gallery-item[data-image-id]');
+        galleryItems.forEach((item, index) => {
+            const badge = item.querySelector('.gallery-order');
+            if (badge) {
+                badge.textContent = index + 1;
+            }
+        });
+    }
+
+    function checkGalleryEmpty() {
+        const container = document.getElementById('gallery-container');
+        const items = container.querySelectorAll('.gallery-item[data-image-id]');
+        const emptyState = document.getElementById('gallery-empty-state');
+        
+        if (items.length === 0 && !emptyState) {
+            container.innerHTML = `
+                <div class="gallery-empty-state" id="gallery-empty-state">
+                    <i class="fe fe-image" style="font-size: 32px;"></i>
+                    <p class="mb-0 mt-2">No gallery images yet</p>
+                    <small>Upload images to create a carousel</small>
+                </div>
+            `;
+        }
+    }
+
+    function previewNewGalleryImages(input) {
+        const previewContainer = document.getElementById('new-gallery-preview');
+        previewContainer.innerHTML = '';
+        
+        if (input.files && input.files.length > 0) {
+            // Hide empty state if visible
+            const emptyState = document.getElementById('gallery-empty-state');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            Array.from(input.files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewHtml = `
+                        <div class="gallery-item" style="opacity: 0.7; border: 2px dashed #B4120D;">
+                            <img src="${e.target.result}" alt="New image">
+                            <span class="gallery-order" style="background: rgba(40, 167, 69, 0.9);">New</span>
+                        </div>
+                    `;
+                    previewContainer.insertAdjacentHTML('beforeend', previewHtml);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
     }
 </script>
 @endsection

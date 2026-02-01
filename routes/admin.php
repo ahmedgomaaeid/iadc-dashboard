@@ -73,6 +73,10 @@ Route::domain(env('APP_URL'))->group(function () {
             ->name('events.partners.destroy');
         Route::post('events/partners/update-order', [\App\Http\Controllers\Admin\EventController::class, 'updatePartnerOrder'])
             ->name('events.partners.update-order');
+        Route::delete('events/images/{id}', [\App\Http\Controllers\Admin\EventController::class, 'destroyImage'])
+            ->name('events.images.destroy');
+        Route::post('events/images/update-order', [\App\Http\Controllers\Admin\EventController::class, 'updateImageOrder'])
+            ->name('events.images.update-order');
 
         // Article Management Routes
         Route::resource('articles', \App\Http\Controllers\Admin\ArticleController::class);

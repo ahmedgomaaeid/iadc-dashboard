@@ -39,6 +39,14 @@ class Event extends Model
     }
 
     /**
+     * Get the gallery images for the event.
+     */
+    public function images()
+    {
+        return $this->hasMany(EventImage::class)->orderBy('sort_order');
+    }
+
+    /**
      * Scope a query to only include active events.
      */
     public function scopeActive($query)

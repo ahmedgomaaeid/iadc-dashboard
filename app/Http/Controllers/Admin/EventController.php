@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\EventImage;
 use App\Models\EventPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -52,6 +53,8 @@ class EventController extends Controller
             'partners' => 'nullable|array',
             'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         // Handle event image upload
@@ -82,6 +85,19 @@ class EventController extends Controller
             }
         }
 
+        // Handle gallery images
+        if ($request->hasFile('gallery')) {
+            $imageOrder = 0;
+            foreach ($request->file('gallery') as $galleryImage) {
+                $imagePath = $this->uploadImage($galleryImage, 'event-gallery');
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image' => $imagePath,
+                    'sort_order' => $imageOrder++,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.events.index')
             ->with('success', 'Event created successfully.');
     }
@@ -92,6 +108,8 @@ class EventController extends Controller
     public function edit($id)
     {
         $event = Event::with(['partners' => function($query) {
+            $query->orderBy('sort_order');
+        }, 'images' => function($query) {
             $query->orderBy('sort_order');
         }])->findOrFail($id);
         $partnerTypes = EventPartner::TYPES;
@@ -121,6 +139,8 @@ class EventController extends Controller
             'partners' => 'nullable|array',
             'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         // Handle event image upload
@@ -152,6 +172,20 @@ class EventController extends Controller
             }
         }
 
+        // Handle gallery images
+        if ($request->hasFile('gallery')) {
+            $maxImageOrder = $event->images()->max('sort_order') ?? -1;
+            foreach ($request->file('gallery') as $galleryImage) {
+                $maxImageOrder++;
+                $imagePath = $this->uploadImage($galleryImage, 'event-gallery');
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image' => $imagePath,
+                    'sort_order' => $maxImageOrder,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.events.index')
             ->with('success', 'Event updated successfully.');
     }
@@ -172,6 +206,13 @@ class EventController extends Controller
         foreach ($event->partners as $partner) {
             if ($partner->image) {
                 Storage::disk('public')->delete($partner->image);
+            }
+        }
+
+        // Delete gallery images
+        foreach ($event->images as $image) {
+            if ($image->image) {
+                Storage::disk('public')->delete($image->image);
             }
         }
 
@@ -224,6 +265,40 @@ class EventController extends Controller
 
         foreach ($request->input('order') as $index => $partnerId) {
             EventPartner::where('id', $partnerId)->update(['sort_order' => $index]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Delete a specific gallery image.
+     */
+    public function destroyImage($id)
+    {
+        $image = EventImage::findOrFail($id);
+
+        // Delete image file
+        if ($image->image) {
+            Storage::disk('public')->delete($image->image);
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Update gallery image order.
+     */
+    public function updateImageOrder(Request $request)
+    {
+        $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'required|integer|exists:event_images,id',
+        ]);
+
+        foreach ($request->input('order') as $index => $imageId) {
+            EventImage::where('id', $imageId)->update(['sort_order' => $index]);
         }
 
         return response()->json(['success' => true]);
