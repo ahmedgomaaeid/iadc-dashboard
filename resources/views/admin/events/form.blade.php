@@ -12,6 +12,7 @@
         border: 1px solid #dee2e6;
         position: relative;
         transition: all 0.3s ease;
+        cursor: grab;
     }
     .partner-card:hover {
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -21,6 +22,30 @@
         position: absolute;
         top: 10px;
         right: 10px;
+        z-index: 10;
+    }
+    .partner-card .drag-handle {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        cursor: grab;
+        color: #6c757d;
+        font-size: 18px;
+        z-index: 10;
+    }
+    .partner-card .drag-handle:hover {
+        color: #B4120D;
+    }
+    .partner-card .order-badge {
+        position: absolute;
+        top: 10px;
+        left: 40px;
+        background: #B4120D;
+        color: #fff;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        z-index: 10;
     }
     .existing-partner-card {
         background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
@@ -61,10 +86,17 @@
         margin-top: 10px;
         border: 3px solid #dee2e6;
     }
+    #existing-partners-container,
     #partners-container {
         max-height: 500px;
         overflow-y: auto;
         padding-right: 10px;
+    }
+    .sortable-ghost {
+        opacity: 0.4;
+    }
+    .sortable-chosen {
+        box-shadow: 0 8px 25px rgba(180, 18, 13, 0.3);
     }
 </style>
 @endsection
@@ -272,25 +304,29 @@
                     <div class="card-body">
                         <!-- Existing Partners -->
                         @if(isset($event) && $event->partners->count() > 0)
-                            <h6 class="text-muted mb-3">Existing Partners</h6>
-                            @foreach($event->partners as $partner)
-                                <div class="partner-card existing-partner-card" id="existing-partner-{{ $partner->id }}">
-                                    <button type="button" class="btn btn-sm btn-danger remove-partner" 
-                                            onclick="deletePartner({{ $partner->id }})">
-                                        <i class="fe fe-x"></i>
-                                    </button>
-                                    <div class="text-center">
-                                        <img src="{{ asset('storage/' . $partner->image) }}" 
-                                             alt="Partner" 
-                                             class="image-preview mb-2">
-                                        <div>
-                                            <span class="partner-type-badge type-{{ $partner->type }}">
-                                                {{ $partner->type_name }}
-                                            </span>
+                            <h6 class="text-muted mb-3"><i class="fe fe-move me-1"></i>Existing Partners (Drag to Reorder)</h6>
+                            <div id="existing-partners-container">
+                                @foreach($event->partners as $index => $partner)
+                                    <div class="partner-card existing-partner-card" id="existing-partner-{{ $partner->id }}" data-partner-id="{{ $partner->id }}">
+                                        <span class="drag-handle"><i class="fe fe-menu"></i></span>
+                                        <span class="order-badge">{{ $index + 1 }}</span>
+                                        <button type="button" class="btn btn-sm btn-danger remove-partner" 
+                                                onclick="deletePartner({{ $partner->id }})">
+                                            <i class="fe fe-x"></i>
+                                        </button>
+                                        <div class="text-center">
+                                            <img src="{{ asset('storage/' . $partner->image) }}" 
+                                                 alt="Partner" 
+                                                 class="image-preview mb-2">
+                                            <div>
+                                                <span class="partner-type-badge type-{{ $partner->type }}">
+                                                    {{ $partner->type_name }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                             <hr>
                         @endif
 
@@ -317,6 +353,7 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
     let partnerIndex = 0;
 
@@ -350,7 +387,59 @@
                 $('#description').val($('#description').summernote('code'));
             }
         });
+
+        // Initialize Sortable for existing partners
+        const existingPartnersContainer = document.getElementById('existing-partners-container');
+        if (existingPartnersContainer) {
+            new Sortable(existingPartnersContainer, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                handle: '.drag-handle',
+                onEnd: function() {
+                    updatePartnerOrder();
+                }
+            });
+        }
     });
+
+    function updatePartnerOrder() {
+        const container = document.getElementById('existing-partners-container');
+        if (!container) return;
+
+        const partnerCards = container.querySelectorAll('.partner-card[data-partner-id]');
+        const order = [];
+
+        // Update order badges and collect IDs
+        partnerCards.forEach((card, index) => {
+            const partnerId = card.dataset.partnerId;
+            order.push(partnerId);
+
+            // Update the order badge
+            const badge = card.querySelector('.order-badge');
+            if (badge) {
+                badge.textContent = index + 1;
+            }
+        });
+
+        // Save the new order via AJAX
+        $.ajax({
+            url: '{{ route("admin.events.partners.update-order") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                order: order
+            },
+            success: function(response) {
+                // Order saved successfully - optional: show toast notification
+                console.log('Partner order updated successfully');
+            },
+            error: function(xhr) {
+                console.error('Error updating partner order:', xhr);
+                alert('Error updating partner order. Please try again.');
+            }
+        });
+    }
 
     function addPartner() {
         const container = document.getElementById('partners-container');
@@ -436,11 +525,26 @@
             success: function(response) {
                 $(`#existing-partner-${partnerId}`).fadeOut(300, function() {
                     $(this).remove();
+                    // Update order badges after removal
+                    updateOrderBadges();
                 });
             },
             error: function(xhr) {
                 alert('Error deleting partner. Please try again.');
                 console.error(xhr);
+            }
+        });
+    }
+
+    function updateOrderBadges() {
+        const container = document.getElementById('existing-partners-container');
+        if (!container) return;
+
+        const partnerCards = container.querySelectorAll('.partner-card[data-partner-id]');
+        partnerCards.forEach((card, index) => {
+            const badge = card.querySelector('.order-badge');
+            if (badge) {
+                badge.textContent = index + 1;
             }
         });
     }

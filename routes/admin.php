@@ -71,6 +71,8 @@ Route::domain(env('APP_URL'))->group(function () {
             ->name('events.toggle-status');
         Route::delete('events/partners/{id}', [\App\Http\Controllers\Admin\EventController::class, 'destroyPartner'])
             ->name('events.partners.destroy');
+        Route::post('events/partners/update-order', [\App\Http\Controllers\Admin\EventController::class, 'updatePartnerOrder'])
+            ->name('events.partners.update-order');
 
         // Article Management Routes
         Route::resource('articles', \App\Http\Controllers\Admin\ArticleController::class);

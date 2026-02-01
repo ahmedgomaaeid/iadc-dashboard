@@ -66,6 +66,7 @@ class EventController extends Controller
 
         // Handle partners
         if ($request->has('partners')) {
+            $maxOrder = 0;
             foreach ($request->input('partners') as $index => $partnerInput) {
                 $partnerType = $partnerInput['type'] ?? null;
                 
@@ -75,6 +76,7 @@ class EventController extends Controller
                         'event_id' => $event->id,
                         'image' => $partnerImage,
                         'type' => $partnerType,
+                        'sort_order' => $maxOrder++,
                     ]);
                 }
             }
@@ -89,7 +91,9 @@ class EventController extends Controller
      */
     public function edit($id)
     {
-        $event = Event::with('partners')->findOrFail($id);
+        $event = Event::with(['partners' => function($query) {
+            $query->orderBy('sort_order');
+        }])->findOrFail($id);
         $partnerTypes = EventPartner::TYPES;
 
         return view('admin.events.form', compact('event', 'partnerTypes'));
@@ -131,15 +135,18 @@ class EventController extends Controller
 
         // Handle new partners
         if ($request->has('partners')) {
+            $maxOrder = $event->partners()->max('sort_order') ?? 0;
             foreach ($request->input('partners') as $index => $partnerInput) {
                 $partnerType = $partnerInput['type'] ?? null;
                 
                 if ($partnerType && $request->hasFile("partners.{$index}.image")) {
+                    $maxOrder++;
                     $partnerImage = $this->uploadImage($request->file("partners.{$index}.image"), 'event-partners');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,
                         'type' => $partnerType,
+                        'sort_order' => $maxOrder,
                     ]);
                 }
             }
@@ -203,5 +210,22 @@ class EventController extends Controller
         $partner->delete();
 
         return back()->with('success', 'Partner removed successfully.');
+    }
+
+    /**
+     * Update partner order.
+     */
+    public function updatePartnerOrder(Request $request)
+    {
+        $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'required|integer|exists:event_partners,id',
+        ]);
+
+        foreach ($request->input('order') as $index => $partnerId) {
+            EventPartner::where('id', $partnerId)->update(['sort_order' => $index]);
+        }
+
+        return response()->json(['success' => true]);
     }
 }
