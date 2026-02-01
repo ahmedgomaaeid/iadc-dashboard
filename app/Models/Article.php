@@ -63,4 +63,5 @@ class Article extends Model
     {
         return \Str::limit(strip_tags($this->content), 150);
     }
+
 }

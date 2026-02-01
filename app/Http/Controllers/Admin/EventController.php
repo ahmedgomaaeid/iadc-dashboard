@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventImage;
+use App\Models\EventLink;
 use App\Models\EventPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -55,6 +56,9 @@ class EventController extends Controller
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
             'gallery' => 'nullable|array',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'links' => 'nullable|array',
+            'links.*.name' => 'required|string|max:255',
+            'links.*.url' => 'required|url|max:255',
         ]);
 
         // Handle event image upload
@@ -95,6 +99,19 @@ class EventController extends Controller
                     'image' => $imagePath,
                     'sort_order' => $imageOrder++,
                 ]);
+            }
+        }
+
+        // Handle links
+        if ($request->has('links')) {
+            foreach ($request->input('links') as $link) {
+                if (!empty($link['name']) && !empty($link['url'])) {
+                    EventLink::create([
+                        'event_id' => $event->id,
+                        'name' => $link['name'],
+                        'url' => $link['url'],
+                    ]);
+                }
             }
         }
 
@@ -141,6 +158,9 @@ class EventController extends Controller
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
             'gallery' => 'nullable|array',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'links' => 'nullable|array',
+            'links.*.name' => 'required|string|max:255',
+            'links.*.url' => 'required|url|max:255',
         ]);
 
         // Handle event image upload
@@ -152,6 +172,22 @@ class EventController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         $event->update($validated);
+
+        // Handle links
+        // Sync approach: delete all and recreate
+        $event->links()->delete();
+        
+        if ($request->has('links')) {
+            foreach ($request->input('links') as $link) {
+                if (!empty($link['name']) && !empty($link['url'])) {
+                    EventLink::create([
+                        'event_id' => $event->id,
+                        'name' => $link['name'],
+                        'url' => $link['url'],
+                    ]);
+                }
+            }
+        }
 
         // Handle new partners
         if ($request->has('partners')) {

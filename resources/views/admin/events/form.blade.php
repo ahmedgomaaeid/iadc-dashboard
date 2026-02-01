@@ -450,6 +450,51 @@
             </div>
         </div>
 
+        <!-- Related Links Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Related Links</div>
+                    </div>
+                    <div class="card-body">
+                        <label class="form-label d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold"><i class="fe fe-link me-1"></i>Links</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" onclick="addLink()">
+                                <i class="fe fe-plus me-1"></i>Add Link
+                            </button>
+                        </label>
+                        <div id="links-container">
+                            @if(isset($event) && $event->links->count() > 0)
+                                @foreach($event->links as $index => $link)
+                                    <div class="row g-2 mb-2 link-row align-items-center" id="link-row-{{ $index }}">
+                                        <div class="col-md-5">
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i class="fe fe-type"></i></span>
+                                                <input type="text" class="form-control" name="links[{{ $index }}][name]" placeholder="Link Title" value="{{ $link->name }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i class="fe fe-link"></i></span>
+                                                <input type="url" class="form-control" name="links[{{ $index }}][url]" placeholder="URL (https://...)" value="{{ $link->url }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeLink({{ $index }})">
+                                                <i class="fe fe-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <small class="text-muted ms-1">Add external resources, registration forms, or related documents.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex gap-2">
@@ -801,6 +846,41 @@
                 };
                 reader.readAsDataURL(file);
             });
+        }
+    }
+    let linkIndex = {{ isset($event) ? $event->links->count() : 0 }};
+
+    function addLink() {
+        const container = document.getElementById('links-container');
+        const html = `
+            <div class="row g-2 mb-2 link-row align-items-center" id="link-row-${linkIndex}">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fe fe-type"></i></span>
+                        <input type="text" class="form-control" name="links[${linkIndex}][name]" placeholder="Link Title" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fe fe-link"></i></span>
+                        <input type="url" class="form-control" name="links[${linkIndex}][url]" placeholder="URL (https://...)" required>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeLink(${linkIndex})">
+                        <i class="fe fe-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+        linkIndex++;
+    }
+
+    function removeLink(index) {
+        const element = document.getElementById(`link-row-${index}`);
+        if (element) {
+            element.remove();
         }
     }
 </script>

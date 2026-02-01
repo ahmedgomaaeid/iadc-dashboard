@@ -35,7 +35,7 @@ class Event extends Model
      */
     public function partners()
     {
-        return $this->hasMany(EventPartner::class);
+        return $this->hasMany(EventPartner::class)->orderBy('sort_order');
     }
 
     /**
@@ -44,6 +44,14 @@ class Event extends Model
     public function images()
     {
         return $this->hasMany(EventImage::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Get the links for the event.
+     */
+    public function links()
+    {
+        return $this->hasMany(EventLink::class);
     }
 
     /**

@@ -185,7 +185,7 @@
                     <div class="article-body">
                         {!! $article->content !!}
                     </div>
-                    
+
                     <!-- Share Section -->
                     <hr class="my-4">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">

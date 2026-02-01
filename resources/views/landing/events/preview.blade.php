@@ -169,6 +169,23 @@
                     <div class="card-body">
                         <h3><a href="javascript:void(0)">{{ $event->name }}</a></h3>
                         <p class="card-text">{!! $event->description !!}</p>
+
+                        <!-- Links -->
+                        @if($event->links->count() > 0)
+                            <div class="mt-4 mb-3">
+                                <h5 class="fw-bold mb-3" style="color: #333; font-size: 1rem;"><i class="fe fe-link me-2 text-primary"></i>Links</h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach($event->links as $link)
+                                        <a href="{{ $link->url }}" target="_blank" class="btn btn-outline-light text-dark border shadow-sm rounded-pill px-3 py-2 d-flex align-items-center event-link-badge" style="transition: all 0.2s ease;">
+                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2" style="width: 20px; height: 20px;">
+                                                <i class="fe fe-external-link text-primary" style="font-size: 10px;"></i>
+                                            </div>
+                                            <span class="fw-semibold" style="font-size: 0.9rem;">{{ $link->name }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

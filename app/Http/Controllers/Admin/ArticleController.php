@@ -51,7 +51,7 @@ class ArticleController extends Controller
 
         $validated['is_active'] = $request->has('is_active');
 
-        Article::create($validated);
+        $article = Article::create($validated);
 
         return redirect()->route('admin.articles.index')
             ->with('success', 'Article created successfully.');
