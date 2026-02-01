@@ -30,8 +30,8 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::get('/quizzes', [QuizController::class, 'index'])->name('user.quizzes.index');
 
         // Sessions
-        Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');
-        Route::get('/sessions/{session}/join', [SessionController::class, 'join'])->name('user.sessions.join');
+        // Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');
+        // Route::get('/sessions/{session}/join', [SessionController::class, 'join'])->name('user.sessions.join');
 
         // Profile Management
         Route::get('/profile', [ProfileController::class, 'edit'])->name('user.profile.edit');

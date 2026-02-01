@@ -9,6 +9,7 @@ use App\Http\Controllers\Highboard\MemberController;
 use App\Http\Controllers\Highboard\ProfileController;
 use App\Http\Controllers\Highboard\TaskController;
 use App\Http\Controllers\Highboard\SessionController;
+use App\Http\Controllers\Highboard\GoogleSessionController;
 use App\Http\Controllers\Highboard\QuizController;
 use App\Http\Controllers\Highboard\QuestionController;
 use Illuminate\Support\Facades\Route;
@@ -60,8 +61,14 @@ Route::domain(env('APP_URL'))->group(function () {
 
 
         // Session Management
-        Route::resource('sessions', SessionController::class);
-        Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
+        // Route::resource('sessions', SessionController::class);
+        // Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
+        Route::resource('sessions', GoogleSessionController::class);
+        Route::get('sessions/{session}/join', [GoogleSessionController::class, 'join'])->name('sessions.join');
+        
+        // Google Auth
+        Route::get('auth/google', [GoogleSessionController::class, 'redirectToGoogle'])->name('auth.google');
+        Route::get('auth/google/callback', [GoogleSessionController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
         // Highboard Impersonation Routes
         Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])

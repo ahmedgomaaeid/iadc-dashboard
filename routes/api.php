@@ -25,12 +25,12 @@ Route::post('/quizzes/{quiz}/answerQuestion', [QuizController::class, 'answerQue
 Route::get('/quizzes/{quiz}/leaderboard', [QuizController::class, 'getLeaderboard']);
 
 // Session endpoints
-use App\Http\Controllers\Api\SessionController;
-Route::get('/sessions/{session}/status', [SessionController::class, 'status']);
-Route::get('/sessions/{session}/latest', [SessionController::class, 'latest']);
+// use App\Http\Controllers\Api\SessionController;
+// Route::get('/sessions/{session}/status', [SessionController::class, 'status']);
+// Route::get('/sessions/{session}/latest', [SessionController::class, 'latest']);
 
-Route::middleware(['web'])->group(function () {
-    Route::post('/sessions/{session}/recreate', [SessionController::class, 'recreate']);
-    Route::post('/sessions/{session}/mark-joined', [SessionController::class, 'markJoined']);
-    Route::post('/sessions/{session}/mark-ended', [SessionController::class, 'markEnded']);
-});
+// Route::middleware(['web'])->group(function () {
+//     Route::post('/sessions/{session}/recreate', [SessionController::class, 'recreate']);
+//     Route::post('/sessions/{session}/mark-joined', [SessionController::class, 'markJoined']);
+//     Route::post('/sessions/{session}/mark-ended', [SessionController::class, 'markEnded']);
+// });

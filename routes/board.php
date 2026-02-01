@@ -59,8 +59,8 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::resource('questions', \App\Http\Controllers\Board\QuestionController::class)->only([]);
 
         // Session Management
-        Route::resource('sessions', SessionController::class);
-        Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
+        // Route::resource('sessions', SessionController::class);
+        // Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
 
         // Profile Management
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
