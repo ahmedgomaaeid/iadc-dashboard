@@ -170,6 +170,34 @@
         white-space: normal !important;
     }
     
+    
+    /* Active Meeting Event Styling */
+    .fc-event.active-meeting-event {
+        position: relative;
+    }
+    
+    .fc-event.active-meeting-event .fc-event-title::before {
+        content: '🔴 LIVE';
+        display: inline-block;
+        margin-right: 6px;
+        font-weight: bold;
+        font-size: 0.75em;
+        padding: 2px 6px;
+        background: rgba(255, 68, 68, 0.9);
+        color: white;
+        border-radius: 4px;
+        animation: blink 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes blink {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+    
     /* Session Action Modal Styling */
     #sessionActionModal .modal-content {
         border: none;
@@ -337,6 +365,14 @@
                     
                     // Show the action modal
                     actionModal.show();
+                },
+                
+                // Customize event rendering
+                eventDidMount: function(info) {
+                    // Add tooltip for active events
+                    if (info.event.extendedProps.isActive) {
+                        info.el.title = '🔴 LIVE NOW - Click to join or delete';
+                    }
                 },
                 
                 // Responsive settings

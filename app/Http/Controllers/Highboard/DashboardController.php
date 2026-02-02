@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Board;
 use App\Models\Committee;
+use App\Models\GoogleSession;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -13,33 +14,39 @@ class DashboardController extends Controller
     public function index()
     {
         $highboard = Auth::guard('highboard')->user();
-        $fieldId = $highboard->field_id;
 
-        // Statistics - count users who belong to committees in this field
-        $totalUsers = User::whereHas('committees', function($query) use ($fieldId) {
-                $query->where('field_id', $fieldId);
-            })
-            ->where('is_active', true)
-            ->count();
-        $totalBoards = Board::where('field_id', $fieldId)->where('is_active', true)->count();
-        $totalCommittees = Committee::where('field_id', $fieldId)->where('is_active', true)->count();
+        // Statistics
+        $totalUsers = User::whereHas('committees', function($query) use ($highboard) {
+            $query->where('field_id', $highboard->field_id);
+        })->count();
 
-        // Committees with member counts
-        $committees = Committee::where('field_id', $fieldId)
-            ->withCount(['users' => function($query) {
-                $query->where('is_active', true);
-            }])
-            ->withCount(['boards' => function($query) {
-                $query->where('is_active', true);
-            }])
+        $totalBoards = Board::whereHas('committee', function($query) use ($highboard) {
+            $query->where('field_id', $highboard->field_id);
+        })->count();
+
+        $totalCommittees = Committee::where('field_id', $highboard->field_id)->count();
+
+        // Committees with counts
+        $committees = Committee::where('field_id', $highboard->field_id)
+            ->withCount(['users', 'boards'])
             ->get();
+        
+        // Check for active meeting (happening right now)
+        $activeMeeting = GoogleSession::whereHas('committee', function($query) use ($highboard) {
+                $query->where('field_id', $highboard->field_id);
+            })
+            ->where('start_time', '<=', now())
+            ->where('end_time', '>=', now())
+            ->with('committee')
+            ->first();
 
         return view('highboard.dashboard.index', compact(
             'highboard',
             'totalUsers',
             'totalBoards',
             'totalCommittees',
-            'committees'
+            'committees',
+            'activeMeeting'
         ));
     }
 }

@@ -33,13 +33,21 @@ class GoogleSessionController extends Controller
             })
             ->get();
             
-        $calendarEvents = $sessions->map(function($session) {
+        $now = now();
+        $calendarEvents = $sessions->map(function($session) use ($now) {
+            $isActive = $session->start_time <= $now && $session->end_time >= $now;
+            
             return [
                 'id' => $session->id,
                 'title' => $session->title,
                 'start' => $session->start_time->toIso8601String(),
                 'end' => $session->end_time->toIso8601String(),
-                'url' => $session->session_url
+                'url' => $session->session_url,
+                'className' => $isActive ? 'active-meeting-event' : '',
+                'extendedProps' => [
+                    'isActive' => $isActive,
+                    'committeeId' => $session->committee_id
+                ]
             ];
         });
             
