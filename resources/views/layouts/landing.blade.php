@@ -216,10 +216,6 @@
                                             <a class="side-menu__item" data-bs-toggle="slide" href="#Contact"><span
                                                     class="side-menu__label">Contact</span></a>
                                         </li>
-                                        <li class="slide">
-                                            <a class="side-menu__item" href="{{route('privacy-policy')}}"><span
-                                                    class="side-menu__label">Privacy Policy</span></a>
-                                        </li>
                                     </ul>
                                     <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg"
                                             fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
@@ -278,6 +274,7 @@
                                             <li><a href="#Articles">Knowledge Hub</a></li>
                                             <li><a href="#Publications">Publications</a></li>
                                             <li><a href="#Contact">Contact</a></li>
+                                            <li><a href="{{route('privacy-policy')}}">Privacy Policy</a></li>
                                         </ul>
                                     </div>
                                     <div class="col-lg-4 col-sm-12 col-md-6 reveal revealleft">
