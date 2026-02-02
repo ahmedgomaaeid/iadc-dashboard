@@ -217,7 +217,7 @@
                                                     class="side-menu__label">Contact</span></a>
                                         </li>
                                         <li class="slide">
-                                            <a class="side-menu__item" href="#PrivacyPolicy"><span
+                                            <a class="side-menu__item" href="{{route('privacy-policy')}}"><span
                                                     class="side-menu__label">Privacy Policy</span></a>
                                         </li>
                                     </ul>
