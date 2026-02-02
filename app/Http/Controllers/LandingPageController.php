@@ -55,4 +55,9 @@ class LandingPageController extends Controller
         $magazine = Magazine::active()->findOrFail($id);
         return view('landing.magazines.viewer', compact('magazine'));
     }
+
+    public function privacyPolicy()
+    {
+        return view('privacy-policy');
+    }
 }

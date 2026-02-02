@@ -23,6 +23,7 @@ Route::get('article/{id}', [LandingPageController::class, 'articlePreview'])->na
 Route::get('magazine/{id}', [LandingPageController::class, 'magazineViewer'])->name('magazineViewer');
 Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
 Route::post('newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('privacy-policy', [LandingPageController::class, 'privacyPolicy'])->name('privacy-policy');
 // Main domain routes
 
 $domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
