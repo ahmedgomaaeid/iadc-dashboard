@@ -22,6 +22,11 @@ class Board extends Authenticatable
         'zoom_access_token',
         'zoom_refresh_token',
         'zoom_token_expires_at',
+        'google_id',
+        'google_access_token',
+        'google_refresh_token',
+        'google_token_expires_at',
+        'google_avatar',
     ];
 
     protected $hidden = [
@@ -29,6 +34,8 @@ class Board extends Authenticatable
         'remember_token',
         'zoom_access_token',
         'zoom_refresh_token',
+        'google_access_token',
+        'google_refresh_token',
     ];
 
     protected function casts(): array
@@ -38,6 +45,7 @@ class Board extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'zoom_token_expires_at' => 'datetime',
+            'google_token_expires_at' => 'datetime',
         ];
     }
 

@@ -62,9 +62,9 @@ Route::domain($domain)->group(function () {
         Route::resource('questions', \App\Http\Controllers\Board\QuestionController::class)->only([]);
 
         // Session Management
-        // Route::resource('sessions', SessionController::class);
-        // Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
-
+        Route::resource('sessions', \App\Http\Controllers\Board\GoogleSessionController::class);
+        Route::get('sessions/{session}/join', [\App\Http\Controllers\Board\GoogleSessionController::class, 'join'])->name('sessions.join');
+        
         // Profile Management
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

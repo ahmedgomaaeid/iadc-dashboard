@@ -69,10 +69,6 @@ Route::domain($domain)->group(function () {
         Route::resource('sessions', GoogleSessionController::class);
         Route::get('sessions/{session}/join', [GoogleSessionController::class, 'join'])->name('sessions.join');
         
-        // Google Auth
-        Route::get('auth/google', [GoogleSessionController::class, 'redirectToGoogle'])->name('auth.google');
-        Route::get('auth/google/callback', [GoogleSessionController::class, 'handleGoogleCallback'])->name('auth.google.callback');
-
         // Highboard Impersonation Routes
         Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])
             ->name('login-as-board');

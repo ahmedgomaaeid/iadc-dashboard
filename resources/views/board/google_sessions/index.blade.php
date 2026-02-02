@@ -1,76 +1,137 @@
-@extends('layouts.highboard-dashboard')
+@extends('layouts.board-dashboard')
+
+@section('title', 'Manage Sessions')
 
 @section('content')
-<div class="container-fluid">
+    <div class="page-header">
+        <h1 class="page-title">Manage Sessions</h1>
+        <div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sessions</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Stats & Actions Row -->
+    <div class="row mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="card bg-primary img-card box-primary-shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="text-white">
+                            <h2 class="mb-0 number-font">{{ count($sessions) }}</h2>
+                            <p class="text-white mb-0">Total Sessions</p>
+                        </div>
+                        <div class="ms-auto"> <i class="fe fe-calendar text-white fs-30 me-2 mt-2"></i> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-9">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div>
+                        <h4 class="card-title mb-1">Google Calendar Integration</h4>
+                        <p class="text-muted mb-0">Sync your sessions directly with Google Calendar</p>
+                    </div>
+                    
+                    @if(!$isConnected)
+                        <a href="{{ route('auth.google') }}" class="btn btn-white btn-lg shadow-sm border">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" class="me-2">
+                            Connect Google Calendar
+                        </a>
+                    @else
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-success fw-bold">
+                                <i class="fe fe-check-circle me-1"></i> Connected
+                            </span>
+                            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#eventModal">
+                                <i class="fe fe-plus me-1"></i> New Session
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Calendar Card -->
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Sessions</h3>
+                <div class="card-header border-bottom">
+                    <h3 class="card-title">Calendar Schedule</h3>
                 </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-                    @if(session('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
-                    @endif
-
-                    @if(!$isConnected)
-                        <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
-                            <div class="text-center">
-                                <h4>Connect your Google Calendar to manage sessions</h4>
-                                <p class="text-muted mb-4">You need to sign in with Google to create and sync meetings.</p>
-                                <a href="{{ route('auth.google') }}" class="btn btn-danger btn-lg">
-                                    <i class="fab fa-google me-2"></i> Sign in with Google
-                                </a>
-                            </div>
-                        </div>
-                    @else
-                        <div id="calendar" style="min-height: 800px;"></div>
-                    @endif
+                <div class="card-body p-0">
+                    <div id="calendar" class="p-4"></div>
                 </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Event Modal -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eventModalLabel">Create New Session</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="eventForm">
+                    <div id="errorAlert" class="alert alert-danger d-none"></div>
+                    
+                    <form id="createEventForm">
                         <div class="mb-3">
-                            <label for="eventTitle" class="form-label">Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="eventTitle" required>
+                            <label for="eventTitle" class="form-label">Session Title</label>
+                            <input type="text" class="form-control" id="eventTitle" required placeholder="Enter session title">
                         </div>
-                        <div class="mb-3">
-                            <label for="committee_id" class="form-label">Committee <span class="text-danger">*</span></label>
-                            <select class="form-control" id="committee_id" required>
-                                <option value="">Select Committee</option>
-                                @foreach($committees as $committee)
-                                    <option value="{{ $committee->id }}">{{ $committee->name }}</option>
-                                @endforeach
-                            </select>
+                        
+                        <input type="hidden" id="committee_id" value="{{ $committees[0]->id ?? '' }}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label">Start Time</label>
+                                <input type="datetime-local" class="form-control" id="start_time" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_time" class="form-label">End Time</label>
+                                <input type="datetime-local" class="form-control" id="end_time" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="start_time" class="form-label">Start Time <span class="text-danger">*</span></label>
-                            <input type="datetime-local" class="form-control" id="start_time" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="end_time" class="form-label">End Time <span class="text-danger">*</span></label>
-                            <input type="datetime-local" class="form-control" id="end_time" required>
-                        </div>
-                        <div id="errorAlert" class="alert alert-danger d-none"></div>
                     </form>
+                    
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center d-none my-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Creating Google Meet session...</p>
+                    </div>
+
+                    <!-- Success Alert inside modal -->
+                    <div id="successAlert" class="alert alert-success d-none">
+                        Session created successfully!
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveEventBtn">
-                        <span class="btn-text">Save Session</span>
-                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Create Session</button>
                 </div>
             </div>
         </div>
@@ -117,11 +178,6 @@
         </div>
     </div>
 
-    
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('css')
@@ -277,16 +333,15 @@
     
     <script>
         window.calendarEvents = @json($calendarEvents);
-        console.log('Calendar Events from backend:', window.calendarEvents);
         
         document.addEventListener('DOMContentLoaded', function() {
             @if($isConnected)
             var calendarEl = document.getElementById('calendar');
             var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
-            var actionModal = new bootstrap.Modal(document.getElementById('sessionActionModal'));
             
-            // Store current event data for action modal
-            let currentEventData = null;
+            // Session Action Modal
+            var actionModal = new bootstrap.Modal(document.getElementById('sessionActionModal'));
+            var currentEventData = null;
             
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
@@ -295,23 +350,23 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                slotMinTime: '08:00:00',
-                slotMaxTime: '20:00:00',
-                slotDuration: '00:30:00',
-                allDaySlot: false,
-                expandRows: true,
-                height: 'auto',
-                editable: false,
-                selectable: true,
-                selectMirror: true,
-                nowIndicator: true,
+                themeSystem: 'bootstrap5',
                 events: window.calendarEvents,
+                selectable: true,
+                editable: false,
+                nowIndicator: true,
+                allDaySlot: false,
+                slotMinTime: '08:00:00',
+                slotMaxTime: '22:00:00',
+                height: 800,
                 
-                // Handle date/time slot selection
+                // Clicking on a date/time slot to create new event
                 select: function(info) {
-                    // Pre-fill the modal with selected date/time
+                    // Reset form
+                    document.getElementById('createEventForm').reset();
                     document.getElementById('eventTitle').value = '';
-                    document.getElementById('committee_id').value = '';
+                    // Set default committee
+                    document.getElementById('committee_id').value = "{{ $committees[0]->id ?? '' }}";
                     
                     // Format datetime for input
                     const startTime = formatDateTimeLocal(info.start);
@@ -331,39 +386,25 @@
                 },
                 
                 
-                
-                
                 // Handle event click
                 eventClick: function(info) {
                     info.jsEvent.preventDefault();
-                    
-                    console.log('Event clicked:', info.event);
-                    console.log('Event ID:', info.event.id);
                     
                     const eventId = info.event.id;
                     const eventTitle = info.event.title;
                     const eventUrl = info.event.url;
                     
-                    if (!eventId) {
-                        alert('Cannot delete this event - missing ID. This might be an old event. Please refresh the page.');
-                        if (eventUrl) {
-                            window.open(eventUrl, '_blank');
-                        }
-                        return;
-                    }
-                    
-                    // Store event data for modal actions
+                    // Store current event data
                     currentEventData = {
                         id: eventId,
-                        title: eventTitle,
                         url: eventUrl,
                         calendarEvent: info.event
                     };
                     
-                    // Update modal title with session name
+                    // Update modal content
                     document.getElementById('actionSessionTitle').textContent = eventTitle;
                     
-                    // Show the action modal
+                    // Show action modal
                     actionModal.show();
                 },
                 
@@ -408,46 +449,41 @@
                 const day = String(date.getDate()).padStart(2, '0');
                 const hours = String(date.getHours()).padStart(2, '0');
                 const minutes = String(date.getMinutes()).padStart(2, '0');
+                
                 return `${year}-${month}-${day}T${hours}:${minutes}`;
             }
             
-            // Handle save event button
+            // Handle Save Button
             document.getElementById('saveEventBtn').addEventListener('click', function() {
-                const btn = this;
-                const btnText = btn.querySelector('.btn-text');
-                const spinner = btn.querySelector('.spinner-border');
-                const errorAlert = document.getElementById('errorAlert');
-                
-                // Validate form
-                const title = document.getElementById('eventTitle').value.trim();
+                const title = document.getElementById('eventTitle').value;
                 const committeeId = document.getElementById('committee_id').value;
                 const startTime = document.getElementById('start_time').value;
                 const endTime = document.getElementById('end_time').value;
                 
                 if (!title || !committeeId || !startTime || !endTime) {
-                    errorAlert.textContent = 'Please fill in all required fields.';
-                    errorAlert.classList.remove('d-none');
-                    return;
-                }
-                
-                if (new Date(endTime) <= new Date(startTime)) {
-                    errorAlert.textContent = 'End time must be after start time.';
-                    errorAlert.classList.remove('d-none');
+                    alert('Please fill in all fields');
                     return;
                 }
                 
                 // Show loading state
-                btn.disabled = true;
-                btnText.classList.add('d-none');
-                spinner.classList.remove('d-none');
-                errorAlert.classList.add('d-none');
+                const spinner = document.getElementById('loadingSpinner');
+                const form = document.getElementById('createEventForm');
+                const errorAlert = document.getElementById('errorAlert');
+                const successAlert = document.getElementById('successAlert');
+                const saveBtn = document.getElementById('saveEventBtn');
                 
-                // Submit form via AJAX
-                fetch('{{ route("highboard.sessions.store") }}', {
+                spinner.classList.remove('d-none');
+                form.classList.add('d-none');
+                errorAlert.classList.add('d-none');
+                saveBtn.disabled = true;
+                
+                // Send AJAX request
+                fetch("{{ route('board.sessions.store') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         title: title,
@@ -462,9 +498,11 @@
                         throw new Error(data.error);
                     }
                     
-                    console.log('Event created successfully:', data.event);
+                    // Success handling
+                    spinner.classList.add('d-none');
+                    successAlert.classList.remove('d-none');
                     
-                    // Add event to calendar with ID
+                    // Add event to calendar
                     calendar.addEvent({
                         id: data.event.id,
                         title: data.event.title,
@@ -473,36 +511,21 @@
                         url: data.event.session_url
                     });
                     
-                    // Close modal and reset form
-                    eventModal.hide();
-                    document.getElementById('eventForm').reset();
-                    
-                    // Show success message
-                    const successAlert = document.createElement('div');
-                    successAlert.className = 'alert alert-success alert-dismissible fade show';
-                    successAlert.innerHTML = `
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    document.querySelector('.card-body').insertBefore(
-                        successAlert,
-                        document.getElementById('calendar')
-                    );
-                    
-                    // Auto-dismiss after 5 seconds
+                    // Close modal after delay
                     setTimeout(() => {
-                        successAlert.remove();
-                    }, 5000);
+                        eventModal.hide();
+                        successAlert.classList.add('d-none');
+                        form.classList.remove('d-none');
+                        saveBtn.disabled = false;
+                    }, 1500);
                 })
                 .catch(error => {
+                    spinner.classList.add('d-none');
+                    form.classList.remove('d-none');
+                    saveBtn.disabled = false;
+                    
                     errorAlert.textContent = error.message || 'An error occurred while creating the session.';
                     errorAlert.classList.remove('d-none');
-                })
-                .finally(() => {
-                    // Reset button state
-                    btn.disabled = false;
-                    btnText.classList.remove('d-none');
-                    spinner.classList.add('d-none');
                 });
             });
             
@@ -514,40 +537,30 @@
                 }
                 
                 // Send delete request
-                fetch(`{{ url('highboard/sessions') }}/${eventId}`, {
+                fetch(`{{ url('board/sessions') }}/${eventId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        throw new Error(data.error);
+                .then(response => {
+                    if (response.ok) {
+                        calendarEvent.remove();
+                        // Show success toast or alert
+                        const toast = document.createElement('div');
+                        toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+                        toast.style.zIndex = '9999';
+                        toast.textContent = 'Session deleted successfully';
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Failed to delete');
+                        });
                     }
-                    
-                    // Remove event from calendar
-                    calendarEvent.remove();
-                    
-                    // Show success message
-                    const successAlert = document.createElement('div');
-                    successAlert.className = 'alert alert-success alert-dismissible fade show';
-                    successAlert.innerHTML = `
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    document.querySelector('.card-body').insertBefore(
-                        successAlert,
-                        document.getElementById('calendar')
-                    );
-                    
-                    // Auto-dismiss after 5 seconds
-                    setTimeout(() => {
-                        successAlert.remove();
-                    }, 5000);
                 })
                 .catch(error => {
-                    alert('Error deleting session: ' + (error.message || 'Unknown error'));
+                    alert('Error: ' + error.message);
                 });
             }
             @endif

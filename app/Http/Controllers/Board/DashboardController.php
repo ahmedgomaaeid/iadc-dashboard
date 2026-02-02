@@ -35,12 +35,19 @@ class DashboardController extends Controller
         $submissions = TaskSubmission::whereIn('task_id', $tasks)->where('status', 'pending')->latest()->take(5)->get();
         
         
+        // Check for active meeting (happening right now) for this board's committee
+        $activeMeeting = \App\Models\GoogleSession::where('committee_id', $board->committee_id)
+            ->where('start_time', '<=', now())
+            ->where('end_time', '>=', now())
+            ->first();
+        
         return view('board.dashboard.index', compact(
             'board',
             'totalMembers',
             'activeMembers',
             'inactiveMembers',
-            'submissions'
+            'submissions',
+            'activeMeeting'
         ));
     }
 }
