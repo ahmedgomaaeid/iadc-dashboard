@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('highboards', function (Blueprint $table) {
-            $table->string('google_id')->nullable()->after('remember_token');
-            $table->text('google_access_token')->nullable()->after('google_id');
-            $table->text('google_refresh_token')->nullable()->after('google_access_token');
-            $table->timestamp('google_token_expires_at')->nullable()->after('google_refresh_token');
-            $table->string('google_avatar')->nullable()->after('google_token_expires_at');
+            $table->string('google_id')->nullable();
+            $table->text('google_access_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
+            $table->timestamp('google_token_expires_at')->nullable();
+            $table->string('google_avatar')->nullable();
         });
     }
 

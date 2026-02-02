@@ -11,6 +11,7 @@ class GoogleSession extends Model
     protected $fillable = [
         'title',
         'session_url',
+        'google_event_id',
         'start_time',
         'end_time',
         'creator_id',

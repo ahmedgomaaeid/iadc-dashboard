@@ -22,13 +22,28 @@ class GoogleSessionController extends Controller
         // Check if user is connected to Google
         $isConnected = !is_null($highboard->google_access_token);
         
+        // Get committees in the highboard member's field
+        $committees = \App\Models\Committee::where('field_id', $highboard->field_id)
+            ->where('is_active', true)
+            ->get();
+        
         // Show sessions for all committees in the highboard member's field
         $sessions = GoogleSession::whereHas('committee', function($query) use ($highboard) {
                 $query->where('field_id', $highboard->field_id);
             })
             ->get();
             
-        return view('highboard.google_sessions.index', compact('sessions', 'isConnected'));
+        $calendarEvents = $sessions->map(function($session) {
+            return [
+                'id' => $session->id,
+                'title' => $session->title,
+                'start' => $session->start_time->toIso8601String(),
+                'end' => $session->end_time->toIso8601String(),
+                'url' => $session->session_url
+            ];
+        });
+            
+        return view('highboard.google_sessions.index', compact('sessions', 'isConnected', 'calendarEvents', 'committees'));
     }
 
     public function redirectToGoogle()
@@ -66,7 +81,7 @@ class GoogleSessionController extends Controller
             'title' => 'required|string',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
-            'description' => 'nullable|string',
+            'committee_id' => 'required|exists:committees,id',
         ]);
 
         $user = Auth::guard('highboard')->user();
@@ -98,25 +113,46 @@ class GoogleSessionController extends Controller
             $service = new GoogleCalendar($client);
             $event = new GoogleCalendar\Event([
                 'summary' => $request->title,
-                'description' => $request->description,
+                'description' => 'Session for committee: ' . $request->committee_id,
                 'start' => [
-                    'dateTime' => Carbon::parse($request->start_time)->toRfc3339(),
+                    'dateTime' => Carbon::parse($request->start_time)->toRfc3339String(),
                     'timeZone' => config('app.timezone'),
                 ],
                 'end' => [
-                    'dateTime' => Carbon::parse($request->end_time)->toRfc3339(),
+                    'dateTime' => Carbon::parse($request->end_time)->toRfc3339String(),
                     'timeZone' => config('app.timezone'),
                 ],
+                'conferenceData' => [
+                    'createRequest' => [
+                        'requestId' => uniqid(),
+                        'conferenceSolutionKey' => [
+                            'type' => 'hangoutsMeet'
+                        ]
+                    ]
+                ]
             ]);
 
             $calendarId = 'primary';
-            $event = $service->events->insert($calendarId, $event);
+            $createdEvent = $service->events->insert($calendarId, $event, ['conferenceDataVersion' => 1]);
 
             // Save to local database
             $session = new GoogleSession();
             $session->title = $request->title;
-            // $session->session_url = $event->htmlLink; // Or meet link if available
-            $session->session_url = $event->hangoutLink ?? $event->htmlLink; 
+            
+            // Get Google Meet link from conferenceData
+            $meetLink = null;
+            if (isset($createdEvent->conferenceData->entryPoints)) {
+                foreach ($createdEvent->conferenceData->entryPoints as $entryPoint) {
+                    if ($entryPoint->entryPointType === 'video') {
+                        $meetLink = $entryPoint->uri;
+                        break;
+                    }
+                }
+            }
+            // Fallback to hangoutLink or htmlLink if conferenceData not available
+            $session->session_url = $meetLink ?? $createdEvent->hangoutLink ?? $createdEvent->htmlLink;
+            
+            $session->google_event_id = $createdEvent->id; // Store Google event ID for deletion 
             $session->start_time = $request->start_time;
             $session->end_time = $request->end_time;
             $session->creator_id = $user->id;
@@ -141,5 +177,77 @@ class GoogleSessionController extends Controller
             Log::error('Google Calendar Error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to create event on Google Calendar: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function destroy($id)
+    {
+        $user = Auth::guard('highboard')->user();
+
+        if (!$user->google_access_token) {
+            return response()->json(['error' => 'Not connected to Google Calendar'], 403);
+        }
+
+        $session = GoogleSession::findOrFail($id);
+
+        // Verify user has permission to delete (creator or same field)
+        if ($session->creator_id !== $user->id && $session->committee->field_id !== $user->field_id) {
+            return response()->json(['error' => 'Unauthorized to delete this session'], 403);
+        }
+
+        // Delete from Google Calendar if event ID exists
+        if ($session->google_event_id) {
+            try {
+                Log::info('Attempting to delete Google Calendar event', [
+                    'event_id' => $session->google_event_id,
+                    'session_id' => $session->id
+                ]);
+
+                $client = new GoogleClient();
+                $client->setClientId(config('services.google.client_id'));
+                $client->setClientSecret(config('services.google.client_secret'));
+                $client->setAccessToken($user->google_access_token);
+
+                // Refresh token if expired
+                if ($user->google_token_expires_at->isPast()) {
+                    if ($user->google_refresh_token) {
+                        $client->fetchAccessTokenWithRefreshToken($user->google_refresh_token);
+                        $newAccessToken = $client->getAccessToken();
+                        $user->update([
+                            'google_access_token' => $newAccessToken['access_token'],
+                            'google_token_expires_at' => now()->addSeconds($newAccessToken['expires_in']),
+                        ]);
+                        Log::info('Google token refreshed for deletion');
+                    } else {
+                        Log::warning('No refresh token available');
+                        return response()->json(['error' => 'Google session expired. Please reconnect.'], 401);
+                    }
+                }
+
+                $service = new GoogleCalendar($client);
+                $calendarId = 'primary';
+                
+                // Delete event from Google Calendar
+                $service->events->delete($calendarId, $session->google_event_id);
+                
+                Log::info('Successfully deleted event from Google Calendar', [
+                    'event_id' => $session->google_event_id
+                ]);
+
+            } catch (\Exception $e) {
+                Log::error('Google Calendar Delete Error', [
+                    'event_id' => $session->google_event_id,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                // Continue with local deletion even if Google deletion fails
+            }
+        } else {
+            Log::warning('No google_event_id found for session', ['session_id' => $session->id]);
+        }
+
+        // Delete from local database
+        $session->delete();
+
+        return response()->json(['message' => 'Session deleted successfully']);
     }
 }

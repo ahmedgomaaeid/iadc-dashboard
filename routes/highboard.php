@@ -13,7 +13,10 @@ use App\Http\Controllers\Highboard\GoogleSessionController;
 use App\Http\Controllers\Highboard\QuizController;
 use App\Http\Controllers\Highboard\QuestionController;
 use Illuminate\Support\Facades\Route;
-Route::domain(env('APP_URL'))->group(function () {
+
+$domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
+
+Route::domain($domain)->group(function () {
     Route::middleware('guest:highboard')->group(function () {
         Route::get('/highboard/login', [LoginController::class, 'highboardLogin'])->name('highboard.login');
         Route::post('/highboard/login', [LoginController::class, 'highboardAuthenticate']);

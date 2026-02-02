@@ -8,7 +8,10 @@ use App\Http\Controllers\Board\ProfileController;
 use App\Http\Controllers\Board\TaskController;
 use App\Http\Controllers\Board\SessionController;
 use Illuminate\Support\Facades\Route;
-Route::domain(env('APP_URL'))->group(function () {
+
+$domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
+
+Route::domain($domain)->group(function () {
     Route::middleware('guest:board')->group(function () {
         Route::get('/board/login', [LoginController::class, 'boardLogin'])->name('board.login');
         Route::post('/board/login', [LoginController::class, 'boardAuthenticate']);

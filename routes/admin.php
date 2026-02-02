@@ -4,7 +4,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use Illuminate\Support\Facades\Route;
-Route::domain(env('APP_URL'))->group(function () {
+
+$domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
+
+Route::domain($domain)->group(function () {
     Route::middleware('guest:admin')->group(function () {
         Route::get('/admin/login', [LoginController::class, 'adminLogin'])->name('admin.login');
         Route::post('/admin/login', [LoginController::class, 'adminAuthenticate']);
