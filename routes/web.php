@@ -40,6 +40,7 @@ Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 's
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
 
 Route::get('/quiz/{id}', [ControllersQuizController::class, 'showQuiz'])->name('quiz.show');
+Route::post('/quiz/{id}/finish', [ControllersQuizController::class, 'finishQuiz'])->name('quiz.finish');
 
 // Unified Google Auth Routes
 Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');

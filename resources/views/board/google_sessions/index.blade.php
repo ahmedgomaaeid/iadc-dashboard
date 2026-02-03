@@ -158,7 +158,7 @@
                         <div class="col-12">
                             <button type="button" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center" id="openInGoogleBtn">
                                 <i class="fe fe-external-link me-2"></i>
-                                <span>Open Meeting</span>
+                                <span>Join as Manager</span>
                             </button>
                         </div>
                         <div class="col-12">
@@ -426,13 +426,49 @@
             
             calendar.render();
             
-            // Handle "Open in Google Calendar" button
+            // Handle "Open in Google Calendar" button -> Converted to "Join Session"
             document.getElementById('openInGoogleBtn').addEventListener('click', function() {
-                if (currentEventData && currentEventData.url) {
-                    window.open(currentEventData.url, '_blank');
+                if (currentEventData && currentEventData.id) {
+                    // Logic: Redirect to Join Route
+                    const joinUrl = `{{ url('board/sessions') }}/${currentEventData.id}/join`;
+                    window.location.href = joinUrl;
                     actionModal.hide();
                 }
             });
+
+            // Add "Copy Member Link" functionality if it doesn't exist
+            if (!document.getElementById('copyMemberLinkBtn')) {
+                // Add button dynamically to modal
+                const btnContainer = document.querySelector('#sessionActionModal .row.g-3');
+                const copyBtnCol = document.createElement('div');
+                copyBtnCol.className = 'col-12';
+                copyBtnCol.innerHTML = `
+                    <button type="button" class="btn btn-outline-info btn-lg w-100 d-flex align-items-center justify-content-center" id="copyMemberLinkBtn">
+                        <i class="fe fe-copy me-2"></i>
+                        <span>Copy Member Link</span>
+                    </button>
+                `;
+                // Insert before delete button (last child is delete usually, insert at index 1)
+                btnContainer.insertBefore(copyBtnCol, btnContainer.children[1]);
+
+                // Add listener
+                document.getElementById('copyMemberLinkBtn').addEventListener('click', function() {
+                    if (currentEventData && currentEventData.id) {
+                        const memberLink = `{{ url('user/sessions') }}/${currentEventData.id}/join`;
+                        navigator.clipboard.writeText(memberLink).then(() => {
+                            // Show success
+                            const btn = document.getElementById('copyMemberLinkBtn');
+                            const originalHtml = btn.innerHTML;
+                            btn.innerHTML = '<i class="fe fe-check me-2"></i><span>Copied!</span>';
+                            btn.classList.replace('btn-outline-info', 'btn-success');
+                            setTimeout(() => {
+                                btn.innerHTML = originalHtml;
+                                btn.classList.replace('btn-success', 'btn-outline-info');
+                            }, 2000);
+                        });
+                    }
+                });
+            }
             
             // Handle "Delete Session" button
             document.getElementById('deleteSessionBtn').addEventListener('click', function() {

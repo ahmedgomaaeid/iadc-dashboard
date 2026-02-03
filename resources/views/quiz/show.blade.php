@@ -425,7 +425,7 @@
                                         <input type="email" id="participant_email" name="email" class="form-control" placeholder="Your Email Address" value="{{ $userEmail }}" @if($userEmail) readonly @endif required>
                                     </div>
                                     <div class="d-grid">
-                                        <button type="submit" id = "submit-button" class="btn btn-register">
+                                        <button type="button" id="submit-button" class="btn btn-register">
                                             <i class="fas fa-paper-plane"></i> Start Quiz
                                         </button>
                                     </div>

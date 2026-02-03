@@ -122,6 +122,29 @@ class SessionController extends Controller
             $session->update(['creator_joined' => true]);
         }
 
-        return view('board.sessions.join', compact('session', 'isCreator'));
+        // Record Management Evaluation (5 points for joining)
+        \App\Models\ManagementEvaluation::firstOrCreate(
+            [
+                'user_type' => get_class($board),
+                'user_id' => $board->id,
+                'committee_id' => $session->committee_id,
+                'type' => 'joining_meeting',
+                'related_type' => get_class($session),
+                'related_id' => $session->id,
+            ],
+            [
+                'score' => 5,
+            ]
+        );
+
+        // Instead of returning join view directly, we need to handle the redirect behavior
+        // Redirect current tab to interaction evaluation page
+        // Open Zoom link in new tab provided by view
+        
+        return view('board.sessions.join_redirect', [
+            'session' => $session, 
+            'redirectUrl' => route('board.evaluations.interaction', $session),
+            'meetingUrl' => $session->join_url ?? $session->zoom_join_url ?? $session->meeting_link
+        ]);
     }
 }

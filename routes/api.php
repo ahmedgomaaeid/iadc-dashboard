@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\QuizController;
 Route::post('/quizzes/{quiz}/addParticipant', [QuizController::class, 'addParticipant']);
 Route::get('/quizzes/{quiz}/getQuestion/{number}', [QuizController::class, 'getQuestion']);
 Route::post('/quizzes/{quiz}/answerQuestion', [QuizController::class, 'answerQuestion']);
+Route::post('/quizzes/{quiz}/finish', [QuizController::class, 'finishQuiz']);
 
 // Leaderboard endpoint
 Route::get('/quizzes/{quiz}/leaderboard', [QuizController::class, 'getLeaderboard']);

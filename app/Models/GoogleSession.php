@@ -17,11 +17,13 @@ class GoogleSession extends Model
         'creator_id',
         'creator_type',
         'committee_id',
+        'creator_joined',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
+        'creator_joined' => 'boolean',
     ];
 
     public function creator()

@@ -64,6 +64,19 @@ Route::domain($domain)->group(function () {
         // Session Management
         Route::resource('sessions', \App\Http\Controllers\Board\GoogleSessionController::class);
         Route::get('sessions/{session}/join', [\App\Http\Controllers\Board\GoogleSessionController::class, 'join'])->name('sessions.join');
+
+        // Evaluation Management
+        Route::get('evaluations', [\App\Http\Controllers\Board\EvaluationController::class, 'index'])->name('evaluations.index');
+        Route::get('sessions/{session}/interaction', [\App\Http\Controllers\Board\EvaluationController::class, 'interaction'])
+            ->name('evaluations.interaction');
+        Route::post('sessions/{session}/interaction', [\App\Http\Controllers\Board\EvaluationController::class, 'storeInteraction'])
+            ->name('evaluations.interaction.store');
+        Route::get('sessions/{session}/participants', [\App\Http\Controllers\Board\EvaluationController::class, 'getParticipants'])
+            ->name('evaluations.participants');
+        Route::get('evaluations/participation', [\App\Http\Controllers\Board\EvaluationController::class, 'participation'])
+            ->name('evaluations.participation');
+        Route::post('evaluations/participation', [\App\Http\Controllers\Board\EvaluationController::class, 'storeParticipation'])
+            ->name('evaluations.participation.store');
         
         // Profile Management
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

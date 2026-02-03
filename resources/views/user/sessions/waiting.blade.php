@@ -81,7 +81,7 @@
                                 @if($session->description)
                                     <p><strong>Description:</strong> {{ $session->description }}</p>
                                 @endif
-                                <p><strong>Scheduled Start:</strong> {{ $session->start_time->format('M d, Y h:i A') }}</p>
+                                <p><strong>Scheduled Start:</strong> {{ $session->start_time ? $session->start_time->format('M d, Y h:i A') : 'N/A' }}</p>
                                 @if($session->committee)
                                     <p><strong>Committee:</strong> {{ $session->committee->name }}</p>
                                 @endif

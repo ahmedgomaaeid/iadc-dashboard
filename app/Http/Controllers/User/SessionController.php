@@ -61,19 +61,54 @@ class SessionController extends Controller
         $user = Auth::guard('user')->user();
         
         // Check if user has access to this session (member of the committee)
-        $hasAccess = $user->committees()->where('committees.id', $session->committee_id)->exists();
-        if (!$hasAccess) {
-            abort(403, 'You do not have access to this session.');
+        // If session has no committee assigned, we assume it's accessible to all valid users (or handle as error).
+        // Here we allow it if committee_id is null/0, otherwise check specific committee membership.
+        if ($session->committee_id) {
+            $hasAccess = $user->committees->pluck('id')->contains($session->committee_id);
+            
+            if (!$hasAccess) {
+                abort(403, 'You do not have access to this session.');
+            }
         }
 
         // Check if creator has joined
+        // Disabled per user request for immediate join/redirect
+        /*
         if (!$session->creator_joined) {
             return view('user.sessions.waiting', compact('session'));
         }
+        */
 
-        // Generate Zoom Signature
-        $signature = $this->zoomService->generateSignature($session->zoom_meeting_id, 0); // Role 0 for participant
+        // Record User Evaluation (5 points for joining meeting)
+        $existingEvaluation = \App\Models\UserEvaluation::where('user_id', $user->id)
+            ->where('related_type', get_class($session))
+            ->where('related_id', $session->id)
+            ->where('type', 'joining_meeting')
+            ->exists();
 
-        return view('user.sessions.join', compact('session', 'signature', 'user'));
+        if (!$existingEvaluation) {
+            // Use session's committee_id if available, otherwise fallback to user's first committee
+            $committeeId = $session->committee_id ?? $user->committees->first()?->id;
+            
+            \App\Models\UserEvaluation::create([
+                'user_id' => $user->id,
+                'committee_id' => $committeeId,
+                'type' => 'joining_meeting',
+                'score' => 5,
+                'max_score' => 5,
+                'related_type' => get_class($session),
+                'related_id' => $session->id,
+            ]);
+        }
+
+        // For GoogleSession, we just redirect to the URL
+        if ($session->session_url) {
+            return redirect()->away($session->session_url);
+        }
+        
+        \Illuminate\Support\Facades\Log::warning('Session join failed: No URL', ['session_id' => $session->id]);
+
+        // Fallback or error
+        return redirect()->route('user.sessions.index')->with('error', 'Meeting URL not found for this session. Please contact the board.');
     }
 }

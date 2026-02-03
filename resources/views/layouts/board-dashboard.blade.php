@@ -200,6 +200,11 @@
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
                                     <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.evaluations.index') }}"><i
+                                                class="side-menu__icon fe fe-star"></i><span
+                                                class="side-menu__label">Evaluations</span></a>
+                                    </li>
+                                    <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('board.sessions.index') }}"><i
                                                 class="side-menu__icon fe fe-video"></i><span
                                                 class="side-menu__label">Sessions</span></a>

@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 
         // Sessions
         Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');
-        Route::get('/sessions/{session}/join', [SessionController::class, 'join'])->name('user.sessions.join');
+        Route::get('/sessions/{googleSession}/join', [SessionController::class, 'join'])->name('user.sessions.join');
 
         // Profile Management
         Route::get('/profile', [ProfileController::class, 'edit'])->name('user.profile.edit');

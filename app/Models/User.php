@@ -80,4 +80,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(TaskSubmission::class);
     }
+
+    /**
+     * Get the user's evaluations.
+     */
+    public function userEvaluations()
+    {
+        return $this->hasMany(UserEvaluation::class);
+    }
+
+    /**
+     * Get the management evaluations for this user.
+     */
+    public function managementEvaluations()
+    {
+        return $this->hasMany(ManagementEvaluation::class);
+    }
 }

@@ -55,4 +55,20 @@ class Committee extends Model
     {
         return $this->hasMany(Quiz::class);
     }
+
+    /**
+     * Get evaluations related to this committee.
+     */
+    public function userEvaluations()
+    {
+        return $this->hasMany(UserEvaluation::class);
+    }
+
+    /**
+     * Get management evaluations related to this committee.
+     */
+    public function managementEvaluations()
+    {
+        return $this->hasMany(ManagementEvaluation::class);
+    }
 }
