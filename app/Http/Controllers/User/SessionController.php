@@ -19,12 +19,41 @@ class SessionController extends Controller
     public function index()
     {
         $user = Auth::guard('user')->user();
-        // Show sessions for all committees the user belongs to
+        
+        // Get sessions for all committees the user belongs to
         $committeeIds = $user->committees()->pluck('committees.id');
-        $sessions = Session::whereIn('committee_id', $committeeIds)
-            ->orderBy('start_time', 'asc')
+        
+        $sessions = \App\Models\GoogleSession::whereIn('committee_id', $committeeIds)
+            ->with('committee')
             ->get();
-        return view('user.sessions.index', compact('sessions'));
+            
+        // Format sessions for calendar
+        $now = now();
+        $calendarEvents = $sessions->map(function($session) use ($now) {
+            $isActive = $session->start_time <= $now && $session->end_time >= $now;
+            
+            return [
+                'id' => $session->id,
+                'title' => $session->title,
+                'start' => $session->start_time->toIso8601String(),
+                'end' => $session->end_time->toIso8601String(),
+                'url' => $session->session_url,
+                'className' => $isActive ? 'active-meeting-event' : '',
+                'extendedProps' => [
+                    'isActive' => $isActive,
+                    'committeeId' => $session->committee_id,
+                    'committeeName' => $session->committee->name ?? 'Unknown Committee',
+                    'sessionUrl' => $session->session_url
+                ]
+            ];
+        });
+        
+        // Check for active meeting (happening right now)
+        $activeMeeting = $sessions->filter(function($session) use ($now) {
+            return $session->start_time <= $now && $session->end_time >= $now;
+        })->first();
+
+        return view('user.sessions.index', compact('sessions', 'calendarEvents', 'activeMeeting'));
     }
 
     public function join(Session $session)

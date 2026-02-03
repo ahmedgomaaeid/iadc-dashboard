@@ -356,8 +356,8 @@
                 editable: false,
                 nowIndicator: true,
                 allDaySlot: false,
-                slotMinTime: '08:00:00',
-                slotMaxTime: '22:00:00',
+                slotMinTime: '10:00:00',
+                slotMaxTime: '23:59:59',
                 height: 800,
                 
                 // Clicking on a date/time slot to create new event

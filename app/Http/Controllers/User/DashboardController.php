@@ -54,6 +54,51 @@ class DashboardController extends Controller
             return !QuizCacheService::hasEmailParticipated($quiz->id, $user->email);
         })->take(5);
 
-        return view('user.dashboard', compact('committees', 'recentLessons', 'recentTasks', 'recentQuizzes', 'selectedCommitteeId'));
+        // Get sessions for the user's committees
+        $sessionsQuery = \App\Models\GoogleSession::query();
+        
+        if ($selectedCommitteeId) {
+            $sessionsQuery->where('committee_id', $selectedCommitteeId);
+        } else {
+            $sessionsQuery->whereIn('committee_id', $committees->pluck('id'));
+        }
+        
+        $sessions = $sessionsQuery->get();
+        
+        // Format sessions for calendar
+        $now = now();
+        $calendarEvents = $sessions->map(function($session) use ($now) {
+            $isActive = $session->start_time <= $now && $session->end_time >= $now;
+            
+            return [
+                'id' => $session->id,
+                'title' => $session->title,
+                'start' => $session->start_time->toIso8601String(),
+                'end' => $session->end_time->toIso8601String(),
+                'url' => $session->session_url,
+                'className' => $isActive ? 'active-meeting-event' : '',
+                'extendedProps' => [
+                    'isActive' => $isActive,
+                    'committeeId' => $session->committee_id,
+                    'committeeName' => $session->committee->name ?? 'Unknown Committee',
+                    'sessionUrl' => $session->session_url
+                ]
+            ];
+        });
+        
+        // Check for active meeting (happening right now)
+        $activeMeeting = $sessions->filter(function($session) use ($now) {
+            return $session->start_time <= $now && $session->end_time >= $now;
+        })->first();
+
+        return view('user.dashboard', compact(
+            'committees', 
+            'recentLessons', 
+            'recentTasks', 
+            'recentQuizzes', 
+            'selectedCommitteeId',
+            'calendarEvents',
+            'activeMeeting'
+        ));
     }
 }

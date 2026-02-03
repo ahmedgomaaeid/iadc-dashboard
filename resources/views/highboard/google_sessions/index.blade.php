@@ -295,8 +295,8 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                slotMinTime: '08:00:00',
-                slotMaxTime: '20:00:00',
+                slotMinTime: '10:00:00',
+                slotMaxTime: '23:59:59',
                 slotDuration: '00:30:00',
                 allDaySlot: false,
                 expandRows: true,

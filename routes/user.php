@@ -8,7 +8,8 @@ use App\Http\Controllers\User\SessionController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\QuizController;
 use Illuminate\Support\Facades\Route;
-Route::domain(env('APP_URL'))->group(function () {
+
+
     Route::middleware('guest:user')->group(function () {
         Route::get('/login', [LoginController::class, 'userLogin'])->name('login');
         Route::post('/login', [LoginController::class, 'userAuthenticate']);
@@ -30,8 +31,8 @@ Route::domain(env('APP_URL'))->group(function () {
         Route::get('/quizzes', [QuizController::class, 'index'])->name('user.quizzes.index');
 
         // Sessions
-        // Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');
-        // Route::get('/sessions/{session}/join', [SessionController::class, 'join'])->name('user.sessions.join');
+        Route::get('/sessions', [SessionController::class, 'index'])->name('user.sessions.index');
+        Route::get('/sessions/{session}/join', [SessionController::class, 'join'])->name('user.sessions.join');
 
         // Profile Management
         Route::get('/profile', [ProfileController::class, 'edit'])->name('user.profile.edit');
@@ -40,4 +41,3 @@ Route::domain(env('APP_URL'))->group(function () {
 
         Route::get('/logout', [LoginController::class, 'userlogout'])->name('logout');
     });
-});
