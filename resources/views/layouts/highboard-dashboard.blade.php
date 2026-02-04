@@ -228,7 +228,12 @@
                                     <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.evaluations.index') }}"><i
                                                 class="side-menu__icon fe fe-star"></i><span
-                                                class="side-menu__label">Evaluations</span></a>
+                                                class="side-menu__label">Member Evaluations</span></a>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.evaluations.sessions.index') }}"><i
+                                                class="side-menu__icon fe fe-bar-chart-2"></i><span
+                                                class="side-menu__label">Session Evaluations</span></a>
                                     </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>

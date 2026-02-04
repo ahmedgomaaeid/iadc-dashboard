@@ -203,4 +203,53 @@ class EvaluationController extends Controller
 
         return redirect()->back()->with('success', 'Participation evaluations saved successfully for "' . $data['event_name'] . '".');
     }
+
+    public function instructorEvaluationsIndex()
+    {
+        $committeeIds = $this->getCommitteeIds();
+        
+        // Get sessions belonging to the highboard's committees
+        $sessions = GoogleSession::whereIn('committee_id', $committeeIds)
+            ->with(['committee']) // Eager load committee
+            // We can't really eager load aggregate of separate table easily without subquery or join
+            // But for simplicity in Laravel, we can load just the sessions and compute averages in PHP or use withCount/withAvg if relation existed
+            // Since InstructorEvaluation is related via google_session_id, let's define relationship or query it manually.
+            ->latest()
+            ->paginate(15);
+            
+        // Prepare data with averages
+        foreach ($sessions as $session) {
+            $evaluations = \App\Models\InstructorEvaluation::where('google_session_id', $session->id)->get();
+            $count = $evaluations->count();
+            if ($count > 0) {
+                // Average rating (1-5)
+                $avgRating = $evaluations->avg('rating'); 
+                // Convert to percentage: (Avg / 5) * 100
+                $session->average_percentage = round(($avgRating / 5) * 100, 1);
+                $session->evaluations_count = $count;
+            } else {
+                $session->average_percentage = 0;
+                $session->evaluations_count = 0;
+            }
+        }
+        
+        return view('highboard.evaluations.sessions.index', compact('sessions'));
+    }
+
+    public function showSessionInstructorEvaluations(GoogleSession $googleSession)
+    {
+        $committeeIds = $this->getCommitteeIds();
+        
+        if (!$committeeIds->contains($googleSession->committee_id)) {
+            abort(403);
+        }
+        
+        // Get all instructor evaluations for this session
+        $evaluations = \App\Models\InstructorEvaluation::where('google_session_id', $googleSession->id)
+            ->join('users', 'instructor_evaluations.user_id', '=', 'users.id')
+            ->select('instructor_evaluations.*', 'users.name as user_name', 'users.image as user_image') // Get user details
+            ->get();
+            
+        return view('highboard.evaluations.sessions.show', compact('googleSession', 'evaluations'));
+    }
 }

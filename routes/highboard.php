@@ -76,6 +76,9 @@ Route::domain($domain)->group(function () {
         Route::post('evaluations/interaction/{googleSession}', [EvaluationController::class, 'storeInteraction'])->name('evaluations.interaction.store');
         Route::get('evaluations/participants/{googleSession}', [EvaluationController::class, 'getParticipants'])->name('evaluations.participants');
         
+        // Session Instructor Evaluation Routes
+        Route::get('evaluations/sessions', [EvaluationController::class, 'instructorEvaluationsIndex'])->name('evaluations.sessions.index');
+        Route::get('evaluations/sessions/{googleSession}', [EvaluationController::class, 'showSessionInstructorEvaluations'])->name('evaluations.sessions.show');
         // Highboard Impersonation Routes
         Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])
             ->name('login-as-board');
