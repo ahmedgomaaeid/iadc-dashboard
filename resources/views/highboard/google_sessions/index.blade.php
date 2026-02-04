@@ -101,6 +101,12 @@
                             </button>
                         </div>
                         <div class="col-12">
+                            <button type="button" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center" id="copyMemberLinkBtn">
+                                <i class="fe fe-copy me-2"></i>
+                                <span>Copy Member Link</span>
+                            </button>
+                        </div>
+                        <div class="col-12">
                             <button type="button" class="btn btn-outline-danger btn-lg w-100 d-flex align-items-center justify-content-center" id="deleteSessionBtn">
                                 <i class="fe fe-trash-2 me-2"></i>
                                 <span>Delete Session</span>
@@ -386,9 +392,12 @@
             calendar.render();
             
             // Handle "Open in Google Calendar" button
+            // Handle "Open in Google Calendar" button
             document.getElementById('openInGoogleBtn').addEventListener('click', function() {
-                if (currentEventData && currentEventData.url) {
-                    window.open(currentEventData.url, '_blank');
+                if (currentEventData && currentEventData.id) {
+                    // Redirect to Join Route which handles the split view
+                    const joinUrl = `{{ url('highboard/sessions') }}/${currentEventData.id}/join`;
+                    window.location.href = joinUrl;
                     actionModal.hide();
                 }
             });
@@ -398,6 +407,24 @@
                 if (currentEventData) {
                     actionModal.hide();
                     deleteEvent(currentEventData.id, currentEventData.calendarEvent);
+                }
+            });
+            
+            // Handle "Copy Member Link" button
+            document.getElementById('copyMemberLinkBtn').addEventListener('click', function() {
+                if (currentEventData && currentEventData.id) {
+                    const memberLink = '{{ url("sessions") }}/' + currentEventData.id + '/join';
+                    const btn = this;
+                    navigator.clipboard.writeText(memberLink).then(() => {
+                        // Show success feedback
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<i class="fe fe-check me-2"></i><span>Copied!</span>';
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                        }, 2000);
+                    }).catch(err => {
+                        alert('Failed to copy link');
+                    });
                 }
             });
             

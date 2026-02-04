@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Highboard\BoardController;
 use App\Http\Controllers\Highboard\CommitteeController;
 use App\Http\Controllers\Highboard\DashboardController;
+use App\Http\Controllers\Highboard\EvaluationController;
 use App\Http\Controllers\Highboard\LessonController;
 use App\Http\Controllers\Highboard\MemberController;
 use App\Http\Controllers\Highboard\ProfileController;
@@ -64,10 +65,16 @@ Route::domain($domain)->group(function () {
 
 
         // Session Management
-        // Route::resource('sessions', SessionController::class);
-        // Route::get('sessions/{session}/join', [SessionController::class, 'join'])->name('sessions.join');
         Route::resource('sessions', GoogleSessionController::class);
-        Route::get('sessions/{session}/join', [GoogleSessionController::class, 'join'])->name('sessions.join');
+        Route::get('sessions/{googleSession}/join', [GoogleSessionController::class, 'join'])->name('sessions.join');
+
+        // Evaluation Routes
+        Route::get('evaluations', [EvaluationController::class, 'index'])->name('evaluations.index');
+        Route::get('evaluations/participation', [EvaluationController::class, 'participation'])->name('evaluations.participation');
+        Route::post('evaluations/participation', [EvaluationController::class, 'storeParticipation'])->name('evaluations.participation.store');
+        Route::get('evaluations/interaction/{googleSession}', [EvaluationController::class, 'interaction'])->name('evaluations.interaction');
+        Route::post('evaluations/interaction/{googleSession}', [EvaluationController::class, 'storeInteraction'])->name('evaluations.interaction.store');
+        Route::get('evaluations/participants/{googleSession}', [EvaluationController::class, 'getParticipants'])->name('evaluations.participants');
         
         // Highboard Impersonation Routes
         Route::post('login-as-board/{id}', [LoginController::class, 'highboardLoginAsBoard'])

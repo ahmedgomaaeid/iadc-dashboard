@@ -225,6 +225,11 @@
                                                 class="side-menu__icon fe fe-award"></i><span
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.evaluations.index') }}"><i
+                                                class="side-menu__icon fe fe-star"></i><span
+                                                class="side-menu__label">Evaluations</span></a>
+                                    </li>
                                     <li class="sub-category">
                                         <h3>Logout</h3>
                                     </li>

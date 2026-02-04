@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Highboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\GoogleSession;
+use App\Models\UserEvaluation;
 use Illuminate\Support\Facades\Auth;
 
 use Laravel\Socialite\Facades\Socialite;
@@ -257,5 +258,40 @@ class GoogleSessionController extends Controller
         $session->delete();
 
         return response()->json(['message' => 'Session deleted successfully']);
+    }
+
+    /**
+     * Join a session - record highboard member joining and redirect to meeting
+     */
+    public function join(GoogleSession $googleSession)
+    {
+        $highboard = Auth::guard('highboard')->user();
+        
+        Log::info('Highboard joining session', [
+            'highboard_id' => $highboard->id,
+            'session_id' => $googleSession->id
+        ]);
+
+        // Verify highboard has access (session's committee must be in their field)
+        $fieldCommittees = \App\Models\Committee::where('field_id', $highboard->field_id)->pluck('id');
+        if (!$fieldCommittees->contains($googleSession->committee_id)) {
+            Log::warning('Highboard unauthorized to join session', [
+                'highboard_field' => $highboard->field_id,
+                'session_committee' => $googleSession->committee_id
+            ]);
+            return redirect()->route('highboard.sessions.index')
+                ->with('error', 'You do not have access to this session.');
+        }
+
+        // Note: We don't record UserEvaluation for highboard joins since they are managers, not members being evaluated
+        // The join is logged above for tracking purposes
+
+        // Return view that opens meeting in new tab and redirects current tab to evaluation
+        return view('highboard.sessions.join_redirect', [
+            'session' => $googleSession, 
+            'redirectUrl' => route('highboard.evaluations.interaction', $googleSession),
+            'meetingUrl' => $googleSession->session_url ?? $googleSession->google_meet_link
+        ]);
+
     }
 }
