@@ -81,12 +81,9 @@
                 </div>
                 <div class="card-footer text-end">
                     @if($submission->status == 'pending')
-                        <form action="{{ route('highboard.tasks.submissions.accept', $submission) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-success" onclick="return confirm('Accept this submission?')">
-                                <i class="fe fe-check"></i> Accept
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                            <i class="fe fe-check"></i> Accept & Evaluate
+                        </button>
                         <form action="{{ route('highboard.tasks.submissions.reject', $submission) }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Reject this submission?')">
@@ -139,4 +136,31 @@
         </div>
     </div>
     <!-- ROW-1 END -->
+
+    <!-- Accept Modal -->
+    <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('highboard.tasks.submissions.accept', $submission) }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="acceptModalLabel">Evaluate Submission</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please evaluate this submission before accepting it.</p>
+                        <div class="mb-3">
+                            <label for="score" class="form-label">Score (1-10)</label>
+                            <input type="number" class="form-control" id="score" name="score" min="1" max="10" required>
+                            <div class="form-text">Assign a score between 1 and 10 for this task submission.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Accept & Save Score</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection

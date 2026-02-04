@@ -252,7 +252,10 @@ class TaskController extends Controller
     /**
      * Accept a submission
      */
-    public function acceptSubmission(\App\Models\TaskSubmission $submission)
+    /**
+     * Accept a submission
+     */
+    public function acceptSubmission(Request $request, \App\Models\TaskSubmission $submission)
     {
         $board = Auth::guard('board')->user();
         
@@ -261,9 +264,36 @@ class TaskController extends Controller
             abort(403);
         }
         
+        $request->validate([
+            'score' => 'required|integer|min:1|max:10',
+        ]);
+        
+        // Check if already evaluated to avoid duplicates
+        $existingEvaluation = \App\Models\UserEvaluation::where('related_type', get_class($submission))
+            ->where('related_id', $submission->id)
+            ->where('type', 'task_submission')
+            ->first();
+            
+        if (!$existingEvaluation) {
+            // Create evaluation
+            \App\Models\UserEvaluation::create([
+                'user_id' => $submission->user_id,
+                'evaluator_type' => get_class($board),
+                'evaluator_id' => $board->id,
+                'committee_id' => $board->committee_id,
+                'type' => 'task_submission',
+                'related_type' => get_class($submission),
+                'related_id' => $submission->id,
+                'score' => $request->score,
+                'max_score' => 10,
+                'evaluation_date' => now(),
+                'event_name' => 'Task: ' . $submission->task->title,
+            ]);
+        }
+        
         $submission->update(['status' => 'accepted']);
         
-        return redirect()->route('board.tasks.submissions')->with('success', 'Submission accepted successfully.');
+        return redirect()->route('board.tasks.submissions')->with('success', 'Submission accepted and evaluated successfully.');
     }
 
     /**
