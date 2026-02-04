@@ -132,7 +132,7 @@ class SessionController extends Controller
         }
         
         // 2. Check if user has already evaluated
-        $existingEvaluation = \App\Models\ManagementEvaluation::where('user_id', $user->id)
+        $existingEvaluation = \App\Models\InstructorEvaluation::where('user_id', $user->id)
             ->where('google_session_id', $googleSession->id)
             ->first();
             
@@ -148,7 +148,7 @@ class SessionController extends Controller
             'message' => 'nullable|string|max:1000'
         ]);
 
-        \App\Models\ManagementEvaluation::updateOrCreate(
+        \App\Models\InstructorEvaluation::updateOrCreate(
             [
                 'user_id' => $user->id,
                 'google_session_id' => $googleSession->id,

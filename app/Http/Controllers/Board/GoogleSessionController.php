@@ -273,6 +273,9 @@ class GoogleSessionController extends Controller
         // Let's check GoogleSession model first.
         
         // Record Management Evaluation (5 points for joining)
+        // Record Management Evaluation (5 points for joining)
+        // Disabled per user request
+        /*
         \App\Models\ManagementEvaluation::firstOrCreate(
             [
                 'user_type' => get_class($board),
@@ -286,6 +289,7 @@ class GoogleSessionController extends Controller
                 'score' => 5,
             ]
         );
+        */
 
         // Redirect current tab to interaction evaluation page
         // Open Zoom link in new tab provided by view
