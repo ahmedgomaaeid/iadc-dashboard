@@ -10,36 +10,19 @@ class ManagementEvaluation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_type',
         'user_id',
-        'committee_id',
-        'type',
-        'score',
-        'related_type',
-        'related_id',
+        'google_session_id',
+        'rating',
+        'message',
     ];
 
-    /**
-     * Get the user/member that owns the evaluation.
-     */
     public function user()
     {
-        return $this->morphTo();
+        return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the committee related to the evaluation.
-     */
-    public function committee()
+    public function session()
     {
-        return $this->belongsTo(Committee::class);
-    }
-
-    /**
-     * Get the owning related model (session, etc.).
-     */
-    public function related()
-    {
-        return $this->morphTo();
+        return $this->belongsTo(GoogleSession::class, 'google_session_id');
     }
 }

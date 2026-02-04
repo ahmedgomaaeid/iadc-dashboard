@@ -88,7 +88,10 @@ class EvaluationController extends Controller
             );
         }
 
-        return redirect()->back()->with('success', 'Evaluations saved successfully.');
+        return redirect()->back()->with([
+            'success' => 'Evaluations saved successfully.',
+            'show_instructor_link_modal' => true
+        ]);
     }
 
     public function participation()

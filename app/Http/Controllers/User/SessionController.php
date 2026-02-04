@@ -116,4 +116,49 @@ class SessionController extends Controller
         // Fallback or error
         return redirect()->route('user.sessions.index')->with('error', 'Meeting URL not found for this session. Please contact the board.');
     }
+    public function evaluate(GoogleSession $googleSession)
+    {
+        $user = Auth::guard('user')->user();
+
+        // 1. Check if user has joined this session
+        $hasJoined = \App\Models\UserEvaluation::where('user_id', $user->id)
+            ->where('related_type', get_class($googleSession))
+            ->where('related_id', $googleSession->id)
+            ->where('type', 'joining_meeting')
+            ->exists();
+
+        if (!$hasJoined) {
+            return redirect()->route('user.sessions.index')->with('error', 'You must join the session before you can evaluate the instructor.');
+        }
+        
+        // 2. Check if user has already evaluated
+        $existingEvaluation = \App\Models\ManagementEvaluation::where('user_id', $user->id)
+            ->where('google_session_id', $googleSession->id)
+            ->first();
+            
+        return view('user.sessions.evaluate', compact('googleSession', 'existingEvaluation'));
+    }
+
+    public function storeEvaluation(Request $request, GoogleSession $googleSession)
+    {
+        $user = Auth::guard('user')->user();
+        
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'message' => 'nullable|string|max:1000'
+        ]);
+
+        \App\Models\ManagementEvaluation::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'google_session_id' => $googleSession->id,
+            ],
+            [
+                'rating' => $request->rating,
+                'message' => $request->message
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Thank you for your feedback! Your evaluation has been saved.');
+    }
 }

@@ -103,6 +103,30 @@
         </div>
     </div>
 </div>
+    <!-- Instructor Link Modal -->
+    <div class="modal fade" id="instructorLinkModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Instructor Evaluation Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Share this link with users to evaluate the instructor:</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="instructorLinkInput" value="{{ route('user.sessions.evaluate', $session->id) }}" readonly>
+                        <button class="btn btn-outline-primary" type="button" onclick="copyInstructorLink()">
+                            <i class="fe fe-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -224,5 +248,27 @@
         `;
         document.head.appendChild(style);
     });
+    function copyInstructorLink() {
+        const copyText = document.getElementById("instructorLinkInput");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+        navigator.clipboard.writeText(copyText.value).then(() => {
+            const btn = document.querySelector('.input-group button');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fe fe-check"></i> Copied!';
+            btn.classList.replace('btn-outline-primary', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.replace('btn-success', 'btn-outline-primary');
+            }, 2000);
+        });
+    }
+
+    @if(session('show_instructor_link_modal'))
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = new bootstrap.Modal(document.getElementById('instructorLinkModal'));
+            modal.show();
+        });
+    @endif
 </script>
 @endsection
