@@ -44,7 +44,7 @@
                         </p>
                     </div>
                     <div class="ms-auto">
-                        <a href="{{ $activeMeeting->session_url }}" target="_blank" class="btn btn-light btn-lg pulse-button">
+                        <a href="{{ route('user.sessions.join', $activeMeeting->id) }}" target="_blank" class="btn btn-light btn-lg pulse-button">
                             <i class="fe fe-log-in me-2"></i>
                             Join Meeting
                         </a>
@@ -238,7 +238,9 @@
                         cancelButtonText: 'Close'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.open(props.sessionUrl, '_blank');
+                            // Use tracking route to record the join
+                            const trackingUrl = `{{ url('sessions') }}/${event.id}/join`;
+                            window.open(trackingUrl, '_blank');
                         }
                     });
                 } else {

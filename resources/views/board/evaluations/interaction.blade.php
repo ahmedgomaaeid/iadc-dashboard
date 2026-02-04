@@ -2,23 +2,41 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- PAGE-HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">User Interaction Evaluation</h1>
+        <div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('board.sessions.index') }}">Sessions</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Interaction Evaluation</li>
+            </ol>
+        </div>
+    </div>
+    <!-- PAGE-HEADER END -->
+
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card bg-dark text-white">
-                <div class="card-header border-0 bg-transparent">
-                    <h3 class="card-title text-primary"><i class="fas fa-users-cog me-2"></i>User Interaction Evaluation</h3>
-                    <p class="text-muted mb-0">Session: {{ $session->title }}</p>
+            <div class="card">
+                <div class="card-header border-bottom">
+                    <h3 class="card-title"><i class="fe fe-users me-2"></i>Evaluate Member Interactions</h3>
+                    <div class="card-options">
+                        <span class="badge bg-primary-transparent text-primary">{{ $session->title }}</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if(session('success'))
-                        <div class="alert alert-success bg-success text-white border-0">{{ session('success') }}</div>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
                     @endif
 
                     <form action="{{ route('board.evaluations.interaction.store', $session->id) }}" method="POST">
                         @csrf
                         <div class="table-responsive">
-                            <table class="table table-dark table-hover align-middle">
-                                <thead>
+                            <table class="table table-hover table-bordered align-middle">
+                                <thead class="table-light">
                                     <tr>
                                         <th>User</th>
                                         <th>Role</th>
@@ -33,8 +51,8 @@
                                                     @if($user->image)
                                                         <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}" class="rounded-circle me-3" width="40" height="40">
                                                     @else
-                                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                                            <span class="text-white">{{ substr($user->name, 0, 1) }}</span>
+                                                        <div class="rounded-circle bg-primary-transparent d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                            <span class="text-primary fw-bold">{{ substr($user->name, 0, 1) }}</span>
                                                         </div>
                                                     @endif
                                                     <div>
@@ -44,8 +62,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <!-- Assuming committee role or just Member -->
-                                                <span class="badge bg-info">Member</span>
+                                                <span class="badge bg-info-transparent text-info">Member</span>
                                             </td>
                                             <td style="width: 200px;">
                                                 <input type="hidden" name="evaluations[{{ $loop->index }}][user_id]" value="{{ $user->id }}">
@@ -63,7 +80,8 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="text-center text-muted py-4">
+                                            <td colspan="3" class="text-center text-muted py-5">
+                                                <i class="fe fe-users fs-50 d-block mb-3"></i>
                                                 No users have joined this session yet.
                                             </td>
                                         </tr>
@@ -73,9 +91,9 @@
                         </div>
                         
                         @if($users->count() > 0)
-                            <div class="text-end mt-3">
+                            <div class="text-end mt-3 save-btn-container">
                                 <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-save me-2"></i>Save Evaluations
+                                    <i class="fe fe-save me-2"></i>Save Evaluations
                                 </button>
                             </div>
                         @endif
@@ -99,8 +117,14 @@
                 const newUsers = data.users.filter(user => !currentUserIds.includes(user.id));
                 
                 if (newUsers.length > 0) {
-                    // Add new users to the table
                     const tbody = document.querySelector('table tbody');
+                    
+                    // Remove "no users" message row if it exists
+                    const emptyRow = tbody.querySelector('tr td[colspan="3"]');
+                    if (emptyRow) {
+                        emptyRow.closest('tr').remove();
+                    }
+                    
                     const currentIndex = currentUserIds.length;
                     
                     newUsers.forEach((user, idx) => {
@@ -108,6 +132,20 @@
                         tbody.insertAdjacentHTML('beforeend', row);
                         currentUserIds.push(user.id);
                     });
+                    
+                    // Show save button if not already visible
+                    let saveButtonContainer = document.querySelector('.save-btn-container');
+                    if (!saveButtonContainer) {
+                        const formElement = document.querySelector('form');
+                        const buttonHtml = `
+                            <div class="text-end mt-3 save-btn-container">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fe fe-save me-2"></i>Save Evaluations
+                                </button>
+                            </div>
+                        `;
+                        formElement.insertAdjacentHTML('beforeend', buttonHtml);
+                    }
                     
                     // Flash notification
                     showNotification(`${newUsers.length} new member(s) joined!`);
@@ -119,8 +157,8 @@
     function createUserRow(user, index) {
         const avatar = user.image 
             ? `<img src="/storage/${user.image}" alt="${user.name}" class="rounded-circle me-3" width="40" height="40">`
-            : `<div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                   <span class="text-white">${user.name.charAt(0)}</span>
+            : `<div class="rounded-circle bg-primary-transparent d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                   <span class="text-primary fw-bold">${user.name.charAt(0)}</span>
                </div>`;
         
         return `
@@ -135,7 +173,7 @@
                     </div>
                 </td>
                 <td>
-                    <span class="badge bg-info">Member</span>
+                    <span class="badge bg-info-transparent text-info">Member</span>
                 </td>
                 <td style="width: 200px;">
                     <input type="hidden" name="evaluations[${index}][user_id]" value="${user.id}">

@@ -29,37 +29,38 @@ class EvaluationController extends Controller
         return view('board.evaluations.index', compact('recentSessions', 'participationCount'));
     }
 
-    public function interaction(GoogleSession $session)
+    public function interaction(GoogleSession $googleSession)
     {
         // Ensure user has access
         $board = Auth::guard('board')->user();
-        if ($session->committee_id !== $board->committee_id) {
+        if ($googleSession->committee_id !== $board->committee_id) {
             abort(403);
         }
 
         // Get users who joined this session (have an evaluation of type 'joining_meeting')
         // We can find them by looking at UserEvaluation for this session
-        $joinedUserIds = UserEvaluation::where('related_type', get_class($session))
-            ->where('related_id', $session->id)
+        $joinedUserIds = UserEvaluation::where('related_type', get_class($googleSession))
+            ->where('related_id', $googleSession->id)
             ->where('type', 'joining_meeting')
             ->pluck('user_id');
 
         $users = User::whereIn('id', $joinedUserIds)->get();
 
         // Pass existing interaction evaluations if any
-        $evaluations = UserEvaluation::where('related_type', get_class($session))
-            ->where('related_id', $session->id)
+        $evaluations = UserEvaluation::where('related_type', get_class($googleSession))
+            ->where('related_id', $googleSession->id)
             ->where('type', 'interaction')
             ->get()
             ->keyBy('user_id');
 
+        $session = $googleSession; // Alias for view compatibility
         return view('board.evaluations.interaction', compact('session', 'users', 'evaluations'));
     }
 
-    public function storeInteraction(Request $request, GoogleSession $session)
+    public function storeInteraction(Request $request, GoogleSession $googleSession)
     {
         $board = Auth::guard('board')->user();
-        if ($session->committee_id !== $board->committee_id) {
+        if ($googleSession->committee_id !== $board->committee_id) {
             abort(403);
         }
 
@@ -73,14 +74,14 @@ class EvaluationController extends Controller
             UserEvaluation::updateOrCreate(
                 [
                     'user_id' => $eval['user_id'],
-                    'related_type' => get_class($session),
-                    'related_id' => $session->id,
+                    'related_type' => get_class($googleSession),
+                    'related_id' => $googleSession->id,
                     'type' => 'interaction',
                 ],
                 [
                     'evaluator_type' => get_class($board),
                     'evaluator_id' => $board->id,
-                    'committee_id' => $session->committee_id,
+                    'committee_id' => $googleSession->committee_id,
                     'score' => $eval['score'],
                     'max_score' => 5,
                 ]
@@ -102,24 +103,24 @@ class EvaluationController extends Controller
         return view('board.evaluations.participation', compact('users'));
     }
 
-    public function getParticipants(GoogleSession $session)
+    public function getParticipants(GoogleSession $googleSession)
     {
         $board = Auth::guard('board')->user();
-        if ($session->committee_id !== $board->committee_id) {
+        if ($googleSession->committee_id !== $board->committee_id) {
             abort(403);
         }
 
         // Get users who joined this session
-        $joinedUserIds = UserEvaluation::where('related_type', get_class($session))
-            ->where('related_id', $session->id)
+        $joinedUserIds = UserEvaluation::where('related_type', get_class($googleSession))
+            ->where('related_id', $googleSession->id)
             ->where('type', 'joining_meeting')
             ->pluck('user_id');
 
         $users = User::whereIn('id', $joinedUserIds)->get();
 
         // Get existing evaluations
-        $evaluations = UserEvaluation::where('related_type', get_class($session))
-            ->where('related_id', $session->id)
+        $evaluations = UserEvaluation::where('related_type', get_class($googleSession))
+            ->where('related_id', $googleSession->id)
             ->where('type', 'interaction')
             ->get()
             ->keyBy('user_id');
@@ -143,27 +144,27 @@ class EvaluationController extends Controller
         $committeeId = $board->committee_id;
 
         $data = $request->validate([
+            'evaluation_date' => 'required|date',
+            'event_name' => 'required|string|max:255',
             'evaluations' => 'required|array',
             'evaluations.*.user_id' => 'required|exists:users,id',
             'evaluations.*.score' => 'required|numeric|min:1|max:10',
         ]);
 
         foreach ($data['evaluations'] as $eval) {
-            UserEvaluation::updateOrCreate(
-                [
-                    'user_id' => $eval['user_id'],
-                    'committee_id' => $committeeId,
-                    'type' => 'participation',
-                ],
-                [
-                    'evaluator_type' => get_class($board),
-                    'evaluator_id' => $board->id,
-                    'score' => $eval['score'],
-                    'max_score' => 10,
-                ]
-            );
+            UserEvaluation::create([
+                'user_id' => $eval['user_id'],
+                'evaluator_type' => get_class($board),
+                'evaluator_id' => $board->id,
+                'committee_id' => $committeeId,
+                'type' => 'participation',
+                'score' => $eval['score'],
+                'max_score' => 10,
+                'evaluation_date' => $data['evaluation_date'],
+                'event_name' => $data['event_name'],
+            ]);
         }
 
-        return redirect()->back()->with('success', 'Participation evaluations saved successfully.');
+        return redirect()->back()->with('success', 'Participation evaluations saved successfully for "' . $data['event_name'] . '".');
     }
 }

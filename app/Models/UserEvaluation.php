@@ -19,6 +19,8 @@ class UserEvaluation extends Model
         'max_score',
         'related_type',
         'related_id',
+        'evaluation_date',
+        'event_name',
     ];
 
     /**

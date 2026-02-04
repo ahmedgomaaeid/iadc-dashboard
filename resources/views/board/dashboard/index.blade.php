@@ -44,11 +44,15 @@
                             @endif
                         </p>
                     </div>
-                    <div class="ms-auto">
-                        <a href="{{ $activeMeeting->session_url }}" target="_blank" class="btn btn-light btn-lg pulse-button">
+                    <div class="ms-auto d-flex gap-2 align-items-center">
+                        <a href="{{ route('board.sessions.join', $activeMeeting->id) }}" class="btn btn-light btn-lg pulse-button">
                             <i class="fe fe-log-in me-2"></i>
                             Join Meeting
                         </a>
+                        <button type="button" class="btn btn-outline-light btn-lg" id="copyMemberLinkBtn" data-link="{{ url('sessions/' . $activeMeeting->id . '/join') }}">
+                            <i class="fe fe-copy me-2"></i>
+                            Copy Member Link
+                        </button>
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -298,4 +302,31 @@
         .live-indicator { margin: 0 auto 1rem; }
     }
 </style>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('copyMemberLinkBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+            const link = this.getAttribute('data-link');
+            navigator.clipboard.writeText(link).then(() => {
+                // Show success feedback
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="fe fe-check me-2"></i>Copied!';
+                this.classList.remove('btn-outline-light');
+                this.classList.add('btn-success');
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-light');
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy link');
+            });
+        });
+    }
+});
+</script>
 @endsection

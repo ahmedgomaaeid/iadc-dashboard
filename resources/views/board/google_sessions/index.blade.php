@@ -454,7 +454,7 @@
                 // Add listener
                 document.getElementById('copyMemberLinkBtn').addEventListener('click', function() {
                     if (currentEventData && currentEventData.id) {
-                        const memberLink = `{{ url('user/sessions') }}/${currentEventData.id}/join`;
+                        const memberLink = `{{ url('sessions') }}/${currentEventData.id}/join`;
                         navigator.clipboard.writeText(memberLink).then(() => {
                             // Show success
                             const btn = document.getElementById('copyMemberLinkBtn');

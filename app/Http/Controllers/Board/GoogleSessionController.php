@@ -255,17 +255,17 @@ class GoogleSessionController extends Controller
 
         return response()->json(['message' => 'Session deleted successfully']);
     }
-    public function join(GoogleSession $session)
+    public function join(GoogleSession $googleSession)
     {
         $board = Auth::guard('board')->user();
         
         // Check if board member has access to this session (same committee)
-        if ($session->committee_id !== $board->committee_id) {
+        if ($googleSession->committee_id !== $board->committee_id) {
             abort(403, 'You do not have access to this session.');
         }
 
         // Check if this is the creator
-        $isCreator = $session->creator_id === $board->id && $session->creator_type === get_class($board);
+        $isCreator = $googleSession->creator_id === $board->id && $googleSession->creator_type === get_class($board);
         
         // If creator, mark as joined (if column exists, GoogleSession might not have it)
         // Checking GoogleSession model... it extends Model. 
@@ -277,10 +277,10 @@ class GoogleSessionController extends Controller
             [
                 'user_type' => get_class($board),
                 'user_id' => $board->id,
-                'committee_id' => $session->committee_id,
+                'committee_id' => $googleSession->committee_id,
                 'type' => 'joining_meeting',
-                'related_type' => get_class($session),
-                'related_id' => $session->id,
+                'related_type' => get_class($googleSession),
+                'related_id' => $googleSession->id,
             ],
             [
                 'score' => 5,
@@ -291,9 +291,9 @@ class GoogleSessionController extends Controller
         // Open Zoom link in new tab provided by view
         
         return view('board.sessions.join_redirect', [
-            'session' => $session, 
-            'redirectUrl' => route('board.evaluations.interaction', $session),
-            'meetingUrl' => $session->session_url ?? $session->google_meet_link // fallbacks
+            'session' => $googleSession, 
+            'redirectUrl' => route('board.evaluations.interaction', $googleSession),
+            'meetingUrl' => $googleSession->session_url ?? $googleSession->google_meet_link // fallbacks
         ]);
     }
 }
