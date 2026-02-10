@@ -516,7 +516,7 @@ class QuizCacheService
     }
 
 
-    public function getScore(int $quizId, int $participantId): int
+    public static function getScore(int $quizId, ?string $participantId = null): int
     {
         try {
             $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
@@ -529,6 +529,25 @@ class QuizCacheService
                 'error' => $e->getMessage(),
             ]);
             return 0;
+        }
+    }
+    public static function getParticipantEmail(int $quizId, ?string $participantId = null): string
+    {
+        try {
+            $infoKey = "quiz:{$quizId}:participant:{$participantId}";
+            $participantData = Redis::get($infoKey);
+            if ($participantData) {
+                $participant = json_decode($participantData, true);
+                return $participant['email'] ?? '';
+            }
+            return '';
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get participant email from Redis', [
+                'quiz_id' => $quizId,
+                'participant_id' => $participantId,
+                'error' => $e->getMessage(),
+            ]);
+            return '';
         }
     }
 }

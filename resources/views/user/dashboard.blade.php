@@ -165,7 +165,7 @@
                                                     <i class="fe fe-award text-primary"></i>
                                                 </span>
                                                 <a href="{{ route('tasks.show', $task->id) }}">
-                                                    {{ Str::limit($task->name, 20) }}
+                                                    {{ Str::limit($task->title, 20) }}
                                                 </a>
                                             </div>
                                         </td>

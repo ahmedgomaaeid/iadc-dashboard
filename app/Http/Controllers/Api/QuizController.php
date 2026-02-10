@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\QuizCacheService;
 use Illuminate\Http\Request;
+use App\Models\Quiz;
+use App\Models\UserEvaluation;
+use App\Models\User;
 
 class QuizController extends Controller
 {
@@ -183,10 +186,12 @@ class QuizController extends Controller
         if ($isLastQuestion) {
             // record the quiz score in user evaluation if the quiz is private
             $quiztable = Quiz::find($quizId);
+            $useremail = QuizCacheService::getParticipantEmail($quizId, $participantId);
+            $user = User::where('email', $useremail)->first();
             if ($quiztable->visibility == 'private') {
                 //create or update score of evaluation
                 \App\Models\UserEvaluation::updateOrCreate([
-                    'user_id' => $participantId,
+                    'user_id' => $user->id,
                     'committee_id' => $quiztable->committee_id,
                     'type' => 'quiz_submission',
                     'related_type' => get_class($quiztable),
