@@ -514,4 +514,21 @@ class QuizCacheService
             return 0;
         }
     }
+
+
+    public function getScore(int $quizId, int $participantId): int
+    {
+        try {
+            $scoreKey = "quiz:{$quizId}:participant:{$participantId}:score";
+            $score = Redis::get($scoreKey);
+            return $score !== null ? (int) $score : 0;
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get score from Redis', [
+                'quiz_id' => $quizId,
+                'participant_id' => $participantId,
+                'error' => $e->getMessage(),
+            ]);
+            return 0;
+        }
+    }
 }

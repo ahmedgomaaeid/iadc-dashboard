@@ -181,6 +181,23 @@ class QuizController extends Controller
         $isLastQuestion = $questionNumber >= $totalQuestions;
 
         if ($isLastQuestion) {
+            // record the quiz score in user evaluation if the quiz is private
+            $quiztable = Quiz::find($quizId);
+            if ($quiztable->visibility == 'private') {
+                //create or update score of evaluation
+                \App\Models\UserEvaluation::updateOrCreate([
+                    'user_id' => $participantId,
+                    'committee_id' => $quiztable->committee_id,
+                    'type' => 'quiz_submission',
+                    'related_type' => get_class($quiztable),
+                    'related_id' => $quiztable->id,
+                ], [
+                    'score' => QuizCacheService::getScore($quizId, $participantId),
+                    'max_score' => $totalQuestions,
+                    'evaluation_date' => now(),
+                    'event_name' => 'Quiz: ' . $quiztable->name,
+                ]);
+            }
             return response()->json([
                 'message' => 'Quiz completed! Thank you for participating.',
                 'completed' => true,
