@@ -5,6 +5,7 @@ use App\Http\Controllers\Highboard\BoardController;
 use App\Http\Controllers\Highboard\CommitteeController;
 use App\Http\Controllers\Highboard\DashboardController;
 use App\Http\Controllers\Highboard\EvaluationController;
+use App\Http\Controllers\Highboard\UserEvaluationController;
 use App\Http\Controllers\Highboard\LessonController;
 use App\Http\Controllers\Highboard\MemberController;
 use App\Http\Controllers\Highboard\ProfileController;
@@ -69,6 +70,7 @@ Route::domain($domain)->group(function () {
         Route::get('sessions/{googleSession}/join', [GoogleSessionController::class, 'join'])->name('sessions.join');
 
         // Evaluation Routes
+        Route::get('users/evaluations', [UserEvaluationController::class, 'index'])->name('users.evaluations.index');
         Route::get('evaluations', [EvaluationController::class, 'index'])->name('evaluations.index');
         Route::get('evaluations/participation', [EvaluationController::class, 'participation'])->name('evaluations.participation');
         Route::post('evaluations/participation', [EvaluationController::class, 'storeParticipation'])->name('evaluations.participation.store');
