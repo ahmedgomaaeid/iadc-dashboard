@@ -52,10 +52,10 @@
                             <th>Phone</th>
                             <th>Email</th>
                             <th>Committee</th>
-                            <th>Meetings (10%)</th>
+                            <th>Meetings (%)</th>
                             <th>Participation (%)</th>
                             <th>Quizzes (%)</th>
-                            <th>Tasks (10%)</th>
+                            <th>Tasks (%)</th>
                             <th>Total (%)</th>
                         </tr>
                     </thead>
@@ -109,10 +109,16 @@
                                     // "count of quiz_submission score / num of quizzes * num of question in each quiz"
                                     // Denominator is Total Questions.
                                     // Numerator is User's Total Quiz Score.
-                                    $quizScore = $user->userEvaluations()
+                                    $quizEvals = $user->userEvaluations()
                                         ->where('committee_id', $committee->id)
-                                        ->where('type', 'quiz')
-                                        ->sum('score');
+                                        ->where('type', 'quiz_submission')
+                                        ->get();
+                                        
+                                    // Only count scores from PRIVATE quizzes to match the denominator
+                                    $quizScore = $quizEvals->filter(function($eval) {
+                                        $quiz = \App\Models\Quiz::find($eval->related_id);
+                                        return $quiz && $quiz->visibility === 'private';
+                                    })->sum('score');
                                         
                                     $quizMax = $stats['max_quiz_score'];
                                     $quizPercentage = $quizMax > 0 ? ($quizScore / $quizMax) * 100 : 0;
