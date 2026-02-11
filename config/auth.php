@@ -39,26 +39,36 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
         ],
 
         'user' => [
             'driver' => 'session',
             'provider' => 'users',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
         ],
 
         'board' => [
             'driver' => 'session',
             'provider' => 'boards',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
         ],
 
         'highboard' => [
             'driver' => 'session',
             'provider' => 'highboards',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
         ],
 
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
         ],
     ],
 
