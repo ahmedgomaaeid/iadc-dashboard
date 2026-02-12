@@ -42,6 +42,9 @@
                             name="{{ $fieldName }}"
                             {{ $fieldConfig['required'] ? 'required' : '' }}
                         >
+                            @if(!empty($fieldConfig['placeholder']))
+                                <option value="" disabled selected>{{ $fieldConfig['placeholder'] }}</option>
+                            @endif
                             @foreach($fieldConfig['options'] ?? [] as $option)
                                 <option value="{{ $option }}" {{ old($fieldName) === $option ? 'selected' : '' }}>
                                     {{ $option }}
