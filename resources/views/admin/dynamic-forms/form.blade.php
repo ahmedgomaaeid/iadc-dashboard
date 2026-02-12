@@ -202,6 +202,33 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="custom_field_type" class="form-label">Field Type</label>
+                        <select class="form-select" id="custom_field_type">
+                            <option value="text" selected>Text Input</option>
+                            <option value="select">Select Dropdown</option>
+                            <option value="email">Email</option>
+                            <option value="number">Number</option>
+                            <option value="date">Date</option>
+                            <option value="textarea">Text Area</option>
+                        </select>
+                    </div>
+
+                    <div id="options_container" class="mb-3" style="display: none;">
+                        <label class="form-label">Options</label>
+                        <div id="options_list">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control option-input" placeholder="Option Value">
+                                <button class="btn btn-outline-danger" type="button" onclick="this.parentElement.remove()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addOptionInput()">
+                            <i class="fas fa-plus me-1"></i> Add Option
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="custom_field_placeholder" class="form-label">Placeholder</label>
                         <input type="text" class="form-control" id="custom_field_placeholder" placeholder="e.g. Enter your flight number">
                     </div>
@@ -262,6 +289,8 @@
     const container = document.getElementById('selectedFieldsContainer');
     const emptyState = document.getElementById('emptyState');
     const fieldsInput = document.getElementById('fieldsInput');
+    const fieldTypeSelect = document.getElementById('custom_field_type');
+    const optionsContainer = document.getElementById('options_container');
 
     // Initialize Sortable
     const sortable = new Sortable(container, {
@@ -274,6 +303,30 @@
 
     // Initial render
     renderSelectedFields();
+    
+    // Handle Field Type Change
+    if(fieldTypeSelect) {
+        fieldTypeSelect.addEventListener('change', function() {
+            if (this.value === 'select') {
+                optionsContainer.style.display = 'block';
+            } else {
+                optionsContainer.style.display = 'none';
+            }
+        });
+    }
+
+    function addOptionInput() {
+        const optionsList = document.getElementById('options_list');
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2';
+        div.innerHTML = `
+            <input type="text" class="form-control option-input" placeholder="Option Value">
+            <button class="btn btn-outline-danger" type="button" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        optionsList.appendChild(div);
+    }
 
     function toggleField(fieldName) {
         const index = selectedFields.findIndex(f => f.name === fieldName);
@@ -321,13 +374,20 @@
                         label: field.label,
                         type: field.type || 'text',
                         required: field.required,
-                        icon: field.icon || 'fa-pen',
-                        placeholder: field.placeholder || ''
+                        icon: field.icon || 'fa-pen', // Default icon
+                        placeholder: field.placeholder || '',
+                        options: field.options || []
                     };
                 }
 
                 if (!config) return;
                 
+                let details = `<span class="field-type">${config.type.charAt(0).toUpperCase() + config.type.slice(1)} ${config.required ? '• Required' : '• Optional'}</span>`;
+                
+                if (config.type === 'select' && config.options && config.options.length > 0) {
+                     details += `<br><span class="text-muted small">Options: ${config.options.join(', ')}</span>`;
+                }
+
                 const div = document.createElement('div');
                 div.className = 'field-item d-flex align-items-center selected';
                 div.dataset.field = field.name;
@@ -340,7 +400,7 @@
                     <div>
                         <span class="field-label">${config.label}</span>
                         <br>
-                        <span class="field-type">${config.type.charAt(0).toUpperCase() + config.type.slice(1)} ${config.required ? '• Required' : '• Optional'}</span>
+                        ${details}
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeField('${field.name}')">
                         <i class="fe fe-x"></i>
@@ -355,14 +415,30 @@
 
     function addCustomField() {
         const labelInput = document.getElementById('custom_field_label');
+        const typeSelect = document.getElementById('custom_field_type');
         const placeholderInput = document.getElementById('custom_field_placeholder');
         const requiredInput = document.getElementById('custom_field_required');
         const label = labelInput.value.trim();
         const placeholder = placeholderInput.value.trim();
+        const type = typeSelect ? typeSelect.value : 'text';
         
         if (!label) {
             alert('Please enter a field label');
             return;
+        }
+
+        let options = [];
+        if (type === 'select') {
+            document.querySelectorAll('.option-input').forEach(input => {
+                if(input.value.trim()) {
+                    options.push(input.value.trim());
+                }
+            });
+            
+            if (options.length === 0) {
+                alert('Please add at least one option for the select field.');
+                return;
+            }
         }
 
         const timestamp = new Date().getTime();
@@ -371,17 +447,33 @@
         selectedFields.push({
             name: fieldName,
             label: label,
-            type: 'text',
+            type: type,
             required: requiredInput.checked,
-            icon: 'fa-pen', // Default icon for custom fields
+            icon: type === 'select' ? 'fa-list' : 'fa-pen',
             placeholder: placeholder,
-            order: selectedFields.length + 1
+            order: selectedFields.length + 1,
+            options: options
         });
 
         // Reset inputs
         labelInput.value = '';
         placeholderInput.value = '';
+        if (placeholderInput) placeholderInput.value = '';
         requiredInput.checked = false;
+        if(typeSelect) typeSelect.value = 'text';
+        
+        // Reset options
+        if (optionsContainer) {
+            optionsContainer.style.display = 'none';
+            document.getElementById('options_list').innerHTML = `
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control option-input" placeholder="Option Value">
+                    <button class="btn btn-outline-danger" type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+        }
 
         renderSelectedFields();
     }
