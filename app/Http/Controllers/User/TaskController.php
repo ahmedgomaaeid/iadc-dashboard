@@ -76,11 +76,31 @@ class TaskController extends Controller
         ]);
 
         // Handle file upload
-        if ($request->hasFile('file')) {
+        if ($request->has('uploaded_file')) {
+            $tempPath = $request->input('uploaded_file');
+            
+            if (Storage::disk('local')->exists($tempPath)) {
+                $fileName = str_replace('temp_uploads/', '', $tempPath);
+                $parts = explode('_', $fileName, 2);
+                $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                
+                // Delete old file if it exists
+                if ($submission->file && Storage::disk('public')->exists($submission->file)) {
+                    Storage::disk('public')->delete($submission->file);
+                }
+                
+                // Move to public storage
+                $newPath = 'submissions/' . $fileName;
+                Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                Storage::disk('local')->delete($tempPath);
+                
+                $submission->file = $newPath;
+            }
+        } elseif ($request->hasFile('file')) {
             $file = $request->file('file');
             
             if (!$file->isValid()) {
-                return back()->withErrors(['file' => 'File upload failed. Please try again.']);
+                return back()->withErrors(['submission' => 'File upload failed. Please try again.']);
             }
             
             // Delete old file if it exists
@@ -94,7 +114,9 @@ class TaskController extends Controller
         }
 
         // Update text content
-        $submission->text_content = $request->input('text_content');
+        if ($request->has('text_content')) {
+            $submission->text_content = $request->input('text_content');
+        }
         
         // Reset status to pending when resubmitting
         $submission->status = 'pending';

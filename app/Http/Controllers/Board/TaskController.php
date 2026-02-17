@@ -64,6 +64,28 @@ class TaskController extends Controller
         ]);
 
         // Handle attachments
+        if ($request->has('uploaded_files')) {
+            foreach ($request->input('uploaded_files') as $tempPath) {
+                if (Storage::disk('local')->exists($tempPath)) {
+                    $fileName = str_replace('temp_uploads/', '', $tempPath);
+                    $parts = explode('_', $fileName, 2);
+                    $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                    
+                    $newPath = 'task_attachments/' . $fileName;
+                    Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                    Storage::disk('local')->delete($tempPath);
+
+                    TaskAttachment::create([
+                        'task_id' => $task->id,
+                        'file_name' => $originalName,
+                        'file_path' => $newPath,
+                        'file_type' => Storage::disk('public')->mimeType($newPath),
+                        'file_size' => Storage::disk('public')->size($newPath),
+                    ]);
+                }
+            }
+        }
+
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $fileName = $file->getClientOriginalName();
@@ -142,6 +164,28 @@ class TaskController extends Controller
         ]);
 
         // Handle new attachments
+        if ($request->has('uploaded_files')) {
+            foreach ($request->input('uploaded_files') as $tempPath) {
+                if (Storage::disk('local')->exists($tempPath)) {
+                    $fileName = str_replace('temp_uploads/', '', $tempPath);
+                    $parts = explode('_', $fileName, 2);
+                    $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                    
+                    $newPath = 'task_attachments/' . $fileName;
+                    Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                    Storage::disk('local')->delete($tempPath);
+
+                    TaskAttachment::create([
+                        'task_id' => $task->id,
+                        'file_name' => $originalName,
+                        'file_path' => $newPath,
+                        'file_type' => Storage::disk('public')->mimeType($newPath),
+                        'file_size' => Storage::disk('public')->size($newPath),
+                    ]);
+                }
+            }
+        }
+
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $fileName = $file->getClientOriginalName();

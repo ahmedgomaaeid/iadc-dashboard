@@ -318,6 +318,7 @@
 
     <!-- CUSTOM JS -->
     <script src="{{route('index')}}/assets/js/custom.js"></script>
+    <script src="{{route('index')}}/assets/js/resumable.min.js"></script>
     @yield('scripts')
 
 

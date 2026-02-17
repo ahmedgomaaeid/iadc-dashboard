@@ -45,3 +45,6 @@ Route::post('/quiz/{id}/finish', [ControllersQuizController::class, 'finishQuiz'
 // Unified Google Auth Routes
 Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+// Chunk Upload Route
+Route::post('upload/chunk', [\App\Http\Controllers\ChunkUploadController::class, 'upload'])->name('upload.chunk');
