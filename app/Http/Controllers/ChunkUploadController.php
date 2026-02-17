@@ -3,103 +3,94 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ChunkUploadController extends Controller
 {
     /**
-     * Handle chunk upload.
+     * Handles the file upload
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws UploadMissingFileException
+     * @throws \Pion\Laravel\ChunkUpload\Exceptions\UploadFailedException
      */
     public function upload(Request $request)
     {
-        $receiver = new \Illuminate\Http\UploadedFile(
-            $request->file('file')->getPathname(),
-            $request->file('file')->getClientOriginalName(),
-            $request->file('file')->getClientMimeType(),
-            $request->file('file')->getError(),
-            true
-        );
+        // create the file receiver
+        $receiver = new FileReceiver("file", $request, HandlerFactory::classFromRequest($request));
 
-        // Parameters from Resumable.js
-        $resumableIdentifier = $request->input('resumableIdentifier');
-        $resumableFilename = $request->input('resumableFilename');
-        $resumableChunkNumber = $request->input('resumableChunkNumber');
-        $resumableTotalChunks = $request->input('resumableTotalChunks');
-
-        // Clean identifier
-        $resumableIdentifier = preg_replace('/[^A-Za-z0-9\-]/', '', $resumableIdentifier);
-
-        // Temp storage path
-        $tempPath = 'chunks/' . $resumableIdentifier;
-
-        // Ensure directory exists
-        if (!Storage::disk('local')->exists($tempPath)) {
-            Storage::disk('local')->makeDirectory($tempPath);
+        // check if the upload is success, throw exception or return false
+        if ($receiver->isUploaded() === false) {
+            throw new UploadMissingFileException();
         }
 
-        // Move chunk
-        $chunkFilename = $resumableIdentifier . '.part' . $resumableChunkNumber;
-        $request->file('file')->storeAs($tempPath, $chunkFilename, 'local');
+        // receive the file
+        $save = $receiver->receive();
 
-        // Check if all chunks are uploaded
-        if ($this->isUploadComplete($tempPath, $resumableTotalChunks, $resumableIdentifier)) {
-            return $this->assembleChunks($tempPath, $resumableTotalChunks, $resumableIdentifier, $resumableFilename);
+        // check if the upload has finished (in chunk mode it will send smaller files)
+        if ($save->isFinished()) {
+            // save the file and return any json you need
+            return $this->saveFile($save->getFile());
         }
 
-        return response()->json(['message' => 'Chunk uploaded'], 200);
-    }
-
-    /**
-     * Check if all chunks exist.
-     */
-    protected function isUploadComplete($path, $totalChunks, $identifier)
-    {
-        for ($i = 1; $i <= $totalChunks; $i++) {
-            if (!Storage::disk('local')->exists($path . '/' . $identifier . '.part' . $i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Assemble chunks into final file.
-     */
-    protected function assembleChunks($path, $totalChunks, $identifier, $filename)
-    {
-        $finalPath = 'temp_uploads/' . $identifier . '_' . $filename;
-        
-        // Ensure temp_uploads directory exists
-        if (!Storage::disk('local')->exists('temp_uploads')) {
-            Storage::disk('local')->makeDirectory('temp_uploads');
-        }
-
-        // Create file
-        Storage::disk('local')->put($finalPath, '');
-
-        // Append chunks
-        for ($i = 1; $i <= $totalChunks; $i++) {
-            $chunkPath = $path . '/' . $identifier . '.part' . $i;
-            $chunkContent = Storage::disk('local')->get($chunkPath);
-            Storage::disk('local')->append($finalPath, $chunkContent, null); // null separator for binary safety logic check
-            
-            // Actually append correctly:
-            $handle = fopen(Storage::disk('local')->path($finalPath), 'ab');
-            fwrite($handle, $chunkContent);
-            fclose($handle);
-            
-            // Delete chunk
-            Storage::disk('local')->delete($chunkPath);
-        }
-        
-        // Remove chunk directory
-        Storage::disk('local')->deleteDirectory($path);
+        // we are in chunk mode, lets send the current progress
+        /** @var \Pion\Laravel\ChunkUpload\Handler\AbstractHandler $handler */
+        $handler = $save->handler();
 
         return response()->json([
-            'path' => $finalPath,
-            'filename' => $filename,
+            "done" => $handler->getPercentageDone(),
+            'status' => true
+        ]);
+    }
+
+    /**
+     * Saves the file
+     *
+     * @param UploadedFile $file
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function saveFile(UploadedFile $file)
+    {
+        $fileName = $this->createFilename($file);
+        
+        // We will store it in 'temp_uploads'
+        $finalPath = 'temp_uploads';
+        
+        // Ensure directory exists
+        if (!Storage::disk('local')->exists($finalPath)) {
+            Storage::disk('local')->makeDirectory($finalPath);
+        }
+
+        // move the file
+        $filePath = $file->storeAs($finalPath, $fileName, 'local');
+
+        return response()->json([
+            'path' => $filePath,
+            'filename' => $fileName,
             'is_complete' => true
-        ], 200);
+        ]);
+    }
+
+    /**
+     * Create unique filename
+     *
+     * @param UploadedFile $file
+     * @return string
+     */
+    protected function createFilename(UploadedFile $file)
+    {
+        $extension = $file->getClientOriginalExtension();
+        $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // Clean filename
+        $filename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $filename);
+        return $filename . "_" . md5(time()) . "." . $extension;
     }
 }
