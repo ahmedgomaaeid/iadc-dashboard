@@ -33,26 +33,34 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- YouTube Video Section -->
+                    <!-- Video Section -->
                     @if($lesson->youtube_video_id)
                         <div class="mb-4">
                             <div class="ratio ratio-16x9">
-                                <iframe 
-                                    src="https://www.youtube.com/embed/{{ $lesson->youtube_video_id }}?controls=0&rel=0&modestbranding=1"
-                                    title="{{ $lesson->title }}"
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; encrypted-media;" 
-                                    allowfullscreen>
-                                </iframe>
-                                <script>
-                                    var iframe = document.querySelector('iframe');
-                                    iframe.addEventListener('load', function() {
-                                        const new_style_element = document.createElement("style");
-                                        // disapear the youtube logo
-                                        new_style_element.innerHTML = ".ytp-watermark { display: none !important; }";
-                                        document.head.appendChild(new_style_element);
-                                    });
-                                </script>
+                                @if($lesson->video_type === 'youtube')
+                                    <iframe 
+                                        src="https://www.youtube.com/embed/{{ $lesson->video_embed_id }}?controls=0&rel=0&modestbranding=1"
+                                        title="{{ $lesson->title }}"
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; encrypted-media;" 
+                                        allowfullscreen>
+                                    </iframe>
+                                    <script>
+                                        var iframe = document.querySelector('iframe');
+                                        iframe.addEventListener('load', function() {
+                                            const new_style_element = document.createElement("style");
+                                            // disapear the youtube logo
+                                            new_style_element.innerHTML = ".ytp-watermark { display: none !important; }";
+                                            document.head.appendChild(new_style_element);
+                                        });
+                                    </script>
+                                @elseif($lesson->video_type === 'drive')
+                                    <iframe 
+                                        src="https://drive.google.com/file/d/{{ $lesson->video_embed_id }}/preview" 
+                                        title="{{ $lesson->title }}"
+                                        allow="autoplay">
+                                    </iframe>
+                                @endif
                             </div>
                         </div>
                     @endif

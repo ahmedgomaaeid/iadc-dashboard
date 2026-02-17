@@ -59,10 +59,10 @@ class LessonController extends Controller
         // Verify committee belongs to highboard's field
         $committee = $highboard->field->committees()->findOrFail($request->committee_id);
 
-        // Extract YouTube ID
+        // Extract Video ID
         $youtubeVideoId = null;
         if ($request->youtube_url) {
-            $youtubeVideoId = Lesson::extractYoutubeId($request->youtube_url);
+            $youtubeVideoId = Lesson::extractVideoId($request->youtube_url);
         }
 
         // Auto-detect links in content for tags
@@ -159,12 +159,12 @@ class LessonController extends Controller
         // Verify committee belongs to highboard's field
         $committee = $highboard->field->committees()->findOrFail($request->committee_id);
 
-        // Extract YouTube ID
+        // Extract Video ID
         $youtubeVideoId = $lesson->youtube_video_id;
         if ($request->has('remove_video')) {
             $youtubeVideoId = null;
         } elseif ($request->youtube_url) {
-            $youtubeVideoId = Lesson::extractYoutubeId($request->youtube_url);
+            $youtubeVideoId = Lesson::extractVideoId($request->youtube_url);
         }
 
         // Auto-detect links in content for tags

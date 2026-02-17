@@ -23,7 +23,11 @@
                 <div class="card-body">
                     @if($lesson->youtube_video_id)
                         <div class="ratio ratio-16x9 mb-4 border rounded">
-                            <iframe src="https://www.youtube.com/embed/{{ $lesson->youtube_video_id }}" title="{{ $lesson->title }}" allowfullscreen></iframe>
+                            @if($lesson->video_type === 'youtube')
+                                <iframe src="https://www.youtube.com/embed/{{ $lesson->video_embed_id }}" title="{{ $lesson->title }}" allowfullscreen></iframe>
+                            @elseif($lesson->video_type === 'drive')
+                                <iframe src="https://drive.google.com/file/d/{{ $lesson->video_embed_id }}/preview" title="{{ $lesson->title }}" allow="autoplay"></iframe>
+                            @endif
                         </div>
                     @endif
 

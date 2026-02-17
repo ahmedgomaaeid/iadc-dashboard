@@ -58,6 +58,38 @@ class Lesson extends Model
     }
 
     /**
+     * Extract Video ID from URL (YouTube or Google Drive).
+     * Returns:
+     * - YouTube ID (11 chars)
+     * - "drive:{FILE_ID}" for Google Drive
+     */
+    public static function extractVideoId($url)
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        // Try YouTube first
+        $youtubeId = self::extractYoutubeId($url);
+        if ($youtubeId) {
+            return $youtubeId;
+        }
+
+        // Try Google Drive
+        // Patterns:
+        // https://drive.google.com/file/d/FILE_ID/view
+        // https://drive.google.com/open?id=FILE_ID
+        // drive.google.com/file/d/FILE_ID
+        
+        $pattern = '/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|Docs\/)([-\w]+)/i';
+        if (preg_match($pattern, $url, $matches)) {
+            return 'drive:' . $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
      * Extract YouTube video ID from URL.
      * Supports formats:
      * - https://www.youtube.com/watch?v=VIDEO_ID
@@ -83,6 +115,38 @@ class Lesson extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Get video type: 'youtube' or 'drive' or null
+     */
+    public function getVideoTypeAttribute()
+    {
+        if (empty($this->youtube_video_id)) {
+            return null;
+        }
+
+        if (str_starts_with($this->youtube_video_id, 'drive:')) {
+            return 'drive';
+        }
+
+        return 'youtube';
+    }
+
+    /**
+     * Get the video embed ID (without prefix)
+     */
+    public function getVideoEmbedIdAttribute()
+    {
+        if (empty($this->youtube_video_id)) {
+            return null;
+        }
+
+        if (str_starts_with($this->youtube_video_id, 'drive:')) {
+            return substr($this->youtube_video_id, 6);
+        }
+
+        return $this->youtube_video_id;
     }
 
     /**

@@ -82,14 +82,14 @@
                             </small>
                         </div>
 
-                        <!-- YouTube Video URL -->
+                        <!-- Video URL -->
                         <div class="mb-4">
-                            <label for="youtube_url" class="form-label">YouTube Video URL (Optional)</label>
+                            <label for="youtube_url" class="form-label">Video URL (YouTube or Google Drive) (Optional)</label>
                             
                             @if(isset($lesson) && $lesson->youtube_video_id)
                                 <div class="alert alert-info d-flex justify-content-between align-items-center mb-2">
                                     <div>
-                                        <i class="fe fe-youtube me-2"></i>
+                                        <i class="fe fe-video me-2"></i>
                                         <strong>Current Video ID:</strong> {{ $lesson->youtube_video_id }}
                                     </div>
                                     <div class="form-check">
@@ -105,13 +105,13 @@
                                    class="form-control @error('youtube_url') is-invalid @enderror" 
                                    id="youtube_url" 
                                    name="youtube_url"
-                                   value="{{ old('youtube_url', isset($lesson) && $lesson->youtube_video_id ? 'https://www.youtube.com/watch?v=' . $lesson->youtube_video_id : '') }}"
-                                   placeholder="https://www.youtube.com/watch?v=xxxxx or https://youtu.be/xxxxx">
+                                   value="{{ old('youtube_url') }}"
+                                   placeholder="https://www.youtube.com/watch?v=... or Google Drive Link">
                             @error('youtube_url')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <small class="text-muted">
-                                <i class="fe fe-info me-1"></i>Paste a YouTube video URL (supports youtube.com, youtu.be, and embed formats)
+                                <i class="fe fe-info me-1"></i>Paste a YouTube video URL or a Google Drive file link
                             </small>
                         </div>
 

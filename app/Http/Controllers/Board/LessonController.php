@@ -55,10 +55,10 @@ class LessonController extends Controller
         // Extract links from content
         $tags = Lesson::extractLinks($request->content ?? '');
 
-        // Extract YouTube video ID from URL
+        // Extract Video ID from URL
         $youtubeVideoId = null;
         if ($request->youtube_url) {
-            $youtubeVideoId = Lesson::extractYoutubeId($request->youtube_url);
+            $youtubeVideoId = Lesson::extractVideoId($request->youtube_url);
         }
 
         // Create lesson
@@ -149,9 +149,9 @@ class LessonController extends Controller
         // Extract links from content
         $tags = Lesson::extractLinks($request->content ?? '');
 
-        // Handle YouTube URL
+        // Handle Video URL
         if ($request->youtube_url) {
-            $lesson->youtube_video_id = Lesson::extractYoutubeId($request->youtube_url);
+            $lesson->youtube_video_id = Lesson::extractVideoId($request->youtube_url);
         } elseif ($request->remove_video) {
             $lesson->youtube_video_id = null;
         }
