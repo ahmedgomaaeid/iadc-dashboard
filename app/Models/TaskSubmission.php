@@ -11,9 +11,13 @@ class TaskSubmission extends Model
     protected $fillable = [
         'user_id',
         'task_id',
-        'file',
+        'files',
         'text_content',
         'status',
+    ];
+
+    protected $casts = [
+        'files' => 'array',
     ];
 
     public function user()

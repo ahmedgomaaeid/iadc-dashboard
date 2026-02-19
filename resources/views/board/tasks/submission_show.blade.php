@@ -39,7 +39,45 @@
                         </div>
                     @endif
 
-                    @if($submission->file)
+                    @if($submission->files && count($submission->files) > 0)
+                        <div class="mb-4">
+                            <label class="form-label">Attachments</label>
+                            <div class="row">
+                                @foreach($submission->files as $file)
+                                    @php
+                                        $extension = pathinfo($file, PATHINFO_EXTENSION);
+                                        $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                    @endphp
+                                    <div class="col-md-6 mb-3">
+                                        @if($isImage)
+                                            <div class="card border">
+                                                <a href="{{ asset('storage/' . $file) }}" target="_blank">
+                                                    <img src="{{ asset('storage/' . $file) }}" class="card-img-top" alt="Attachment" style="height: 200px; object-fit: cover;">
+                                                </a>
+                                                <div class="card-body p-2 text-center">
+                                                     <a href="{{ asset('storage/' . $file) }}" target="_blank" class="btn btn-primary btn-sm"><i class="fe fe-eye"></i> View</a>
+                                                     <a href="{{ asset('storage/' . $file) }}" download class="btn btn-secondary btn-sm"><i class="fe fe-download"></i> Download</a>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="p-3 bg-light border br-5 d-flex align-items-center">
+                                                <span class="avatar avatar-md brround bg-primary me-3">
+                                                    <i class="fe fe-file fs-18 text-white"></i>
+                                                </span>
+                                                <div class="overflow-hidden w-100">
+                                                    <h6 class="mb-1 text-truncate" title="{{ basename($file) }}">{{ basename($file) }}</h6>
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ asset('storage/' . $file) }}" target="_blank" class="text-primary fs-12"><i class="fe fe-eye me-1"></i> View</a>
+                                                        <a href="{{ asset('storage/' . $file) }}" download class="text-secondary fs-12"><i class="fe fe-download me-1"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @elseif($submission->file)
                         <div class="mb-4">
                             <label class="form-label">Attachment</label>
                             @php

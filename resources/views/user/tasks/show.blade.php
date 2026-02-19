@@ -101,7 +101,20 @@
                             </div>
                         @endif
 
-                        @if($submission->file)
+                        @if($submission->files && count($submission->files) > 0)
+                            <div class="mb-3">
+                                <h6 class="mb-2"><i class="fe fe-paperclip me-1"></i> Submitted Files</h6>
+                                <div class="list-group">
+                                    @foreach($submission->files as $file)
+                                        <a href="{{ asset('storage/' . $file) }}" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center">
+                                            <i class="fe fe-file me-2 text-primary"></i>
+                                            <span class="text-truncate" style="max-width: 250px;">{{ basename($file) }}</span>
+                                            <i class="fe fe-download ms-auto text-muted"></i>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @elseif($submission->file)
                             <a href="{{ asset('storage/' . $submission->file) }}" class="btn btn-info btn-block w-100 mb-3" target="_blank">
                                 <i class="fe fe-eye me-1"></i> View File Submission
                             </a>
@@ -213,16 +226,17 @@
                 },
                 testChunks: false,
                 throttleProgressCallbacks: 1,
-                maxFiles: 1 // Only allow 1 file for submission
+                // maxFiles: 1 // Allow multiple files
             });
 
             r.assignBrowse(browseBtn);
             r.assignDrop(dropzone);
 
             r.on('fileAdded', function(file){
-                // Clear previous files since we only allow 1
+                // Clear previous files since we only allow 1 -> No, allow multiple
+                // var fileList = document.getElementById(fileListId);
+                // fileList.innerHTML = ''; 
                 var fileList = document.getElementById(fileListId);
-                fileList.innerHTML = '';
                 
                 var html = `
                     <div id="file-${file.uniqueIdentifier}" class="card mb-2">
@@ -235,7 +249,7 @@
                                 <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <small class="text-muted status-text mt-1 d-block">Waiting...</small>
-                            <input type="hidden" name="uploaded_file" value="" class="file-path-input">
+                            <input type="hidden" name="uploaded_files[]" value="" class="file-path-input">
                         </div>
                     </div>
                 `;
@@ -246,26 +260,32 @@
             r.on('fileProgress', function(file){
                 var progress = Math.floor(file.progress() * 100);
                 var el = document.getElementById('file-' + file.uniqueIdentifier);
-                el.querySelector('.progress-bar').style.width = progress + '%';
-                el.querySelector('.status-text').innerText = 'Uploading... ' + progress + '%';
+                if(el) {
+                    el.querySelector('.progress-bar').style.width = progress + '%';
+                    el.querySelector('.status-text').innerText = 'Uploading... ' + progress + '%';
+                }
             });
 
             r.on('fileSuccess', function(file, message){
                 var response = JSON.parse(message);
                 var el = document.getElementById('file-' + file.uniqueIdentifier);
-                el.querySelector('.progress-bar').classList.add('bg-success');
-                el.querySelector('.status-text').innerText = 'Completed';
-                el.querySelector('.status-text').classList.add('text-success');
-                
-                // Add path to hidden input
-                el.querySelector('.file-path-input').value = response.path;
+                if(el) {
+                    el.querySelector('.progress-bar').classList.add('bg-success');
+                    el.querySelector('.status-text').innerText = 'Completed';
+                    el.querySelector('.status-text').classList.add('text-success');
+                    
+                    // Add path to hidden input
+                    el.querySelector('.file-path-input').value = response.path;
+                }
             });
 
             r.on('fileError', function(file, message){
                 var el = document.getElementById('file-' + file.uniqueIdentifier);
-                el.querySelector('.progress-bar').classList.add('bg-danger');
-                el.querySelector('.status-text').innerText = 'Error: ' + message;
-                el.querySelector('.status-text').classList.add('text-danger');
+                if(el) {
+                    el.querySelector('.progress-bar').classList.add('bg-danger');
+                    el.querySelector('.status-text').innerText = 'Error: ' + message;
+                    el.querySelector('.status-text').classList.add('text-danger');
+                }
             });
         }
 

@@ -50,12 +50,13 @@ class TaskController extends Controller
     public function submit(Request $request, Task $task)
     {
         $request->validate([
-            'file' => 'nullable|file|max:10240', // 10MB max
+            'uploaded_files' => 'nullable|array',
+            'uploaded_files.*' => 'string',
             'text_content' => 'nullable|string',
         ]);
 
         // Ensure at least one submission type is provided
-        if (!$request->hasFile('file') && !$request->filled('text_content')) {
+        if ((!$request->has('uploaded_files') || empty($request->input('uploaded_files'))) && !$request->filled('text_content')) {
             return back()->withErrors(['submission' => 'Please provide either a file or text content.']);
         }
 
@@ -76,41 +77,36 @@ class TaskController extends Controller
         ]);
 
         // Handle file upload
-        if ($request->has('uploaded_file')) {
-            $tempPath = $request->input('uploaded_file');
-            
-            if (Storage::disk('local')->exists($tempPath)) {
-                $fileName = str_replace('temp_uploads/', '', $tempPath);
-                $parts = explode('_', $fileName, 2);
-                $originalName = count($parts) > 1 ? $parts[1] : $fileName;
-                
-                // Delete old file if it exists
-                if ($submission->file && Storage::disk('public')->exists($submission->file)) {
-                    Storage::disk('public')->delete($submission->file);
+        if ($request->has('uploaded_files') && !empty($request->input('uploaded_files'))) {
+            // Delete old files if they exist
+            if ($submission->files) {
+                foreach ($submission->files as $oldFile) {
+                    if (Storage::disk('public')->exists($oldFile)) {
+                        Storage::disk('public')->delete($oldFile);
+                    }
                 }
-                
-                // Move to public storage
-                $newPath = 'submissions/' . $fileName;
-                Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
-                Storage::disk('local')->delete($tempPath);
-                
-                $submission->file = $newPath;
             }
-        } elseif ($request->hasFile('file')) {
-            $file = $request->file('file');
-            
-            if (!$file->isValid()) {
-                return back()->withErrors(['submission' => 'File upload failed. Please try again.']);
+
+            $newFiles = [];
+            foreach ($request->input('uploaded_files') as $tempPath) {
+                if (Storage::disk('local')->exists($tempPath)) {
+                    $fileName = str_replace('temp_uploads/', '', $tempPath);
+                    // Try to restore original filename if possible, but ensure uniqueness or handling
+                    // The temp file naming in ChunkUploadController is $filename . "_" . md5(time()) . "." . $extension;
+                    // We can keep it or try to clean it. Let's keep existing logic preference if any.
+                    // Existing logic: $parts = explode('_', $fileName, 2); $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                    // But we need a unique name in submissions folder too.
+                    // Let's us the temp filename directly as it's already uniqueified.
+                    
+                    $newPath = 'submissions/' . $fileName;
+                    Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                    Storage::disk('local')->delete($tempPath);
+                    
+                    $newFiles[] = $newPath;
+                }
             }
             
-            // Delete old file if it exists
-            if ($submission->file && Storage::disk('public')->exists($submission->file)) {
-                Storage::disk('public')->delete($submission->file);
-            }
-            
-            // Store new file
-            $path = $request->file('file')->store('submissions', 'public');
-            $submission->file = $path;
+            $submission->files = $newFiles;
         }
 
         // Update text content
