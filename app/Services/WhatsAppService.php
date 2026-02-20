@@ -5,10 +5,9 @@ namespace App\Services;
 
 class WhatsAppService
 {
-    public function send($phone, $message)
+    public static function send($phone, $message)
     {
-        ///curl -X POST http://72.61.98.190:5000/send-message \ -F "phone=201001659186" \ -F "message=Hello"
-        /// 
+        $phone = '+2' . $phone;
         $url = "http://72.61.98.190:5000/send-message";
         $curl = curl_init();
         curl_setopt_array($curl, array(

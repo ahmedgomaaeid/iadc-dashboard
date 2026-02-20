@@ -94,6 +94,15 @@ class LessonController extends Controller
                 ]);
             }
         }
+        try {
+            $members = User::where('committee_id', $committee->id)->get();
+            $message = `تم اضافة درس جديد الي قسم ال `. $committee->name .' ( '. $lesson->title .' ) '. route('lessons.show', $lesson->id);
+            foreach ($members as $member) {
+                WhatsAppService::send($member->phone, $message);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending lesson notification: ' . $e->getMessage());
+        }
 
         return redirect()->route('highboard.lessons.index')
             ->with('success', 'Lesson created successfully.');
