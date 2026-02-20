@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Services\WhatsAppService;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class LessonController extends Controller
 {
@@ -98,7 +99,7 @@ class LessonController extends Controller
         }
         try {
             $members = User::where('committee_id', $committee->id)->get();
-            $message = `تم اضافة درس جديد الي قسم ال `. $committee->name .' ( '. $lesson->title .' ) '. route('lessons.show', $lesson->id);
+            $message = 'تم إضافة درس جديد الي قسم ' . $committee->name . ' ( ' . $lesson->title . ' ) ' . route('lessons.show', $lesson->id);
             foreach ($members as $member) {
                 WhatsAppService::send($member->phone, $message);
             }
