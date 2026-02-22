@@ -280,7 +280,7 @@
                     </div>
                     
                     <!-- Team Member 5 -->
-                    <div class="swiper-slide">
+                    {{-- div class="swiper-slide">
                         <div class="team-card">
                             <div class="team-card-image">
                                 <img src="{{ asset('assets/images/users/Saad.webp') }}" alt="Saad Waseem - Technical Manager of IADC Suez University Student Chapter" loading="lazy">
@@ -295,7 +295,7 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     
                     <!-- Team Member 6 -->
                     <div class="swiper-slide">
