@@ -100,7 +100,7 @@ class LessonController extends Controller
         try {
             // get users in committee from committee_user table
             $members = $committee->users()->where('is_active', true)->get();
-            $message = 'تم إضافة درس جديد الي قسم ' . $committee->name . ' ( ' . $lesson->title . ' ) ' . route('lessons.show', $lesson->id);
+            $message = 'مساء الخير \n حابين نبلغك إن في درس جديدة اتضاف، ادخل على الـ Dashboard وشوف التفاصيل. \n 🔗 ' . route('lessons.show', $lesson->id);
             foreach ($members as $member) {
                 WhatsAppService::send($member->phone, $message);
             }
