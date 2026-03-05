@@ -8,6 +8,8 @@ use App\Models\TaskAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -117,7 +119,16 @@ class TaskController extends Controller
                 ]);
             }
         }
-
+        try {
+            // get users in committee from committee_user table
+            $members = $committee->users()->where('is_active', true)->get();
+            $message = 'مساء الخير \n حابين نبلغك إن في تاسك جديدة اتضاف، ادخل على الـ Dashboard وشوف التفاصيل. \n 🔗 ' . route('tasks.show', $task->id);
+            foreach ($members as $member) {
+                WhatsAppService::send($member->phone, $message);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending lesson notification: ' . $e->getMessage());
+        }
         return redirect()->route('highboard.tasks.index')
             ->with('success', 'Task created successfully.');
     }
