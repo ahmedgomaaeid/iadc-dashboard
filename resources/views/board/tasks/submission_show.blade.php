@@ -191,6 +191,11 @@
                             <input type="number" class="form-control" id="score" name="score" min="1" max="10" required>
                             <div class="form-text">Assign a score between 1 and 10 for this task submission.</div>
                         </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes for Student (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Add feedback or notes for the student..."></textarea>
+                            <div class="form-text">These notes will be visible to the student on their task page.</div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

@@ -81,6 +81,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if($submission->status == 'accepted' && $submission->notes)
+                            <div class="card border border-info mb-4">
+                                <div class="card-header bg-info-transparent py-2">
+                                    <h6 class="card-title mb-0"><i class="fe fe-message-square me-1"></i> Evaluator Notes</h6>
+                                </div>
+                                <div class="card-body py-3">
+                                    <p class="mb-0">{!! nl2br(e($submission->notes)) !!}</p>
+                                </div>
+                            </div>
+                        @endif
                         
                         <div class="list-group mb-4">
                             <div class="list-group-item d-flex align-items-center">

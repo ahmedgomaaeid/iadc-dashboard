@@ -14,6 +14,7 @@ class TaskSubmission extends Model
         'files',
         'text_content',
         'status',
+        'notes',
     ];
 
     protected $casts = [

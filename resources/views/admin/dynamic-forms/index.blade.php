@@ -44,7 +44,7 @@
                             <tbody>
                                 @forelse($forms as $form)
                                     <tr>
-                                        <td class="fw-semibold">{{ $form->title }}</td>
+                                        <td class="fw-semibold">{{ $form->subtitle }}</td>
                                         <td><code>{{ $form->subdomain }}</code></td>
                                         <td>
                                             @php $fieldCount = count($form->fields ?? []); @endphp

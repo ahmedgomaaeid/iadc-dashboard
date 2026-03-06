@@ -122,17 +122,19 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="title" class="form-label">Form Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="title" name="title" 
-                            value="{{ old('title', $dynamicForm->title ?? '') }}" required
-                            placeholder="e.g., Registration Form">
-                    </div>
-                    <div class="mb-3">
-                        <label for="subtitle" class="form-label">Form Subtitle</label>
+                        <label for="subtitle" class="form-label">Form Title</label>
                         <input type="text" class="form-control" id="subtitle" name="subtitle" 
                             value="{{ old('subtitle', $dynamicForm->subtitle ?? '') }}"
                             placeholder="e.g., Join our community today">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Form Subtitle<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                            value="{{ old('title', $dynamicForm->title ?? '') }}" required
+                            placeholder="e.g., Registration Form">
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="form_image" class="form-label">Form Image <span class="text-muted">(Optional)</span></label>
                         <input type="file" class="form-control" id="form_image" name="form_image" accept="image/*">

@@ -8,6 +8,7 @@ use App\Models\TaskAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\WhatsAppService;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
@@ -366,6 +367,7 @@ class TaskController extends Controller
         
         $request->validate([
             'score' => 'required|integer|min:1|max:10',
+            'notes' => 'nullable|string|max:1000',
         ]);
         
         // Check if already evaluated to avoid duplicates
@@ -391,7 +393,10 @@ class TaskController extends Controller
             ]);
         }
         
-        $submission->update(['status' => 'accepted']);
+        $submission->update([
+            'status' => 'accepted',
+            'notes' => $request->notes,
+        ]);
         
         return redirect()->route('highboard.tasks.submissions')->with('success', 'Submission accepted and evaluated successfully.');
     }
