@@ -139,7 +139,7 @@
                 @if($form->id != 14)
                     <img src="{{ asset('images/logo.png') }}" alt="IADC Logo" class="logo">
                 @else
-                    <img src="{{ asset('images/logo UH.png') }}" alt="IADC Logo" class="logo">
+                    <img src="{{ asset('images/logo UH.webp') }}" alt="Unconventional Highboard Logo" class="logo">
                 @endif
             </nav>
         </header>
