@@ -70,6 +70,13 @@ return [
             'remember' => true,
             'remember_for' => 60 * 24 * 30,
         ],
+
+        'supervisor' => [
+            'driver' => 'session',
+            'provider' => 'supervisors',
+            'remember' => true,
+            'remember_for' => 60 * 24 * 30,
+        ],
     ],
 
     /*
@@ -108,6 +115,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
+        ],
+
+        'supervisors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Supervisor::class,
         ],
     ],
 

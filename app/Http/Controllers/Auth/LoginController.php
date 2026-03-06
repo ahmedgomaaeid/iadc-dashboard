@@ -159,6 +159,38 @@ class LoginController extends Controller
         return redirect('/admin');
     }
 
+    // Supervisor Login
+    public function supervisorLogin()
+    {
+        return view('supervisor.auth.login');
+    }
+
+    public function supervisorAuthenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::guard('supervisor')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/supervisor');
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
+
+    public function supervisorlogout(Request $request)
+    {
+        if (Auth::guard('supervisor')->check()) {
+            Auth::guard('supervisor')->logout();
+        }
+
+        return redirect('/supervisor');
+    }
+
     // Admin Impersonation - Login as Highboard
     public function loginAsHighboard(Request $request, $id)
     {

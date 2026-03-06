@@ -17,7 +17,7 @@ class CheckActiveStatus
     public function handle(Request $request, Closure $next, ...$guards): Response
     {
         if (empty($guards)) {
-            $guards = ['web', 'board', 'highboard', 'user'];
+            $guards = ['web', 'board', 'highboard', 'user', 'supervisor'];
         }
 
         foreach ($guards as $guard) {
@@ -37,6 +37,8 @@ class CheckActiveStatus
                         $route = 'highboard.login';
                     } elseif ($guard === 'admin') {
                         $route = 'admin.login';
+                    } elseif ($guard === 'supervisor') {
+                        $route = 'supervisor.login';
                     }
 
                     return redirect()->route($route)->with('error', 'Your account is inactive. Please contact the administrator.');
