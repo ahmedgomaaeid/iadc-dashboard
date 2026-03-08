@@ -318,7 +318,7 @@
                     </div>
                     <div class="stat-value">{{ $userCount + $highBoardCount + $boardCount }}</div>
                     <div class="stat-label">Total Members</div>
-                    <div class="stat-sub">{{ $userCount }} users &bull; {{ $boardCount }} boards</div>
+                    <div class="stat-sub">{{ $userCount }} users &bull; {{ $boardCount }} boards &bull; {{ $highBoardCount }} high boards</div>
                 </div>
             </div>
         </div>
