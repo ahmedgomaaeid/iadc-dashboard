@@ -18,11 +18,12 @@ class SendSessionReminder extends Command
         $now = now();
         $nextHour = now()->addHour();
 
-        // Get sessions where start_time is between now and now + 1 hour
-        // Exclude sessions that have already ended
+        // Get sessions starting within the next hour that haven't finished
+        // Skip sessions where start_time has already passed or session is ended
         $sessions = Session::whereNull('end_time')
             ->where('is_finally_ended', false)
-            ->whereBetween('start_time', [$now, $nextHour])
+            ->where('start_time', '>', $now)
+            ->where('start_time', '<=', $nextHour)
             ->with('committee.users')
             ->get();
 

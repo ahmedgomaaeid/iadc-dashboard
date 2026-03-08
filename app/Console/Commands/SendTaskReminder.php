@@ -19,10 +19,12 @@ class SendTaskReminder extends Command
         $now = now();
         $next24Hours = now()->addHours(24);
 
-        // Get active tasks where deadline is between now and now + 24 hours
+        // Get active tasks where deadline is in the future and within the next 24 hours
+        // Skip tasks where deadline has already passed
         $tasks = Task::where('is_active', true)
             ->whereNotNull('deadline')
-            ->whereBetween('deadline', [$now, $next24Hours])
+            ->where('deadline', '>', $now)
+            ->where('deadline', '<=', $next24Hours)
             ->with('committee.users')
             ->get();
 
