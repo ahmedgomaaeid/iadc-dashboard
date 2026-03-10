@@ -184,6 +184,15 @@
                                     </li>
 
                                     <li class="sub-category">
+                                        <h3>Management</h3>
+                                    </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{route('supervisor.sessions.index')}}"><i
+                                                class="side-menu__icon fe fe-video"></i><span
+                                                class="side-menu__label">Sessions</span></a>
+                                    </li>
+
+                                    <li class="sub-category">
                                         <h3>Profile</h3>
                                     </li>
                                     <li class="slide">

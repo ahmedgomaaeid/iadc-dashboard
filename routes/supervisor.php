@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Supervisor\DashboardController;
 use App\Http\Controllers\Supervisor\ProfileController;
+use App\Http\Controllers\Supervisor\SessionController;
 use Illuminate\Support\Facades\Route;
 
 $domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
@@ -21,5 +22,8 @@ Route::domain($domain)->group(function () {
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+        // Sessions Route
+        Route::get('sessions', [SessionController::class, 'index'])->name('sessions.index');
     });
 });
