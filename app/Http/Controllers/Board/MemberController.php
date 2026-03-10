@@ -51,6 +51,7 @@ class MemberController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'boolean',
             'university' => 'nullable|string|max:255',
             'faculty' => 'nullable|string|max:255',
             'academic_year' => 'nullable|string|max:255',
@@ -63,7 +64,7 @@ class MemberController extends Controller
 
         // Hash the password
         $validated['password'] = Hash::make($validated['password']);
-        $validated['is_active'] = true;
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         // Create the user
         $user = User::create($validated);
@@ -109,6 +110,7 @@ class MemberController extends Controller
             'password' => 'nullable|string|min:8',
             'phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'boolean',
             'university' => 'nullable|string|max:255',
             'faculty' => 'nullable|string|max:255',
             'academic_year' => 'nullable|string|max:255',
@@ -129,6 +131,8 @@ class MemberController extends Controller
         } else {
             unset($validated['password']);
         }
+
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         $member->update($validated);
 

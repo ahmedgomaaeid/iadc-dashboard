@@ -5,7 +5,7 @@
         <h1 class="page-title">{{ isset($question) ? 'Edit Question' : 'Create Question' }}</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('board.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ isset($question) ? 'Edit Question' : 'Create Question' }}</li>
             </ol>
         </div>
@@ -36,7 +36,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($question) ? route('highboard.questions.update', $question) : route('highboard.quizzes.questions.store', $quiz) }}" method="POST" class="row g-3">
+                    <form action="{{ isset($question) ? route('board.questions.update', $question) : route('board.quizzes.questions.store', $quiz) }}" method="POST" class="row g-3">
                         @csrf
                         @if (isset($question))
                             @method('PUT')
@@ -84,7 +84,7 @@
 
                         <div class="col-12 d-flex gap-2">
                             <button type="submit" class="btn btn-primary">{{ isset($question) ? 'Update Question' : 'Add Question' }}</button>
-                            <a href="{{ isset($question) ? route('highboard.quizzes.show', $question->quiz) : route('highboard.quizzes.show', $quiz) }}" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="{{ isset($question) ? route('board.quizzes.show', $question->quiz) : route('board.quizzes.show', $quiz) }}" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

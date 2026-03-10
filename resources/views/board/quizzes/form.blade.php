@@ -55,14 +55,6 @@
                             <input type="text" name="name" id="name" class="form-control" value="{{ isset($quiz) ? $quiz->name : old('name') }}" required>
                         </div>
 
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input type="hidden" name="is_active" value="0">
-                                <input type="checkbox" name="is_active" id="is_active" class="form-check-input" value="1" {{ isset($quiz) && $quiz->is_active ? 'checked' : '' }}>
-                                <label for="is_active" class="form-check-label">Active</label>
-                            </div>
-                        </div>
-
                         <div class="col-12 d-flex gap-2">
                             <button type="submit" class="btn btn-primary">{{ isset($quiz) ? 'Update Quiz' : 'Create Quiz' }}</button>
                             <a href="{{ route('board.quizzes.index') }}" class="btn btn-outline-secondary">Cancel</a>

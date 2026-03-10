@@ -1,5 +1,5 @@
 @extends('layouts.highboard-dashboard')
 
 @section('content')
-    @include('highboard.questions.form', ['quiz' => $quiz])
+    @include('board.questions.form', ['quiz' => $quiz])
 @endsection

@@ -38,12 +38,12 @@ class QuizController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'is_active' => 'boolean',
         ]);
 
         // Force private visibility and board's committee
         $quizData = $request->all();
         $quizData['visibility'] = 'private';
+        $quizData['is_active'] = 0;
         $quizData['committee_id'] = $board->committee_id;
 
         Quiz::create($quizData);

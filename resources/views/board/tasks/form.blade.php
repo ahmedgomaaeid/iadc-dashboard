@@ -90,16 +90,11 @@
                                                 <span>{{ $attachment->file_name }}</span>
                                                 <small class="text-muted ms-2">({{ $attachment->formatted_size }})</small>
                                             </div>
-                                            <form action="{{ route('board.tasks.attachments.destroy', $attachment) }}" 
-                                                  method="POST" 
-                                                  class="d-inline"
-                                                  onsubmit="return confirm('Delete this attachment?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fe fe-trash-2"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger delete-attachment-btn"
+                                                    data-attachment-id="{{ $attachment->id }}"
+                                                    onclick="if(confirm('Delete this attachment?')) document.getElementById('delete-attachment-{{ $attachment->id }}').submit();">
+                                                <i class="fe fe-trash-2"></i>
+                                            </button>
                                         </div>
                                     @endforeach
                                 </div>
@@ -156,6 +151,18 @@
             </div>
         </div>
     </div>
+
+    {{-- Delete attachment forms placed outside the main form to avoid nested forms --}}
+    @if(isset($task) && $task->attachments->count() > 0)
+        @foreach($task->attachments as $attachment)
+            <form id="delete-attachment-{{ $attachment->id }}" 
+                  action="{{ route('board.tasks.attachments.destroy', $attachment) }}" 
+                  method="POST" style="display:none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endforeach
+    @endif
 @endsection
 
 @section('scripts')

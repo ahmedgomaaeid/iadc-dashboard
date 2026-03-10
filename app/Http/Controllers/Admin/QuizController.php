@@ -34,11 +34,13 @@ class QuizController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'is_active' => 'boolean',
             'visibility' => 'required|in:global,private',
             'committee_id' => 'required_if:visibility,private|nullable|exists:committees,id',
         ]);
 
+        // make quiz deactive by default
+        $request->merge(['is_active' => 0]);
+        
         Quiz::create($request->all());
 
         // return to view of this quiz to add questions
