@@ -341,12 +341,19 @@ class EmailController extends Controller
             config([
                 'mail.mailers.supervisor_smtp' => [
                     'transport' => 'smtp',
-                    'host' => 'iadcsuez.org',
+                    'host' => '72.61.98.190',
                     'port' => 465,
                     'scheme' => 'smtps',
                     'username' => $supervisor->server_mail,
                     'password' => $supervisor->server_password,
                     'timeout' => null,
+                    'stream' => [
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true,
+                        ],
+                    ],
                 ],
             ]);
 
