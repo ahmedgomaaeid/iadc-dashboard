@@ -16,11 +16,14 @@ class Supervisor extends Authenticatable
         'password',
         'phone',
         'image',
+        'server_mail',
+        'server_password',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'server_password',
     ];
 
     protected function casts(): array

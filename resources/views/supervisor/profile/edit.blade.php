@@ -138,6 +138,55 @@
                     </form>
                 </div>
             </div>
+
+            {{-- Mail Server Credentials --}}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fe fe-mail me-2"></i>Mail Server</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('supervisor.profile.update') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-3">
+                            <label for="server_mail" class="form-label">Server Email</label>
+                            <input type="email" class="form-control @error('server_mail') is-invalid @enderror" 
+                                   id="server_mail" name="server_mail" 
+                                   value="{{ old('server_mail', $user->server_mail) }}"
+                                   placeholder="e.g. user@iadcsuez.org">
+                            @error('server_mail')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="server_password" class="form-label">Server Password</label>
+                            <input type="password" class="form-control @error('server_password') is-invalid @enderror" 
+                                   id="server_password" name="server_password"
+                                   placeholder="{{ $user->server_password ? '••••••••' : 'Not set' }}">
+                            @error('server_password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Leave blank to keep current password</small>
+                        </div>
+
+                        @if($user->server_mail)
+                            <div class="alert alert-success py-2 px-3 mb-3" style="font-size: 0.82rem; border-radius: 8px;">
+                                <i class="fe fe-check-circle me-1"></i> Email configured: {{ $user->server_mail }}
+                            </div>
+                        @else
+                            <div class="alert alert-warning py-2 px-3 mb-3" style="font-size: 0.82rem; border-radius: 8px;">
+                                <i class="fe fe-alert-triangle me-1"></i> No email configured yet
+                            </div>
+                        @endif
+
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fe fe-save me-2"></i>Update Mail Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

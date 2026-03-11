@@ -32,6 +32,8 @@ class ProfileController extends Controller
             'email' => 'required|email|unique:supervisors,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'server_mail' => 'nullable|email|max:255',
+            'server_password' => 'nullable|string|max:255',
         ]);
 
         // Handle image upload
@@ -44,6 +46,11 @@ class ProfileController extends Controller
             // Store new image
             $path = $request->file('image')->store('profiles/supervisor', 'public');
             $validated['image'] = $path;
+        }
+
+        // Handle server_password: keep existing if blank
+        if (empty($validated['server_password'])) {
+            unset($validated['server_password']);
         }
 
         $user->update($validated);
