@@ -343,7 +343,7 @@ class EmailController extends Controller
                     'transport' => 'smtp',
                     'host' => 'iadcsuez.org',
                     'port' => 465,
-                    'scheme' => 'ssl',
+                    'scheme' => 'smtps',
                     'username' => $supervisor->server_mail,
                     'password' => $supervisor->server_password,
                     'timeout' => null,
