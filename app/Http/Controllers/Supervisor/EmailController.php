@@ -20,7 +20,7 @@ class EmailController extends Controller
 
         $host = '{iadcsuez.org:993/imap/ssl/novalidate-cert}' . $folder;
 
-        $connection = @imap_open($host, $supervisor->server_mail, $supervisor->server_password);
+        $connection = @\imap_open($host, $supervisor->server_mail, $supervisor->server_password);
 
         if (!$connection) {
             return null;
@@ -31,7 +31,7 @@ class EmailController extends Controller
 
     private function getSentFolderName($connection)
     {
-        $folders = imap_list($connection, '{iadcsuez.org:993/imap/ssl/novalidate-cert}', '*');
+        $folders = \imap_list($connection, '{iadcsuez.org:993/imap/ssl/novalidate-cert}', '*');
         if ($folders) {
             foreach ($folders as $folder) {
                 $folderName = str_replace('{iadcsuez.org:993/imap/ssl/novalidate-cert}', '', $folder);
@@ -106,7 +106,7 @@ class EmailController extends Controller
             ]);
         }
         $sentFolder = $this->getSentFolderName($tempConnection);
-        imap_close($tempConnection);
+        \imap_close($tempConnection);
 
         $connection = $this->getImapConnection($sentFolder);
         if (!$connection) {
@@ -129,18 +129,18 @@ class EmailController extends Controller
         $perPage = 20;
         $page = max(1, (int) $request->get('page', 1));
 
-        $mailboxInfo = imap_check($connection);
+        $mailboxInfo = \imap_check($connection);
         $totalEmails = $mailboxInfo->Nmsgs;
 
         // Get unread count from INBOX
         if ($currentFolder === 'inbox') {
-            $unreadCount = $mailboxInfo->Nmsgs > 0 ? count(imap_search($connection, 'UNSEEN') ?: []) : 0;
+            $unreadCount = $mailboxInfo->Nmsgs > 0 ? count(\imap_search($connection, 'UNSEEN') ?: []) : 0;
         } else {
             $unreadCount = 0;
             $inboxConn = $this->getImapConnection('INBOX');
             if ($inboxConn) {
-                $unreadCount = count(imap_search($inboxConn, 'UNSEEN') ?: []);
-                imap_close($inboxConn);
+                $unreadCount = count(\imap_search($inboxConn, 'UNSEEN') ?: []);
+                \imap_close($inboxConn);
             }
         }
 
@@ -154,7 +154,7 @@ class EmailController extends Controller
             $start = max(1, $end - $perPage + 1);
 
             $sequence = "$start:$end";
-            $overviews = imap_fetch_overview($connection, $sequence, 0);
+            $overviews = \imap_fetch_overview($connection, $sequence, 0);
 
             if ($overviews) {
                 // Sort by date descending
@@ -179,7 +179,7 @@ class EmailController extends Controller
             }
         }
 
-        imap_close($connection);
+        \imap_close($connection);
 
         return view('supervisor.email.index', compact(
             'emails',
@@ -202,19 +202,19 @@ class EmailController extends Controller
                 ->with('error', 'Could not connect to mail server.');
         }
 
-        $msgno = imap_msgno($connection, (int) $uid);
+        $msgno = \imap_msgno($connection, (int) $uid);
         if (!$msgno) {
-            imap_close($connection);
+            \imap_close($connection);
             return redirect()->route('supervisor.email.inbox')
                 ->with('error', 'Email not found.');
         }
 
         // Mark as read
-        imap_setflag_full($connection, (string) $uid, '\\Seen', ST_UID);
+        \imap_setflag_full($connection, (string) $uid, '\\Seen', ST_UID);
 
         // Get headers
-        $header = imap_headerinfo($connection, $msgno);
-        $structure = imap_fetchstructure($connection, $msgno);
+        $header = \imap_headerinfo($connection, $msgno);
+        $structure = \imap_fetchstructure($connection, $msgno);
 
         // Get body
         $body = $this->getBody($connection, $msgno, $structure);
@@ -235,7 +235,7 @@ class EmailController extends Controller
             'attachments' => $attachments,
         ];
 
-        imap_close($connection);
+        \imap_close($connection);
 
         return view('supervisor.email.show', compact('email'));
     }
@@ -245,7 +245,7 @@ class EmailController extends Controller
         $connection = $this->getImapConnection('INBOX');
         if (!$connection) return 'Sent';
         $sentFolder = $this->getSentFolderName($connection);
-        imap_close($connection);
+        \imap_close($connection);
         return $sentFolder;
     }
 
@@ -267,7 +267,7 @@ class EmailController extends Controller
 
         if (!isset($structure->parts) || !$structure->parts) {
             // Simple message
-            $body = imap_fetchbody($connection, $msgno, '1');
+            $body = \imap_fetchbody($connection, $msgno, '1');
             $body = $this->decodeBody($body, $structure->encoding ?? 0);
             if ($structure->subtype === 'PLAIN') {
                 $body = nl2br(htmlspecialchars($body));
@@ -301,7 +301,7 @@ class EmailController extends Controller
                 $currentPart = $partNumber ? "$partNumber." . ($index + 1) : (string)($index + 1);
 
                 if ($part->type === 0) { // Text
-                    $body = imap_fetchbody($connection, $msgno, $currentPart);
+                    $body = \imap_fetchbody($connection, $msgno, $currentPart);
                     $body = $this->decodeBody($body, $part->encoding ?? 0);
 
                     if (strtoupper($part->subtype) === 'HTML') {
@@ -409,16 +409,16 @@ class EmailController extends Controller
             return redirect()->back()->with('error', 'Could not connect to mail server.');
         }
 
-        $msgno = imap_msgno($connection, (int) $uid);
+        $msgno = \imap_msgno($connection, (int) $uid);
         if (!$msgno) {
-            imap_close($connection);
+            \imap_close($connection);
             return redirect()->back()->with('error', 'Email not found.');
         }
 
-        $structure = imap_fetchstructure($connection, $msgno);
+        $structure = \imap_fetchstructure($connection, $msgno);
 
         if (!isset($structure->parts[$partNumber - 1])) {
-            imap_close($connection);
+            \imap_close($connection);
             return redirect()->back()->with('error', 'Attachment not found.');
         }
 
@@ -441,10 +441,10 @@ class EmailController extends Controller
             }
         }
 
-        $body = imap_fetchbody($connection, $msgno, (string) $partNumber);
+        $body = \imap_fetchbody($connection, $msgno, (string) $partNumber);
         $body = $this->decodeBody($body, $part->encoding ?? 0);
 
-        imap_close($connection);
+        \imap_close($connection);
 
         return response($body)
             ->header('Content-Type', 'application/octet-stream')
@@ -462,10 +462,10 @@ class EmailController extends Controller
             $connection = $this->getImapConnection($imapFolder);
 
             if ($connection) {
-                $msgno = imap_msgno($connection, (int) $request->reply_to);
+                $msgno = \imap_msgno($connection, (int) $request->reply_to);
                 if ($msgno) {
-                    $header = imap_headerinfo($connection, $msgno);
-                    $structure = imap_fetchstructure($connection, $msgno);
+                    $header = \imap_headerinfo($connection, $msgno);
+                    $structure = \imap_fetchstructure($connection, $msgno);
                     $body = $this->getBody($connection, $msgno, $structure);
 
                     $replyTo = [
@@ -478,7 +478,7 @@ class EmailController extends Controller
                         'from' => $this->formatAddresses($header->from ?? []),
                     ];
                 }
-                imap_close($connection);
+                \imap_close($connection);
             }
         }
 
@@ -556,7 +556,7 @@ class EmailController extends Controller
             if (!$connection) return;
 
             $sentFolder = $this->getSentFolderName($connection);
-            imap_close($connection);
+            \imap_close($connection);
 
             $sentConnection = $this->getImapConnection($sentFolder);
             if (!$sentConnection) return;
@@ -571,8 +571,8 @@ class EmailController extends Controller
             $message .= "\r\n";
             $message .= $request->body;
 
-            imap_append($sentConnection, '{iadcsuez.org:993/imap/ssl/novalidate-cert}' . $sentFolder, $message, "\\Seen");
-            imap_close($sentConnection);
+            \imap_append($sentConnection, '{iadcsuez.org:993/imap/ssl/novalidate-cert}' . $sentFolder, $message, "\\Seen");
+            \imap_close($sentConnection);
         } catch (\Exception $e) {
             // Silent fail - email was already sent via SMTP
         }
@@ -587,9 +587,9 @@ class EmailController extends Controller
             return redirect()->back()->with('error', 'Could not connect to mail server.');
         }
 
-        imap_delete($connection, (string) $uid, FT_UID);
-        imap_expunge($connection);
-        imap_close($connection);
+        \imap_delete($connection, (string) $uid, FT_UID);
+        \imap_expunge($connection);
+        \imap_close($connection);
 
         $redirectRoute = $folder === 'sent' ? 'supervisor.email.sent' : 'supervisor.email.inbox';
         return redirect()->route($redirectRoute)
@@ -605,24 +605,24 @@ class EmailController extends Controller
             return redirect()->back()->with('error', 'Could not connect to mail server.');
         }
 
-        $msgno = imap_msgno($connection, (int) $uid);
+        $msgno = \imap_msgno($connection, (int) $uid);
         if ($msgno) {
-            $header = imap_headerinfo($connection, $msgno);
+            $header = \imap_headerinfo($connection, $msgno);
             if ($header->Unseen === 'U' || $header->Recent === 'N') {
-                imap_setflag_full($connection, (string) $uid, '\\Seen', ST_UID);
+                \imap_setflag_full($connection, (string) $uid, '\\Seen', ST_UID);
             } else {
-                imap_clearflag_full($connection, (string) $uid, '\\Seen', ST_UID);
+                \imap_clearflag_full($connection, (string) $uid, '\\Seen', ST_UID);
             }
         }
 
-        imap_close($connection);
+        \imap_close($connection);
 
         return redirect()->back()->with('success', 'Email status updated.');
     }
 
     private function decodeMimeStr($string)
     {
-        $elements = imap_mime_header_decode($string);
+        $elements = \imap_mime_header_decode($string);
         $decoded = '';
         foreach ($elements as $element) {
             $charset = ($element->charset === 'default') ? 'UTF-8' : $element->charset;
