@@ -341,19 +341,14 @@ class EmailController extends Controller
             config([
                 'mail.mailers.supervisor_smtp' => [
                     'transport' => 'smtp',
-                    'host' => '72.61.98.190',
-                    'port' => 465,
-                    'scheme' => 'smtps',
+                    'host' => env('MAIL_HOST', '72.61.98.190'),
+                    'port' => env('MAIL_PORT', 465),
+                    'scheme' => env('MAIL_SCHEME', 'smtps'),
                     'username' => $supervisor->server_mail,
                     'password' => $supervisor->server_password,
                     'timeout' => null,
-                    'stream' => [
-                        'ssl' => [
-                            'verify_peer' => false,
-                            'verify_peer_name' => false,
-                            'allow_self_signed' => true,
-                        ],
-                    ],
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
                 ],
             ]);
 
