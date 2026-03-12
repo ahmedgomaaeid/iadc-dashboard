@@ -358,10 +358,14 @@ class EmailController extends Controller
             $fromEmail = $supervisor->server_mail;
             $fromName = $supervisor->name;
 
-            Mail::mailer('supervisor_smtp')->html($bodyContent, function ($message) use ($toEmail, $subject, $fromEmail, $fromName, $request) {
+            $textContent = strip_tags($bodyContent);
+
+            Mail::mailer('supervisor_smtp')->send([], [], function ($message) use ($toEmail, $subject, $fromEmail, $fromName, $request, $bodyContent, $textContent) {
                 $message->from($fromEmail, $fromName)
                     ->to($toEmail)
-                    ->subject($subject);
+                    ->subject($subject)
+                    ->html($bodyContent)
+                    ->text($textContent);
 
                 if ($request->hasFile('attachments')) {
                     foreach ($request->file('attachments') as $file) {
@@ -394,14 +398,31 @@ class EmailController extends Controller
 
             $sentFolder = $client->findSentFolder();
 
+            $boundary = "=_" . md5(uniqid(microtime(true), true));
+
             $message = "From: {$supervisor->name} <{$supervisor->server_mail}>\r\n";
             $message .= "To: {$request->to}\r\n";
             $message .= "Subject: {$request->subject}\r\n";
             $message .= "Date: " . date('r') . "\r\n";
             $message .= "MIME-Version: 1.0\r\n";
-            $message .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $message .= "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\n";
             $message .= "\r\n";
-            $message .= $request->body;
+            
+            // Plain text part
+            $message .= "--$boundary\r\n";
+            $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+            $message .= "Content-Transfer-Encoding: 8bit\r\n";
+            $message .= "\r\n";
+            $message .= strip_tags($request->body) . "\r\n";
+            
+            // HTML part
+            $message .= "--$boundary\r\n";
+            $message .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $message .= "Content-Transfer-Encoding: 8bit\r\n";
+            $message .= "\r\n";
+            $message .= $request->body . "\r\n";
+            
+            $message .= "--$boundary--\r\n";
 
             $client->selectFolder($sentFolder);
             $client->appendMessage($sentFolder, $message);
