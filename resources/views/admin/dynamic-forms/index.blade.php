@@ -61,8 +61,11 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-outline-danger btn-sm copyFormLink" data-clipboard-text="{{ $form->getFormUrl() }}">
+                                            <a href="#" class="btn btn-outline-danger btn-sm copyFormLink" data-clipboard-text="{{ $form->getFormUrl() }}" title="Copy Form Link">
                                                 <i class="fe fe-copy"></i> Copy Link
+                                            </a>
+                                            <a href="#" class="btn btn-outline-info btn-sm copyFormLink" data-clipboard-text="{{ $form->getSharedSubmissionsUrl() }}" title="Copy Submissions Link">
+                                                <i class="fe fe-share-2"></i> Share Submissions
                                             </a>
                                             <a href="{{ route('admin.dynamic-forms.show', $form) }}" class="btn btn-outline-info btn-sm">
                                                 <i class="fe fe-eye"></i> View

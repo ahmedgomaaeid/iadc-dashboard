@@ -44,6 +44,14 @@
                             <i class="fe fe-copy"></i>
                         </button>
                     </div>
+                    
+                    <p class="mt-3 mb-1"><strong>Share Submissions Link:</strong></p>
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-sm" value="{{ $dynamicForm->getSharedSubmissionsUrl() }}" id="submissionsLink" readonly>
+                        <button class="btn btn-outline-info btn-sm" type="button" onclick="copySubmissionsLink()">
+                            <i class="fe fe-share-2"></i>
+                        </button>
+                    </div>
                     <hr>
                     <p class="mb-2"><strong>Selected Fields:</strong></p>
                     @php $orderedFields = $dynamicForm->getOrderedFields(); @endphp
@@ -124,6 +132,18 @@
             icon: 'success',
             title: 'Copied!',
             text: 'Form link copied to clipboard',
+            timer: 2000
+        });
+    }
+
+    function copySubmissionsLink() {
+        const input = document.getElementById('submissionsLink');
+        input.select();
+        navigator.clipboard.writeText(input.value);
+        Swal.fire({
+            icon: 'success',
+            title: 'Copied!',
+            text: 'Shareable submissions link copied to clipboard',
             timer: 2000
         });
     }

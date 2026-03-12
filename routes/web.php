@@ -7,6 +7,7 @@ use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\SharedFormController;
 
 // Guest Form Routes - Subdomain based (MUST be first!)
 // URL format: {subdomain}.form.iadcsuez.org
@@ -32,6 +33,10 @@ Route::domain($domain)->group(function () {
     Route::get('/', function () {
         return redirect()->route('login');
     })->name('index');
+
+    // Shared Form Submissions Routes (Public)
+    Route::get('/shared-forms/{encryptedId}/submissions', [SharedFormController::class, 'showSubmissions'])->name('shared-forms.submissions.show');
+    Route::get('/shared-forms/{encryptedId}/submissions/export', [SharedFormController::class, 'exportSubmissions'])->name('shared-forms.submissions.export');
 });
 
 Route::get('/zoom/oauth', [ZoomController::class, 'oauth'])->name('zoom.oauth');

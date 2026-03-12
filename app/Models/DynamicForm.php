@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Support\Facades\Crypt;
 class DynamicForm extends Model
 {
     protected $fillable = [
@@ -141,5 +141,14 @@ class DynamicForm extends Model
     public function getFormUrl(): string
     {
         return 'https://' . $this->subdomain . '.form.iadcsuez.org';
+    }
+
+    /**
+     * Get the shareable URL for submissions using an encrypted ID
+     */
+    public function getSharedSubmissionsUrl(): string
+    {
+        $encryptedId = Crypt::encryptString((string)$this->id);
+        return route('shared-forms.submissions.show', ['encryptedId' => $encryptedId]);
     }
 }
