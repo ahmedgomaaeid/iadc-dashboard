@@ -300,7 +300,7 @@
         <!-- Email Body -->
         <div class="email-body-container">
             @if(str_contains(strtolower($email['body']), '<html') || str_contains(strtolower($email['body']), '<div') || str_contains(strtolower($email['body']), '<table'))
-                <iframe class="email-body-frame" id="emailBodyFrame" sandbox="allow-same-origin" srcdoc="{{ htmlspecialchars($email['body']) }}"></iframe>
+                <iframe class="email-body-frame" id="emailBodyFrame" sandbox="allow-same-origin" srcdoc="{{ $email['body'] }}"></iframe>
             @else
                 <div class="email-body-text">{!! $email['body'] !!}</div>
             @endif

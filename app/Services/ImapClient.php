@@ -398,8 +398,7 @@ class ImapClient
         $fullResponse = $this->command("FETCH $msgno BODY.PEEK[]");
         $fullRaw = implode("\r\n", $fullResponse);
 
-        // Find attachment parts
-        preg_match_all('/Content-Disposition:\s*attachment[^]*?filename="?([^"\r\n;]+)"?/i', $fullRaw, $matches);
+        preg_match_all('/Content-Disposition:\s*attachment[\s\S]*?filename="?([^"\r\n;]+)"?/i', $fullRaw, $matches);
 
         if (!empty($matches[1])) {
             foreach ($matches[1] as $index => $filename) {
@@ -641,7 +640,9 @@ class ImapClient
             $line = $this->readLine();
             if ($line === false) break;
 
-            $response[] = $line;
+            foreach (preg_split('/\r?\n/', $line) as $subLine) {
+                $response[] = $subLine;
+            }
 
             if (preg_match("/^$tag\s+(OK|NO|BAD)/i", $line)) {
                 break;
