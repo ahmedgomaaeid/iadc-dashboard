@@ -14,12 +14,12 @@ use Illuminate\Support\Collection;
 class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     protected DynamicForm $form;
-    protected array $fieldNames;
+    protected array $orderedFields;
 
     public function __construct(DynamicForm $form)
     {
         $this->form = $form;
-        $this->fieldNames = array_keys($form->getOrderedFields());
+        $this->orderedFields = $form->getOrderedFields();
     }
 
     /**
@@ -37,8 +37,7 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
     {
         $headings = ['#', 'Submitted At'];
         
-        foreach ($this->fieldNames as $fieldName) {
-            $fieldConfig = DynamicForm::AVAILABLE_FIELDS[$fieldName] ?? null;
+        foreach ($this->orderedFields as $fieldName => $fieldConfig) {
             $headings[] = $fieldConfig['label'] ?? ucfirst(str_replace('_', ' ', $fieldName));
         }
 
@@ -56,8 +55,9 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
             $submission->created_at->format('Y-m-d H:i:s'),
         ];
 
-        foreach ($this->fieldNames as $fieldName) {
-            $row[] = $submission->data[$fieldName] ?? '';
+        foreach (array_keys($this->orderedFields) as $fieldName) {
+            $value = $submission->data[$fieldName] ?? '';
+            $row[] = is_array($value) ? implode(', ', $value) : $value;
         }
 
         return $row;
