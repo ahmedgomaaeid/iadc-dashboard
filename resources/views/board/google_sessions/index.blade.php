@@ -531,6 +531,10 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
+                        if (data.requires_auth) {
+                            window.location.href = "{{ route('auth.google') }}";
+                            return;
+                        }
                         throw new Error(data.error);
                     }
                     
@@ -591,6 +595,10 @@
                         setTimeout(() => toast.remove(), 3000);
                     } else {
                         return response.json().then(data => {
+                            if (data.requires_auth) {
+                                window.location.href = "{{ route('auth.google') }}";
+                                return;
+                            }
                             throw new Error(data.error || 'Failed to delete');
                         });
                     }

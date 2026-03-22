@@ -486,6 +486,10 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
+                        if (data.requires_auth) {
+                            window.location.href = "{{ route('auth.google') }}";
+                            return;
+                        }
                         throw new Error(data.error);
                     }
                     
@@ -550,6 +554,10 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
+                        if (data.requires_auth) {
+                            window.location.href = "{{ route('auth.google') }}";
+                            return;
+                        }
                         throw new Error(data.error);
                     }
                     

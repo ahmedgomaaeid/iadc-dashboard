@@ -109,7 +109,10 @@ class GoogleSessionController extends Controller
                         'google_token_expires_at' => now()->addSeconds($newAccessToken['expires_in']),
                     ]);
                 } else {
-                    return response()->json(['error' => 'Google session expired. Please reconnect.'], 401);
+                    return response()->json([
+                        'error' => 'Google session expired. Please reconnect.',
+                        'requires_auth' => true
+                    ], 401);
                 }
             }
 
@@ -175,8 +178,21 @@ class GoogleSessionController extends Controller
             return response()->json(['message' => 'Event created successfully', 'event' => $session]);
 
         } catch (\Exception $e) {
-            Log::error('Google Calendar Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create event on Google Calendar: ' . $e->getMessage()], 500);
+            $errorMsg = $e->getMessage();
+            Log::error('Google Calendar Error: ' . $errorMsg);
+            
+            if (str_contains($errorMsg, 'insufficient permissions') || 
+                str_contains($errorMsg, 'insufficient authentication scopes') ||
+                str_contains($errorMsg, 'invalid_grant') ||
+                str_contains($errorMsg, 'PERMISSION_DENIED') ||
+                str_contains($errorMsg, 'unauthorized_client')) {
+                return response()->json([
+                    'error' => 'Google Calendar permissions are missing or expired. Please reconnect.',
+                    'requires_auth' => true
+                ], 401);
+            }
+            
+            return response()->json(['error' => 'Failed to create event on Google Calendar: ' . $errorMsg], 500);
         }
     }
 
@@ -225,7 +241,10 @@ class GoogleSessionController extends Controller
                         Log::info('Google token refreshed for deletion');
                     } else {
                         Log::warning('No refresh token available');
-                        return response()->json(['error' => 'Google session expired. Please reconnect.'], 401);
+                        return response()->json([
+                            'error' => 'Google session expired. Please reconnect.',
+                            'requires_auth' => true
+                        ], 401);
                     }
                 }
 
