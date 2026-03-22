@@ -23,6 +23,11 @@
                     <div class="card-options">
                         <span class="badge bg-primary-transparent text-primary">{{ $session->title }}</span>
                     </div>
+                    @if($session->session_url)
+                        <a href="{{ $session->session_url }}" target="_blank" class="btn btn-sm btn-success ms-3 pulse-button">
+                            <i class="fe fe-video me-1"></i> Join Meeting
+                        </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     @if(session('success'))
