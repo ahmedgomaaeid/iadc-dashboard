@@ -70,15 +70,27 @@
                                     <span class="text-danger">*</span>
                                 @endif
                             </label>
-                            <input type="file" 
-                                   class="form-control @error('pdf_file') is-invalid @enderror" 
-                                   id="pdf_file" 
-                                   name="pdf_file"
-                                   accept=".pdf"
-                                   {{ !isset($magazine) ? 'required' : '' }}>
-                            <small class="text-muted">Maximum file size: 50MB. Only PDF files are allowed.</small>
+                            
+                            <!-- Hidden input for chunk path -->
+                            <input type="hidden" name="uploaded_pdf" id="uploaded_pdf_input" value="">
+
+                            <!-- Dropzone container -->
+                            <div class="dropzone-container border rounded p-3 text-center" id="dropzone">
+                                <div class="mb-2">
+                                    <i class="fe fe-upload-cloud fs-30 text-primary"></i>
+                                </div>
+                                <h5 class="mb-2">Drag and drop PDF file here or click to upload</h5>
+                                <small class="text-muted d-block mb-3">Maximum file size: 50MB. Only PDF files are allowed.</small>
+                                <button type="button" class="btn btn-outline-primary" id="browseButton">Browse File</button>
+                            </div>
+
+                            <div id="fileList" class="mt-3"></div>
+
                             @error('pdf_file')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                            @error('uploaded_pdf')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
 
                             @if(isset($magazine) && $magazine->pdf_file)
@@ -174,6 +186,7 @@
 @endsection
 
 @section('scripts')
+<script src="{{route('index')}}/assets/js/resumable.min.js"></script>
 <script>
     function previewCover(input) {
         const preview = document.getElementById('cover-preview');
@@ -190,6 +203,83 @@
             };
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    // Resumable.js Implementation
+    var r = new Resumable({
+        target: '{{ route('upload.chunk') }}',
+        query: {_token: '{{ csrf_token() }}'},
+        fileType: ['pdf'],
+        chunkSize: 2 * 1024 * 1024, // 2MB chunk size
+        headers: {
+            'Accept': 'application/json'
+        },
+        testChunks: false,
+        throttleProgressCallbacks: 1
+    });
+
+    r.assignBrowse(document.getElementById('browseButton'));
+    r.assignDrop(document.getElementById('dropzone'));
+
+    r.on('fileAdded', function(file){
+        // Clear previous files if any, to only allow 1 PDF
+        r.files = [file];
+        var fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        
+        var html = `
+            <div id="file-${file.uniqueIdentifier}" class="card mb-2">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-truncate fw-bold me-2" style="max-width: 70%;">${file.fileName}</span>
+                        <span class="badge bg-secondary">${formatSize(file.size)}</span>
+                    </div>
+                    <div class="progress" style="height: 5px;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted status-text mt-1 d-block">Waiting...</small>
+                </div>
+            </div>
+        `;
+        fileList.insertAdjacentHTML('beforeend', html);
+        r.upload();
+    });
+
+    r.on('fileProgress', function(file){
+        var progress = Math.floor(file.progress() * 100);
+        var el = document.getElementById('file-' + file.uniqueIdentifier);
+        if(el) {
+            el.querySelector('.progress-bar').style.width = progress + '%';
+            el.querySelector('.status-text').innerText = 'Uploading... ' + progress + '%';
+        }
+    });
+
+    r.on('fileSuccess', function(file, message){
+        var response = JSON.parse(message);
+        var el = document.getElementById('file-' + file.uniqueIdentifier);
+        if(el) {
+            el.querySelector('.progress-bar').classList.add('bg-success');
+            el.querySelector('.status-text').innerText = 'Completed';
+            el.querySelector('.status-text').classList.add('text-success');
+        }
+        
+        // Add path to hidden input
+        document.getElementById('uploaded_pdf_input').value = response.path;
+    });
+
+    r.on('fileError', function(file, message){
+        var el = document.getElementById('file-' + file.uniqueIdentifier);
+        if(el) {
+            el.querySelector('.progress-bar').classList.add('bg-danger');
+            el.querySelector('.status-text').innerText = 'Error: ' + message;
+            el.querySelector('.status-text').classList.add('text-danger');
+        }
+    });
+
+    function formatSize(size) {
+        if(size < 1024) return size + ' B';
+        var i = Math.floor(Math.log(size) / Math.log(1024));
+        return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
     }
 </script>
 @endsection

@@ -34,8 +34,9 @@ class MagazineController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'pdf_file' => 'required|mimes:pdf|max:51200',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'pdf_file' => 'nullable|mimes:pdf|max:102400',
+            'uploaded_pdf' => 'required_without:pdf_file|string',
             'is_active' => 'boolean',
         ]);
 
@@ -47,9 +48,24 @@ class MagazineController extends Controller
         // Handle PDF upload
         if ($request->hasFile('pdf_file')) {
             $validated['pdf_file'] = $request->file('pdf_file')->store('magazines/pdfs', 'public');
+        } elseif ($request->filled('uploaded_pdf')) {
+            $tempPath = $request->input('uploaded_pdf');
+            if (Storage::disk('local')->exists($tempPath)) {
+                $fileName = str_replace('temp_uploads/', '', $tempPath);
+                $parts = explode('_', $fileName, 2);
+                $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                
+                $newFileName = time() . '_' . $originalName;
+                $newPath = 'magazines/pdfs/' . $newFileName;
+                Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                Storage::disk('local')->delete($tempPath);
+                
+                $validated['pdf_file'] = $newPath;
+            }
         }
 
         $validated['is_active'] = $request->has('is_active');
+        unset($validated['uploaded_pdf']);
 
         Magazine::create($validated);
 
@@ -75,8 +91,9 @@ class MagazineController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'pdf_file' => 'nullable|mimes:pdf|max:51200',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'pdf_file' => 'nullable|mimes:pdf|max:102400',
+            'uploaded_pdf' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
 
@@ -86,15 +103,33 @@ class MagazineController extends Controller
         }
 
         // Handle PDF upload
-        if ($request->hasFile('pdf_file')) {
+        if ($request->hasFile('pdf_file') || $request->filled('uploaded_pdf')) {
             // Delete old PDF
             if ($magazine->pdf_file) {
                 Storage::disk('public')->delete($magazine->pdf_file);
             }
-            $validated['pdf_file'] = $request->file('pdf_file')->store('magazines/pdfs', 'public');
+            
+            if ($request->hasFile('pdf_file')) {
+                $validated['pdf_file'] = $request->file('pdf_file')->store('magazines/pdfs', 'public');
+            } elseif ($request->filled('uploaded_pdf')) {
+                $tempPath = $request->input('uploaded_pdf');
+                if (Storage::disk('local')->exists($tempPath)) {
+                    $fileName = str_replace('temp_uploads/', '', $tempPath);
+                    $parts = explode('_', $fileName, 2);
+                    $originalName = count($parts) > 1 ? $parts[1] : $fileName;
+                    
+                    $newFileName = time() . '_' . $originalName;
+                    $newPath = 'magazines/pdfs/' . $newFileName;
+                    Storage::disk('public')->put($newPath, Storage::disk('local')->get($tempPath));
+                    Storage::disk('local')->delete($tempPath);
+                    
+                    $validated['pdf_file'] = $newPath;
+                }
+            }
         }
 
         $validated['is_active'] = $request->has('is_active');
+        unset($validated['uploaded_pdf']);
 
         $magazine->update($validated);
 
