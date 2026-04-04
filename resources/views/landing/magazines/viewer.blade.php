@@ -202,7 +202,8 @@
         .page canvas {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            display: block;
+            image-rendering: auto;
         }
         
         .page-cover {
@@ -572,43 +573,73 @@
         const maxZoom = 2;
         const zoomStep = 0.25;
         
+        // Cached PDF aspect ratio (set after loading first page)
+        let pdfAspectRatio = 0.7727; // default fallback (US Letter)
+        
         // Check if screen is wide enough for 2-page spread
         function isWideScreen() {
             return window.innerWidth >= 1200;
         }
         
-        // Calculate book dimensions for 80vh max height
+        // Calculate book dimensions using actual PDF aspect ratio
         function getBookDimensions() {
-            const maxHeight = window.innerHeight * 0.7;
-            const aspectRatio = 0.7; // Typical book aspect ratio
-            const availableWidth = isWideScreen() ? (window.innerWidth - 200) / 2 : window.innerWidth - 150;
-            const pageWidth = Math.min(maxHeight * aspectRatio, availableWidth / (isWideScreen() ? 2 : 1));
-            const pageHeight = pageWidth / aspectRatio;
+            const maxHeight = window.innerHeight * 0.82;
+            const availableWidth = isWideScreen() ? (window.innerWidth - 200) / 2 : window.innerWidth - 100;
+            
+            // Use actual PDF aspect ratio (width/height)
+            let pageHeight = maxHeight;
+            let pageWidth = pageHeight * pdfAspectRatio;
+            
+            // Constrain to available width
+            if (pageWidth > availableWidth) {
+                pageWidth = availableWidth;
+                pageHeight = pageWidth / pdfAspectRatio;
+            }
             
             return {
                 width: Math.floor(pageWidth * currentZoom),
-                height: Math.floor(Math.min(pageHeight, maxHeight) * currentZoom)
+                height: Math.floor(pageHeight * currentZoom)
             };
         }
         
-        // Render PDF page to canvas
-        async function renderPageToCanvas(pageNum, width, height) {
+        // Render PDF page to canvas at high resolution
+        async function renderPageToCanvas(pageNum, displayWidth, displayHeight) {
             const page = await pdfDoc.getPage(pageNum);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            const viewport = page.getViewport({ scale: 1 });
-            const scale = Math.min(width / viewport.width, height / viewport.height) * 2;
-            const scaledViewport = page.getViewport({ scale });
+            // Get the native PDF page size (in PDF points, 72 DPI)
+            const nativeViewport = page.getViewport({ scale: 1 });
             
-            canvas.width = scaledViewport.width;
-            canvas.height = scaledViewport.height;
+            // Render at high resolution: use a scale that gives us at least 200 DPI equivalent,
+            // or 4x the display size, whichever produces more pixels
+            const dpr = window.devicePixelRatio || 1;
+            const displayScale = Math.min(displayWidth / nativeViewport.width, displayHeight / nativeViewport.height);
+            
+            // Option A: 4x display size for supersampling
+            const supersampleScale = displayScale * Math.max(dpr, 4);
+            // Option B: render at ~200 DPI (PDF native is 72 DPI, so scale ~2.78)
+            const hiDpiScale = 200 / 72;
+            
+            // Use whichever produces better quality
+            const renderScale = Math.max(supersampleScale, hiDpiScale);
+            const renderViewport = page.getViewport({ scale: renderScale });
+            
+            // Set internal canvas resolution to the high-res render size
+            canvas.width = Math.floor(renderViewport.width);
+            canvas.height = Math.floor(renderViewport.height);
+            
+            // Let CSS handle display sizing (StPageFlip controls the container)
             canvas.style.width = '100%';
             canvas.style.height = '100%';
             
+            // High quality downscaling
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
             await page.render({
                 canvasContext: ctx,
-                viewport: scaledViewport
+                viewport: renderViewport
             }).promise;
             
             return canvas;
@@ -632,6 +663,11 @@
                 totalPagesEl.textContent = totalPages;
                 pageSlider.max = totalPages - 1;
                 
+                // Get actual PDF page dimensions to compute true aspect ratio
+                const firstPage = await pdfDoc.getPage(1);
+                const firstViewport = firstPage.getViewport({ scale: 1 });
+                pdfAspectRatio = firstViewport.width / firstViewport.height;
+                
                 const dims = getBookDimensions();
                 
                 // Initialize PageFlip - use 2-page spread on wide screens
@@ -641,17 +677,17 @@
                     width: dims.width,
                     height: dims.height,
                     size: 'fixed',
-                    minWidth: 250,
-                    maxWidth: 800,
-                    minHeight: 350,
-                    maxHeight: 1200,
+                    minWidth: 200,
+                    maxWidth: 2000,
+                    minHeight: 300,
+                    maxHeight: 2000,
                     showCover: true,
                     mobileScrollSupport: false,
                     swipeDistance: 30,
                     flippingTime: 800,
                     usePortrait: !useDoublePages,
                     startZIndex: 0,
-                    autoSize: true,
+                    autoSize: false,
                     maxShadowOpacity: 0.3,
                     drawShadow: true
                 });
