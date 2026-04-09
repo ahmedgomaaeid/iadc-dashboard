@@ -261,8 +261,10 @@
     <div id="pulseSuccessScreen">
         @php
             $pulseImage = session('pulse_image');
-            $linkedInText = 'hi i will attend pulse event in 21 april #pulse #iadcsuez';
-            $linkedInUrl = 'https://www.linkedin.com/feed/?shareActive=true&text=' . rawurlencode($linkedInText);
+            $pulseSubmissionId = session('pulse_submission_id');
+            // This page has og:image meta tags — LinkedIn scrapes them and shows the image in the card
+            $sharePageUrl = $pulseSubmissionId ? url('/s/' . $pulseSubmissionId) : url('/');
+            $linkedInUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' . rawurlencode($sharePageUrl);
             $imageUrl = $pulseImage ? asset('storage/' . $pulseImage) : null;
         @endphp
 
