@@ -222,6 +222,7 @@
                             <option value="number">Number</option>
                             <option value="date">Date</option>
                             <option value="textarea">Text Area</option>
+                            <option value="file">Image Upload</option>
                         </select>
                     </div>
 
@@ -429,6 +430,31 @@
                     sectionDropdownUrl += `</select></div>`;
                 }
 
+                // Build an array of selectable fields that appear BEFORE this current field
+                let dependsOptions = `<option value="">None (Always show)</option>`;
+                selectedFields.slice(0, index).forEach(prevField => {
+                    let prevConfig = availableFields[prevField.name];
+                    if (!prevConfig && prevField.name.startsWith('custom_')) {
+                        prevConfig = { label: prevField.label, type: prevField.type };
+                    }
+                    if (prevConfig && prevConfig.type === 'select') {
+                        const selected = (field.depends_on === prevField.name) ? 'selected' : '';
+                        dependsOptions += `<option value="${prevField.name}" ${selected}>${prevConfig.label}</option>`;
+                    }
+                });
+
+                let conditionBlock = `
+                    <div class="mt-2 p-2" style="background:#f1f5f9; border-radius:6px; font-size:12px;">
+                        <div class="d-flex align-items-center">
+                            <label class="me-2 text-muted fw-bold">Depends On:</label>
+                            <select class="form-select form-select-sm d-inline-block w-auto me-2" onchange="updateFieldCondition('${field.name}', 'depends_on', this.value)">
+                                ${dependsOptions}
+                            </select>
+                            <input type="text" class="form-control form-control-sm d-inline-block w-auto" placeholder="Required Value" value="${field.depends_value || ''}" onchange="updateFieldCondition('${field.name}', 'depends_value', this.value)" ${field.depends_on ? '' : 'style="display:none;"'} id="depends_val_${field.name}">
+                        </div>
+                    </div>
+                `;
+
                 const div = document.createElement('div');
                 div.className = 'field-item d-flex align-items-center selected';
                 div.dataset.field = field.name;
@@ -443,6 +469,7 @@
                         <br>
                         ${details}
                         ${sectionDropdownUrl}
+                        ${conditionBlock}
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeField('${field.name}')">
                         <i class="fe fe-x"></i>
@@ -486,12 +513,16 @@
         const timestamp = new Date().getTime();
         const fieldName = `custom_${timestamp}`;
         
+        let icon = 'fa-pen';
+        if (type === 'select') icon = 'fa-list';
+        if (type === 'file') icon = 'fa-image';
+        
         selectedFields.push({
             name: fieldName,
             label: label,
             type: type,
             required: requiredInput.checked,
-            icon: type === 'select' ? 'fa-list' : 'fa-pen',
+            icon: icon,
             placeholder: placeholder,
             order: selectedFields.length + 1,
             options: options
@@ -568,6 +599,20 @@
         const field = selectedFields.find(f => f.name === fieldName);
         if (field) {
             field.section_id = sectionId || null;
+            updateFieldsInput();
+        }
+    }
+
+    function updateFieldCondition(fieldName, key, value) {
+        const field = selectedFields.find(f => f.name === fieldName);
+        if (field) {
+            if (key === 'depends_on') {
+                field.depends_on = value || null;
+                const valInput = document.getElementById(`depends_val_${fieldName}`);
+                if (valInput) valInput.style.display = value ? 'inline-block' : 'none';
+            } else if (key === 'depends_value') {
+                field.depends_value = value || null;
+            }
             updateFieldsInput();
         }
     }

@@ -55,8 +55,13 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
             $submission->created_at->format('Y-m-d H:i:s'),
         ];
 
-        foreach (array_keys($this->orderedFields) as $fieldName) {
+        foreach ($this->orderedFields as $fieldName => $fieldConfig) {
             $value = $submission->data[$fieldName] ?? '';
+            
+            if (isset($fieldConfig['type']) && $fieldConfig['type'] === 'file' && $value !== '') {
+                $value = asset('storage/' . $value);
+            }
+
             $row[] = is_array($value) ? implode(', ', $value) : $value;
         }
 

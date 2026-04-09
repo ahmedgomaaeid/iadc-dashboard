@@ -1,0 +1,29 @@
+[
+    {
+        "icon": "fa-list",
+        "name": "custom_1775735719177",
+        "type": "select",
+        "label": "select you university",
+        "order": 1,
+        "options": [
+            "suez",
+            "other"
+        ],
+        "required": false,
+        "section_id": "section_1775735399283",
+        "placeholder": "select your university"
+    },
+    {
+        "name": "full_name",
+        "order": 2,
+        "depends_on": "custom_1775735719177",
+        "section_id": "section_1775735399283",
+        "depends_value": "other"
+    },
+    {
+        "name": "email",
+        "order": 3,
+        "depends_on": null,
+        "section_id": "section_1775735399283"
+    }
+]

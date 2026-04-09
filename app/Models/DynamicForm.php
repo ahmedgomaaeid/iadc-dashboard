@@ -131,6 +131,14 @@ class DynamicForm extends Model
                     $orderedFields[$fieldName]['options'] = $field['options'];
                 }
             }
+
+            // Always port conditionality configurations so they survive regardless of field origin
+            if (isset($field['depends_on'])) {
+                $orderedFields[$fieldName]['depends_on'] = $field['depends_on'];
+            }
+            if (isset($field['depends_value'])) {
+                $orderedFields[$fieldName]['depends_value'] = $field['depends_value'];
+            }
         }
 
         return $orderedFields;

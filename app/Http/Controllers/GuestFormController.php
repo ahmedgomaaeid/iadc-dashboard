@@ -32,7 +32,24 @@ class GuestFormController extends Controller
         foreach ($orderedFields as $fieldName => $fieldConfig) {
             $fieldRules = [];
             
-            if ($fieldConfig['required']) {
+            $isRequired = $fieldConfig['required'];
+
+            // Evaluate conditional dependency
+            if (isset($fieldConfig['depends_on']) && $fieldConfig['depends_on']) {
+                $dependsOnField = $fieldConfig['depends_on'];
+                $rawDependsValue = $fieldConfig['depends_value'] ?? '';
+                $dependsValue = strtolower(trim($rawDependsValue));
+                
+                $inputValue = strtolower(trim($request->input($dependsOnField, '')));
+                
+                // If the submitted parent field doesn't match the condition, it means the field was hidden
+                // and should not be required.
+                if ($inputValue !== $dependsValue || $dependsValue === '') {
+                    $isRequired = false;
+                }
+            }
+
+            if ($isRequired) {
                 $fieldRules[] = 'required';
             } else {
                 $fieldRules[] = 'nullable';
@@ -55,6 +72,11 @@ class GuestFormController extends Controller
                         $fieldRules[] = 'in:' . implode(',', $fieldConfig['options']);
                     }
                     break;
+                case 'file':
+                    $fieldRules[] = 'image';
+                    $fieldRules[] = 'mimes:jpeg,png,jpg,gif,webp';
+                    $fieldRules[] = 'max:5120'; // 5MB
+                    break;
             }
 
             $rules[$fieldName] = implode('|', $fieldRules);
@@ -62,12 +84,63 @@ class GuestFormController extends Controller
 
         $validated = $request->validate($rules);
 
+        // Process File Uploads safely
+        foreach ($orderedFields as $fieldName => $fieldConfig) {
+            if ($fieldConfig['type'] === 'file' && $request->hasFile($fieldName)) {
+                $file = $request->file($fieldName);
+                if ($file->isValid()) {
+                    $path = $file->store('dynamic_form_uploads', 'public');
+                    $validated[$fieldName] = $path;
+                }
+            }
+        }
+
         // Store submission
-        DynamicFormSubmission::create([
+        $submission = DynamicFormSubmission::create([
             'dynamic_form_id' => $form->id,
             'data' => $validated,
         ]);
 
-        return back()->with('registration_success', 'Thank you! Your submission has been received.');
+        $redirect = back()->with('registration_success', 'Thank you! Your submission has been received.');
+
+        if (strtolower($form->subdomain) === 'pulse') {
+            $redirect->with('is_pulse', true);
+            $redirect->with('pulse_submission_id', $submission->id);
+            
+            // Find the image uploaded for pulse to display back
+            foreach ($orderedFields as $fieldName => $fieldConfig) {
+                if ($fieldConfig['type'] === 'file' && isset($validated[$fieldName])) {
+                    $redirect->with('pulse_image', $validated[$fieldName]);
+                    break;
+                }
+            }
+        }
+
+        return $redirect;
+    }
+
+    /**
+     * Render an OpenGraph metadata page for LinkedIn link previews.
+     */
+    public function sharePage($id)
+    {
+        $submission = DynamicFormSubmission::findOrFail($id);
+        
+        // Find the image file path from the submission data
+        $form = $submission->dynamicForm;
+        $orderedFields = $form->getOrderedFields();
+        $imagePath = null;
+        
+        foreach ($orderedFields as $fieldName => $fieldConfig) {
+            if ($fieldConfig['type'] === 'file' && isset($submission->data[$fieldName])) {
+                $imagePath = $submission->data[$fieldName];
+                break;
+            }
+        }
+        
+        return view('forms.pulse-share', [
+            'submission' => $submission,
+            'imagePath' => $imagePath
+        ]);
     }
 }

@@ -98,7 +98,18 @@
                                             <td>{{ $submission->id }}</td>
                                             <td class="text-nowrap">{{ $submission->created_at->format('M d, Y H:i') }}</td>
                                             @foreach($orderedFields as $fieldName => $fieldConfig)
-                                                <td>{{ $submission->data[$fieldName] ?? '—' }}</td>
+                                                <td>
+                                                    @php $value = $submission->data[$fieldName] ?? '—'; @endphp
+                                                    @if(is_array($value))
+                                                        {{ implode(', ', $value) }}
+                                                    @elseif($fieldConfig['type'] === 'file' && $value !== '—')
+                                                        <a href="{{ asset('storage/' . $value) }}" target="_blank" class="btn btn-sm btn-outline-info" title="View Uploaded Image">
+                                                            <i class="fe fe-image"></i> View Image
+                                                        </a>
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </td>
                                             @endforeach
                                         </tr>
                                     @endforeach

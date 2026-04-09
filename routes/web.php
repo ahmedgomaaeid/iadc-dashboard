@@ -15,6 +15,10 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
     Route::get('/', [GuestFormController::class, 'show'])->name('form.show');
     Route::post('/', [GuestFormController::class, 'submit'])->name('form.submit');
 });
+
+// Single global share route for generated image screens
+Route::get('/s/{id}', [GuestFormController::class, 'sharePage'])->name('form.share');
+
 Route::domain('iadcsuez.org')->group(function () {
     Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 });

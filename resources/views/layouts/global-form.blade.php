@@ -242,7 +242,7 @@
         <!-- JQUERY JS -->
     <script src="{{route('index')}}/assets/js/jquery.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        @if(session('registration_success'))
+        @if(session('registration_success') && !session('is_pulse'))
         <script>
             Swal.fire({
                 title: '<strong>Registration Successful!</strong>',
