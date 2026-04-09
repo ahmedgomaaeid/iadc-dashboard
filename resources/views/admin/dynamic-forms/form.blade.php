@@ -83,6 +83,16 @@
         border-radius: 12px;
         margin-right: 8px;
     }
+    .section-item {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 </style>
 @endsection
 
@@ -252,6 +262,22 @@
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
+                    <h3 class="card-title">Form Sections <span class="text-muted">(Optional)</span></h3>
+                    <p class="text-muted mb-0 small">Group fields into a multi-step wizard. Skip for a single-page form.</p>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="newSectionName" placeholder="e.g. Personal Information">
+                        <button class="btn btn-outline-primary" type="button" onclick="addSection()"><i class="fas fa-plus"></i> Add Section</button>
+                    </div>
+                    <div id="sectionsList">
+                        <!-- Sections list goes here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
                     <h3 class="card-title">Selected Fields (Drag to Reorder)</h3>
                     <p class="text-muted mb-0 small">Drag fields to change their order</p>
                 </div>
@@ -280,6 +306,7 @@
 
     <!-- Hidden input for fields data -->
     <input type="hidden" name="fields" id="fieldsInput">
+    <input type="hidden" name="sections" id="sectionsInput">
 </form>
 
 @section('scripts')
@@ -287,6 +314,7 @@
 <script>
     const availableFields = @json($availableFields);
     let selectedFields = @json($isEdit ? $dynamicForm->fields : []);
+    let formSections = @json($isEdit ? ($dynamicForm->sections ?? []) : []);
     
     const container = document.getElementById('selectedFieldsContainer');
     const emptyState = document.getElementById('emptyState');
@@ -304,6 +332,7 @@
     });
 
     // Initial render
+    renderSections();
     renderSelectedFields();
     
     // Handle Field Type Change
@@ -390,6 +419,16 @@
                      details += `<br><span class="text-muted small">Options: ${config.options.join(', ')}</span>`;
                 }
 
+                let sectionDropdownUrl = "";
+                if (formSections.length > 0) {
+                    sectionDropdownUrl = `<div class="mt-2"><select class="form-select form-select-sm" onchange="updateFieldSection('${field.name}', this.value)"><option value="">Default (No Section)</option>`;
+                    formSections.forEach(sec => {
+                        const selected = (field.section_id === sec.id) ? 'selected' : '';
+                        sectionDropdownUrl += `<option value="${sec.id}" ${selected}>${sec.name}</option>`;
+                    });
+                    sectionDropdownUrl += `</select></div>`;
+                }
+
                 const div = document.createElement('div');
                 div.className = 'field-item d-flex align-items-center selected';
                 div.dataset.field = field.name;
@@ -399,10 +438,11 @@
                     <span class="field-icon">
                         <i class="fas ${config.icon}"></i>
                     </span>
-                    <div>
+                    <div style="flex:1; margin-right: 15px;">
                         <span class="field-label">${config.label}</span>
                         <br>
                         ${details}
+                        ${sectionDropdownUrl}
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeField('${field.name}')">
                         <i class="fe fe-x"></i>
@@ -522,6 +562,68 @@
 
     function updateFieldsInput() {
         fieldsInput.value = JSON.stringify(selectedFields);
+    }
+
+    function updateFieldSection(fieldName, sectionId) {
+        const field = selectedFields.find(f => f.name === fieldName);
+        if (field) {
+            field.section_id = sectionId || null;
+            updateFieldsInput();
+        }
+    }
+
+    function addSection() {
+        const input = document.getElementById('newSectionName');
+        const name = input.value.trim();
+        if (!name) return;
+        
+        const timestamp = new Date().getTime();
+        formSections.push({
+            id: 'section_' + timestamp,
+            name: name,
+            order: formSections.length + 1
+        });
+        
+        input.value = '';
+        renderSections();
+        renderSelectedFields();
+    }
+
+    function removeSection(id) {
+        if (!confirm('Are you sure you want to remove this section? Fields in it will become unassigned.')) return;
+        
+        formSections = formSections.filter(s => s.id !== id);
+        selectedFields.forEach(f => {
+            if (f.section_id === id) f.section_id = null;
+        });
+        
+        renderSections();
+        renderSelectedFields();
+    }
+
+    function renderSections() {
+        const list = document.getElementById('sectionsList');
+        if(!list) return;
+        list.innerHTML = '';
+        
+        formSections.forEach((sec, index) => {
+            sec.order = index + 1; // Update order just in case
+            const div = document.createElement('div');
+            div.className = 'section-item';
+            div.innerHTML = `
+                <div>
+                    <span class="order-badge">${index + 1}</span>
+                    <strong>${sec.name}</strong>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSection('${sec.id}')">
+                    <i class="fe fe-trash"></i>
+                </button>
+            `;
+            list.appendChild(div);
+        });
+        
+        const sectionsInput = document.getElementById('sectionsInput');
+        if(sectionsInput) sectionsInput.value = JSON.stringify(formSections);
     }
 
     // Form validation

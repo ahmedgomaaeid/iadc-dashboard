@@ -13,11 +13,13 @@ class DynamicForm extends Model
         'subdomain',
         'form_image',
         'fields',
+        'sections',
         'is_active',
     ];
 
     protected $casts = [
         'fields' => 'array',
+        'sections' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -132,6 +134,73 @@ class DynamicForm extends Model
         }
 
         return $orderedFields;
+    }
+
+    /**
+     * Get sections with their fields grouped and ordered.
+     * Returns an array of sections, each containing 'id', 'name', 'order', and 'fields'.
+     * If no sections exist, returns a single default section with all fields.
+     */
+    public function getOrderedSections(): array
+    {
+        $sections = $this->sections ?? [];
+        $formFields = $this->fields ?? [];
+        $orderedFields = $this->getOrderedFields();
+
+        // If no sections defined, return all fields in one default section
+        if (empty($sections)) {
+            return [
+                [
+                    'id' => 'default',
+                    'name' => 'Form',
+                    'order' => 1,
+                    'fields' => $orderedFields,
+                ]
+            ];
+        }
+
+        // Sort sections by order
+        usort($sections, fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+
+        // Build a map: field_name => section_id from raw fields data
+        $fieldSectionMap = [];
+        foreach ($formFields as $field) {
+            $fieldSectionMap[$field['name']] = $field['section_id'] ?? null;
+        }
+
+        // Group fields into sections
+        $result = [];
+        foreach ($sections as $section) {
+            $sectionFields = [];
+            foreach ($orderedFields as $fieldName => $fieldConfig) {
+                if (($fieldSectionMap[$fieldName] ?? null) === $section['id']) {
+                    $sectionFields[$fieldName] = $fieldConfig;
+                }
+            }
+            $result[] = [
+                'id' => $section['id'],
+                 'name' => $section['name'],
+                'order' => $section['order'],
+                'fields' => $sectionFields,
+            ];
+        }
+
+        // Collect unassigned fields into a default section
+        $assignedFieldNames = [];
+        foreach ($result as $sec) {
+            $assignedFieldNames = array_merge($assignedFieldNames, array_keys($sec['fields']));
+        }
+        $unassigned = array_diff_key($orderedFields, array_flip($assignedFieldNames));
+        if (!empty($unassigned)) {
+            array_unshift($result, [
+                'id' => 'default',
+                'name' => 'General',
+                'order' => 0,
+                'fields' => $unassigned,
+            ]);
+        }
+
+        return $result;
     }
 
     /**

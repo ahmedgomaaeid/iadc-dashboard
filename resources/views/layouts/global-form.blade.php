@@ -130,6 +130,63 @@
                     padding: 30px 20px;
                 }
             }
+
+            /* Wizard Steps CSS */
+            .wizard-steps {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+                margin-bottom: 2rem;
+            }
+            .wizard-steps::before {
+                content: '';
+                position: absolute;
+                top: 20px;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: #e5e7eb;
+                z-index: 1;
+            }
+            .wizard-step {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                flex: 1;
+            }
+            .wizard-step .step-number {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #fff;
+                border: 3px solid #e5e7eb;
+                color: #9ca3af;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                margin: 0 auto 10px;
+                transition: all 0.3s ease;
+            }
+            .wizard-step.active .step-number {
+                border-color: var(--primary-color);
+                background: var(--primary-color);
+                color: #fff;
+                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            }
+            .wizard-step.completed .step-number {
+                border-color: var(--primary-color);
+                color: var(--primary-color);
+            }
+            .wizard-step .step-label {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: #6b7280;
+            }
+            .wizard-step.active .step-label {
+                color: var(--primary-color);
+                font-weight: 600;
+            }
         </style>
         @yield('styles')
     </head>

@@ -37,7 +37,8 @@ class DynamicFormController extends Controller
     {
         // Parse JSON fields from hidden input
         $fields = json_decode($request->input('fields'), true) ?? [];
-        $request->merge(['fields' => $fields]);
+        $sections = json_decode($request->input('sections'), true) ?? [];
+        $request->merge(['fields' => $fields, 'sections' => $sections]);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -47,6 +48,7 @@ class DynamicFormController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
+            'fields.*.section_id' => 'nullable|string',
             // Allow label and other attributes for custom fields
             'fields.*.label' => 'nullable|string',
             'fields.*.type' => 'nullable|string',
@@ -54,6 +56,10 @@ class DynamicFormController extends Controller
             'fields.*.options.*' => 'string',
             'fields.*.placeholder' => 'nullable|string',
             'fields.*.required' => 'boolean',
+            'sections' => 'nullable|array',
+            'sections.*.id' => 'required|string',
+            'sections.*.name' => 'required|string|max:255',
+            'sections.*.order' => 'required|integer',
             'is_active' => 'boolean',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
@@ -64,6 +70,7 @@ class DynamicFormController extends Controller
             'subtitle' => $request->subtitle,
             'subdomain' => $request->subdomain,
             'fields' => $request->fields,
+            'sections' => $request->sections,
             'is_active' => $request->boolean('is_active', true),
         ];
 
@@ -102,7 +109,8 @@ class DynamicFormController extends Controller
     {
         // Parse JSON fields from hidden input
         $fields = json_decode($request->input('fields'), true) ?? [];
-        $request->merge(['fields' => $fields]);
+        $sections = json_decode($request->input('sections'), true) ?? [];
+        $request->merge(['fields' => $fields, 'sections' => $sections]);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -112,6 +120,7 @@ class DynamicFormController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.name' => 'required|string',
             'fields.*.order' => 'required|integer',
+            'fields.*.section_id' => 'nullable|string',
             // Allow label and other attributes for custom fields
             'fields.*.label' => 'nullable|string',
             'fields.*.type' => 'nullable|string',
@@ -119,6 +128,10 @@ class DynamicFormController extends Controller
             'fields.*.options.*' => 'string',
             'fields.*.placeholder' => 'nullable|string',
             'fields.*.required' => 'boolean',
+            'sections' => 'nullable|array',
+            'sections.*.id' => 'required|string',
+            'sections.*.name' => 'required|string|max:255',
+            'sections.*.order' => 'required|integer',
             'is_active' => 'boolean',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
@@ -129,6 +142,7 @@ class DynamicFormController extends Controller
             'subtitle' => $request->subtitle,
             'subdomain' => $request->subdomain,
             'fields' => $request->fields,
+            'sections' => $request->sections,
             'is_active' => $request->boolean('is_active', true),
         ];
 

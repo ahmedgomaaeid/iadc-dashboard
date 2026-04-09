@@ -14,9 +14,9 @@ class GuestFormController extends Controller
     public function show($subdomain)
     {
         $form = DynamicForm::active()->where('subdomain', $subdomain)->firstOrFail();
-        $orderedFields = $form->getOrderedFields();
+        $orderedSections = $form->getOrderedSections();
 
-        return view('forms.guest-form', compact('form', 'orderedFields'));
+        return view('forms.guest-form', compact('form', 'orderedSections'));
     }
 
     /**
