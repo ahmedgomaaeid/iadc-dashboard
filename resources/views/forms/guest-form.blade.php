@@ -262,9 +262,10 @@
         @php
             $pulseImage = session('pulse_image');
             $pulseSubmissionId = session('pulse_submission_id');
-            // This page has og:image meta tags — LinkedIn scrapes them and shows the image in the card
-            $sharePageUrl = $pulseSubmissionId ? url('/s/' . $pulseSubmissionId) : url('/');
-            $linkedInUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' . rawurlencode($sharePageUrl);
+            // OAuth route — will upload image and create post with native image attachment
+            $linkedInUrl = $pulseSubmissionId
+                ? route('linkedin.redirect', ['submission_id' => $pulseSubmissionId])
+                : '#';
             $imageUrl = $pulseImage ? asset('storage/' . $pulseImage) : null;
         @endphp
 
@@ -284,8 +285,6 @@
 
         <div class="pulse-actions">
             <a href="{{ $linkedInUrl }}"
-               target="_blank"
-               rel="noopener noreferrer"
                class="btn-linkedin"
                id="linkedinShareBtn">
                 <i class="fab fa-linkedin"></i>
@@ -304,8 +303,8 @@
         </div>
 
         <p class="pulse-note">
-            💡 <strong>Tip:</strong> Download your photo first, then click "Share on LinkedIn".<br>
-            Paste the photo into the LinkedIn post to share it along with your message!
+            🔗 Clicking <strong>Share on LinkedIn</strong> will ask you to authorize once,
+            then automatically create a post with your photo attached — ready to publish!
         </p>
     </div>
 

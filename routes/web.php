@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestFormController;
+use App\Http\Controllers\LinkedInShareController;
 use App\Http\Controllers\QuizController as ControllersQuizController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\LandingPageController;
@@ -18,6 +19,10 @@ Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
 
 // Single global share route for generated image screens
 Route::get('/s/{id}', [GuestFormController::class, 'sharePage'])->name('form.share');
+
+// LinkedIn OAuth sharing routes
+Route::get('/linkedin/share',    [LinkedInShareController::class, 'redirect'])->name('linkedin.redirect');
+Route::get('/linkedin/callback', [LinkedInShareController::class, 'callback'])->name('linkedin.callback');
 
 Route::domain('iadcsuez.org')->group(function () {
     Route::get('/', [LandingPageController::class, 'index'])->name('landing');
