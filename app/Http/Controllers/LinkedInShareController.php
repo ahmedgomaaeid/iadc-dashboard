@@ -41,7 +41,7 @@ class LinkedInShareController extends Controller
         $authUrl = 'https://www.linkedin.com/oauth/v2/authorization?' . http_build_query([
             'response_type' => 'code',
             'client_id'     => $this->clientId(),
-            'redirect_uri'  => $this->callbackUrl(),
+            'redirect_uri'  => env('LINKEDIN_REDIRECT_URI'),
             'state'         => $state,
             'scope'         => 'openid profile w_member_social',
         ]);
