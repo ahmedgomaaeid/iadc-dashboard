@@ -109,7 +109,7 @@ class LinkedInShareController extends Controller
             }
         }
 
-        $postText  = "I’m excited to be attending PULSE ⚡\n\nProud to be part of the first technical petroleum upstream event at Suez University, organized by IADC SUSC.\n\nLooking forward to learning, networking, and gaining real industry insights on April 21st at FPME.\n\n🔗 Register here: \nhttps://pulse.form.iadcsuez.org\n#PULSE #IADCSUSC #ExploreYourPotential";
+        $postText  = "I’m excited to be attending PULSE - Petroleum Upstream Learning & Scientific Exchange\n\nProud to be part of the first technical event at Suez University, organized by IADC Suez University Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on April 21st at FPME, Suez University.\n\n🔗 Register here: https://pulse.form.iadcsuez.org\n\n#PULSE \n#IADCSuez\n#ExploreYourPotential";
         $assetUrn  = null;
 
         // 4. Upload the image to LinkedIn
