@@ -137,6 +137,30 @@ class GuestFormController extends Controller
                         if ($photo->width() > 454) {
                             $photo->crop(454, 404, position: 'center');
                         }
+                        
+                        // Apply 40px border radius
+                        $gdImage = $photo->core()->native();
+                        $radius = 40;
+                        $width = imagesx($gdImage);
+                        $height = imagesy($gdImage);
+                        imagealphablending($gdImage, false);
+                        imagesavealpha($gdImage, true);
+                        $transparent = imagecolorallocatealpha($gdImage, 255, 255, 255, 127);
+                        for ($x = 0; $x < $width; $x++) {
+                            for ($y = 0; $y < $height; $y++) {
+                                if ($x < $radius && $y < $radius) {
+                                    if (pow($x - $radius + 1, 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                } elseif ($x >= $width - $radius && $y < $radius) {
+                                    if (pow($x - ($width - $radius), 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                } elseif ($x < $radius && $y >= $height - $radius) {
+                                    if (pow($x - $radius + 1, 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                } elseif ($x >= $width - $radius && $y >= $height - $radius) {
+                                    if (pow($x - ($width - $radius), 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                }
+                            }
+                        }
+                        imagealphablending($gdImage, true);
+
                         $xOffset = 1853 - $photo->width();
                         $baseCard->place($photo, 'top-left', $xOffset, 301);
                     }
