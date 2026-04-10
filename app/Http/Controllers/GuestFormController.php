@@ -107,11 +107,74 @@ class GuestFormController extends Controller
             $redirect->with('is_pulse', true);
             $redirect->with('pulse_submission_id', $submission->id);
             
-            // Find the image uploaded for pulse to display back
+            // Generate the finalized image with user photo and name
+            $userPhotoPath = null;
+            $userName = '';
+            
             foreach ($orderedFields as $fieldName => $fieldConfig) {
                 if ($fieldConfig['type'] === 'file' && isset($validated[$fieldName])) {
-                    $redirect->with('pulse_image', $validated[$fieldName]);
-                    break;
+                    $userPhotoPath = $validated[$fieldName];
+                }
+                if (($fieldConfig['type'] === 'text' || $fieldConfig['type'] === 'string') 
+                    && str_contains(strtolower($fieldName), 'name') 
+                    && isset($validated[$fieldName])) {
+                    if (empty($userName)) {
+                        $userName = $validated[$fieldName];
+                    }
+                }
+            }
+
+            if ($userPhotoPath) {
+                try {
+                    $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                    $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
+                    
+                    // Resize and place user photo
+                    $photoPath = storage_path('app/public/' . $userPhotoPath);
+                    if (file_exists($photoPath)) {
+                        $photo = $manager->read($photoPath);
+                        $photo->scale(height: 404);
+                        if ($photo->width() > 454) {
+                            $photo->crop(454, 404, position: 'center');
+                        }
+                        $xOffset = 1853 - $photo->width();
+                        $baseCard->place($photo, 'top-left', $xOffset, 301);
+                    }
+
+                    // Write user name
+                    if (!empty($userName)) {
+                        $nameParts = explode(' ', trim($userName));
+                        $twoNames = implode(' ', array_slice($nameParts, 0, 2));
+                        
+                        $baseCard->text($twoNames, 895, 383, function($font) {
+                            $font->file(public_path('fonts/MyriadArabic-Bold.otf'));
+                            $font->size(60);
+                            $font->color('#ffffff');
+                            $font->align('left');
+                            $font->valign('top');
+                        });
+                    }
+
+                    // Save the final card
+                    $filename = 'pulse_' . uniqid() . '.jpg';
+                    $generatedPath = 'dynamic_form_uploads/' . $filename;
+                    $baseCard->save(storage_path('app/public/' . $generatedPath), quality: 90);
+                    
+                    // Update submission to use this new card instead of original upload
+                    $newData = $submission->data;
+                    foreach ($orderedFields as $fieldName => $fieldConfig) {
+                        if ($fieldConfig['type'] === 'file' && isset($validated[$fieldName])) {
+                            $newData[$fieldName] = $generatedPath;
+                            break;
+                        }
+                    }
+                    $submission->update(['data' => $newData]);
+
+                    $redirect->with('pulse_image', $generatedPath);
+
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Pulse image generation failed', ['error' => $e->getMessage()]);
+                    $redirect->with('pulse_image', $userPhotoPath);
                 }
             }
         }
