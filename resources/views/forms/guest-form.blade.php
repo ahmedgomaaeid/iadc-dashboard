@@ -274,7 +274,6 @@
             Registration Complete!
         </div>
 
-        <div class="pulse-headline">You're In! 🎉</div>
         <p class="pulse-sub">Share your excitement with your network on LinkedIn!</p>
 
         @if($imageUrl)
