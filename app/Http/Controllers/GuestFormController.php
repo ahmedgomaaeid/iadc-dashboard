@@ -124,14 +124,13 @@ class GuestFormController extends Controller
                 }
             }
 
-            if ($userPhotoPath) {
-                try {
-                    $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
-                    $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
-                    
-                    // Resize and place user photo
-                    $photoPath = storage_path('app/public/' . $userPhotoPath);
-                    if (file_exists($photoPath)) {
+            try {
+                $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
+                
+                // Resize and place user photo or default
+                $photoPath = $userPhotoPath ? storage_path('app/public/' . $userPhotoPath) : public_path('images/default linked_in.png');
+                if (file_exists($photoPath)) {
                         $photo = $manager->read($photoPath);
                         $photo->scale(height: 404);
                         if ($photo->width() > 454) {
@@ -187,7 +186,7 @@ class GuestFormController extends Controller
                     // Update submission to use this new card instead of original upload
                     $newData = $submission->data;
                     foreach ($orderedFields as $fieldName => $fieldConfig) {
-                        if ($fieldConfig['type'] === 'file' && isset($validated[$fieldName])) {
+                        if ($fieldConfig['type'] === 'file') {
                             $newData[$fieldName] = $generatedPath;
                             break;
                         }
@@ -198,9 +197,10 @@ class GuestFormController extends Controller
 
                 } catch (\Exception $e) {
                     \Illuminate\Support\Facades\Log::error('Pulse image generation failed', ['error' => $e->getMessage()]);
-                    $redirect->with('pulse_image', $userPhotoPath);
+                    if ($userPhotoPath) {
+                        $redirect->with('pulse_image', $userPhotoPath);
+                    }
                 }
-            }
         }
 
         return $redirect;
