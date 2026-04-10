@@ -21,7 +21,7 @@ class LinkedInShareController extends Controller
 
     private function callbackUrl(): string
     {
-        return route('linkedin.callback');
+        return config('services.linkedin.redirect');
     }
 
     /**
@@ -41,7 +41,7 @@ class LinkedInShareController extends Controller
         $authUrl = 'https://www.linkedin.com/oauth/v2/authorization?' . http_build_query([
             'response_type' => 'code',
             'client_id'     => $this->clientId(),
-            'redirect_uri'  => env('LINKEDIN_REDIRECT_URI'),
+            'redirect_uri'  => $this->callbackUrl(),
             'state'         => $state,
             'scope'         => 'openid profile w_member_social',
         ]);
@@ -58,13 +58,13 @@ class LinkedInShareController extends Controller
         $state = $request->query('state');
 
         if (!$code) {
-            return redirect('/')->with('linkedin_error', 'LinkedIn authorization was cancelled.');
+            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'LinkedIn authorization was cancelled.');
         }
 
         try {
             $submissionId = decrypt($state);
         } catch (\Exception $e) {
-            return redirect('/')->with('linkedin_error', 'Invalid session state. Please try again.');
+            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Invalid session state. Please try again.');
         }
 
         // 1. Exchange code for access token
@@ -78,7 +78,7 @@ class LinkedInShareController extends Controller
 
         if (!$tokenResp->successful()) {
             Log::error('LinkedIn token error', $tokenResp->json());
-            return redirect('/')->with('linkedin_error', 'Failed to authenticate with LinkedIn. Please try again.');
+            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Failed to authenticate with LinkedIn. Please try again.');
         }
 
         $accessToken = $tokenResp->json('access_token');
@@ -91,7 +91,7 @@ class LinkedInShareController extends Controller
 
         if (!$profileResp->successful()) {
             Log::error('LinkedIn profile error', $profileResp->json());
-            return redirect('/')->with('linkedin_error', 'Failed to get LinkedIn profile. Please try again.');
+            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Failed to get LinkedIn profile. Please try again.');
         }
 
         $sub       = $profileResp->json('sub'); // person ID from OpenID Connect
@@ -195,6 +195,6 @@ class LinkedInShareController extends Controller
             'body'   => $postResp->json(),
         ]);
 
-        return redirect('/')->with('linkedin_error', 'Post was created but LinkedIn returned an error. Check your LinkedIn feed.');
+        return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Post was created but LinkedIn returned an error. Check your LinkedIn feed.');
     }
 }

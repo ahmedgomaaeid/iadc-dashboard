@@ -264,7 +264,7 @@
             $pulseSubmissionId = session('pulse_submission_id');
             // OAuth route — will upload image and create post with native image attachment
             $linkedInUrl = $pulseSubmissionId
-                ? route('linkedin.redirect', ['submission_id' => $pulseSubmissionId])
+                ? 'https://iadcsuez.org/linkedin/share?submission_id=' . $pulseSubmissionId
                 : '#';
             $imageUrl = $pulseImage ? asset('storage/' . $pulseImage) : null;
         @endphp
