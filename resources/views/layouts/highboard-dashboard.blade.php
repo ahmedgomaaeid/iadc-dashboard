@@ -225,6 +225,12 @@
                                                 class="side-menu__icon fe fe-award"></i><span
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
+                                    <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.dynamic-forms.index') }}"><i
+                                                class="side-menu__icon fe fe-file-text"></i><span
+                                                class="side-menu__label">Dynamic Forms</span></a>
+                                    </li>
+                                    <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.evaluations.index') }}"><i
                                                 class="side-menu__icon fe fe-star"></i><span
                                                 class="side-menu__label">Member Evaluations</span></a>

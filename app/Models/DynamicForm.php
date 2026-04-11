@@ -94,6 +94,14 @@ class DynamicForm extends Model
     }
 
     /**
+     * Get the highboards explicitly assigned to this form.
+     */
+    public function highboards(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Highboard::class);
+    }
+
+    /**
      * Scope for active forms
      */
     public function scopeActive($query)

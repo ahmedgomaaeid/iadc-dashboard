@@ -173,6 +173,17 @@
                             <label class="form-check-label" for="is_active">Form is Active</label>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label for="highboards" class="form-label">Assign to Highboards <span class="text-muted">(Optional)</span></label>
+                        <select class="form-select select2" id="highboards" name="highboards[]" multiple data-placeholder="Select highboards...">
+                            @foreach($highboards ?? [] as $highboard)
+                                <option value="{{ $highboard->id }}" {{ (isset($dynamicForm) && $dynamicForm->highboards->contains($highboard->id)) ? 'selected' : (is_array(old('highboards')) && in_array($highboard->id, old('highboards')) ? 'selected' : '') }}>
+                                    {{ $highboard->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Hold CTRL (or CMD) to select multiple. Leave empty to prevent highboard access.</small>
+                    </div>
                 </div>
             </div>
 

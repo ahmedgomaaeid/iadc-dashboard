@@ -14,6 +14,7 @@ use App\Http\Controllers\Highboard\SessionController;
 use App\Http\Controllers\Highboard\GoogleSessionController;
 use App\Http\Controllers\Highboard\QuizController;
 use App\Http\Controllers\Highboard\QuestionController;
+use App\Http\Controllers\Highboard\DynamicFormController;
 use Illuminate\Support\Facades\Route;
 
 $domain = parse_url(env('APP_URL'), PHP_URL_HOST) ?? env('APP_URL');
@@ -96,6 +97,11 @@ Route::domain($domain)->group(function () {
         Route::delete('quizzes/{quiz}/leaderboard/clear', [QuizController::class, 'clearLeaderboard'])->name('quizzes.leaderboard.clear');
         Route::post('quizzes/{quiz}/questions/ai-import', [QuizController::class, 'storeQuestionsFromText'])->name('quizzes.questions.ai-import');
         Route::resource('quizzes.questions', QuestionController::class)->shallow();
+
+        // Dynamic Form Routes
+        Route::resource('dynamic-forms', DynamicFormController::class)->only(['index', 'show']);
+        Route::post('dynamic-forms/submissions/{submission}/toggle-payment', [DynamicFormController::class, 'togglePayment'])->name('dynamic-forms.submissions.toggle-payment');
+        Route::get('dynamic-forms/{dynamicForm}/export', [DynamicFormController::class, 'exportSubmissions'])->name('dynamic-forms.export');
 
         // Profile Routes
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

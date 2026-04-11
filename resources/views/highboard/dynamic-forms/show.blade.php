@@ -1,4 +1,4 @@
-@extends('layouts.admin-dashboard')
+@extends('layouts.highboard-dashboard')
 
 @section('title', 'Form Submissions - ' . $dynamicForm->title)
 @section('content')
@@ -6,8 +6,8 @@
         <h1 class="page-title">{{ $dynamicForm->title }}</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.dynamic-forms.index') }}">Dynamic Forms</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('highboard.dynamic-forms.index') }}">Dynamic Forms</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Submissions</li>
             </ol>
         </div>
@@ -62,11 +62,8 @@
                     @endforeach
                 </div>
                 <div class="card-footer">
-                    <a href="{{ route('admin.dynamic-forms.edit', $dynamicForm) }}" class="btn btn-primary btn-sm">
-                        <i class="fe fe-edit me-1"></i>Edit Form
-                    </a>
                     @if($submissions->total() > 0)
-                        <a href="{{ route('admin.dynamic-forms.export', $dynamicForm) }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('highboard.dynamic-forms.export', $dynamicForm) }}" class="btn btn-success btn-sm">
                             <i class="fe fe-download me-1"></i>Export Excel
                         </a>
                     @endif
@@ -80,7 +77,7 @@
                     <h3 class="card-title">Submissions ({{ $submissions->total() }})</h3>
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.dynamic-forms.show', $dynamicForm) }}" class="mb-4">
+                    <form method="GET" action="{{ route('highboard.dynamic-forms.show', $dynamicForm) }}" class="mb-4">
                         <div class="row g-2">
                             <div class="col-md-5">
                                 <input type="text" name="search" class="form-control" placeholder="Search all fields..." value="{{ request('search') }}">
@@ -116,7 +113,7 @@
                                             <td>{{ $submission->id }}</td>
                                             <td class="text-nowrap">{{ $submission->created_at->format('M d, Y H:i') }}</td>
                                             <td>
-                                                <form action="{{ route('admin.dynamic-forms.submissions.toggle-payment', $submission) }}" method="POST" class="d-inline toggle-payment-form">
+                                                <form action="{{ route('highboard.dynamic-forms.submissions.toggle-payment', $submission) }}" method="POST" class="d-inline toggle-payment-form">
                                                     @csrf
                                                     <button type="button" class="btn btn-sm btn-{{ $submission->is_payed ? 'warning' : 'outline-warning' }} btn-toggle-payment" data-status="{{ $submission->is_payed ? 'unpaid' : 'paid' }}">
                                                         <i class="fe fe-dollar-sign"></i> {{ $submission->is_payed ? 'Paid' : 'Mark as Paid' }}

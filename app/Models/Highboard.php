@@ -79,4 +79,12 @@ class Highboard extends Authenticatable
     {
         return $this->hasMany(Task::class);
     }
+
+    /**
+     * Get all dynamic forms associated with this highboard member.
+     */
+    public function dynamicForms()
+    {
+        return $this->belongsToMany(DynamicForm::class);
+    }
 }

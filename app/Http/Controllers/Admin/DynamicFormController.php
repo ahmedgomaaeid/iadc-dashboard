@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DynamicForm;
+use App\Models\Highboard;
 use App\Exports\DynamicFormSubmissionExport;
+use App\Models\DynamicFormSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,7 +29,8 @@ class DynamicFormController extends Controller
     public function create()
     {
         $availableFields = DynamicForm::AVAILABLE_FIELDS;
-        return view('admin.dynamic-forms.create', compact('availableFields'));
+        $highboards = Highboard::active()->get();
+        return view('admin.dynamic-forms.create', compact('availableFields', 'highboards'));
     }
 
     /**
@@ -63,6 +66,8 @@ class DynamicFormController extends Controller
             'sections.*.name' => 'required|string|max:255',
             'sections.*.order' => 'required|integer',
             'is_active' => 'boolean',
+            'highboards' => 'nullable|array',
+            'highboards.*' => 'exists:highboards,id',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
@@ -80,7 +85,9 @@ class DynamicFormController extends Controller
             $data['form_image'] = $this->uploadImage($request->file('form_image'), 'dynamic-forms');
         }
 
-        DynamicForm::create($data);
+        $form = DynamicForm::create($data);
+
+        $form->highboards()->sync($request->input('highboards', []));
 
         return redirect()->route('admin.dynamic-forms.index')
             ->with('success', 'Dynamic form created successfully.');
@@ -89,9 +96,23 @@ class DynamicFormController extends Controller
     /**
      * Display the specified dynamic form with submissions.
      */
-    public function show(DynamicForm $dynamicForm)
+    public function show(Request $request, DynamicForm $dynamicForm)
     {
-        $submissions = $dynamicForm->submissions()->latest()->paginate(20);
+        $query = $dynamicForm->submissions()->latest();
+
+        if ($request->filled('search')) {
+            $query->where('data', 'LIKE', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('payment_status')) {
+            if ($request->payment_status === 'paid') {
+                $query->where('is_payed', true);
+            } elseif ($request->payment_status === 'unpaid') {
+                $query->where('is_payed', false);
+            }
+        }
+
+        $submissions = $query->paginate(20)->withQueryString();
         return view('admin.dynamic-forms.show', compact('dynamicForm', 'submissions'));
     }
 
@@ -101,7 +122,8 @@ class DynamicFormController extends Controller
     public function edit(DynamicForm $dynamicForm)
     {
         $availableFields = DynamicForm::AVAILABLE_FIELDS;
-        return view('admin.dynamic-forms.edit', compact('dynamicForm', 'availableFields'));
+        $highboards = Highboard::active()->get();
+        return view('admin.dynamic-forms.edit', compact('dynamicForm', 'availableFields', 'highboards'));
     }
 
     /**
@@ -137,6 +159,8 @@ class DynamicFormController extends Controller
             'sections.*.name' => 'required|string|max:255',
             'sections.*.order' => 'required|integer',
             'is_active' => 'boolean',
+            'highboards' => 'nullable|array',
+            'highboards.*' => 'exists:highboards,id',
         ], [
             'subdomain.regex' => 'Subdomain can only contain lowercase letters, numbers, and hyphens.',
         ]);
@@ -155,6 +179,8 @@ class DynamicFormController extends Controller
         }
 
         $dynamicForm->update($data);
+
+        $dynamicForm->highboards()->sync($request->input('highboards', []));
 
         return redirect()->route('admin.dynamic-forms.index')
             ->with('success', 'Dynamic form updated successfully.');
@@ -179,6 +205,16 @@ class DynamicFormController extends Controller
         $dynamicForm->save();
 
         return back()->with('success', 'Form status updated successfully.');
+    }
+
+    /**
+     * Toggle payment status of a submission.
+     */
+    public function togglePayment(DynamicFormSubmission $submission)
+    {
+        $submission->update(['is_payed' => !$submission->is_payed]);
+
+        return back()->with('success', 'Payment status updated successfully.');
     }
 
     /**

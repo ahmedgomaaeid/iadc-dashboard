@@ -65,6 +65,8 @@ Route::domain($domain)->group(function () {
         Route::resource('dynamic-forms', \App\Http\Controllers\Admin\DynamicFormController::class);
         Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\Admin\DynamicFormController::class, 'toggleActive'])
             ->name('dynamic-forms.toggle-active');
+        Route::post('dynamic-forms/submissions/{submission}/toggle-payment', [\App\Http\Controllers\Admin\DynamicFormController::class, 'togglePayment'])
+            ->name('dynamic-forms.submissions.toggle-payment');
         Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\Admin\DynamicFormController::class, 'exportSubmissions'])
             ->name('dynamic-forms.export');
 

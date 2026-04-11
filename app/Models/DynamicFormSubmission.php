@@ -10,6 +10,7 @@ class DynamicFormSubmission extends Model
     protected $fillable = [
         'dynamic_form_id',
         'data',
+        'is_payed',
     ];
 
     protected $casts = [
