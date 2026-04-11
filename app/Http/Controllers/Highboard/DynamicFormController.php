@@ -54,7 +54,11 @@ class DynamicFormController extends Controller
         // Ensure the highboard has access to the form that owns this submission
         auth()->guard('highboard')->user()->dynamicForms()->where('is_active', true)->findOrFail($submission->dynamic_form_id);
 
-        $submission->update(['is_payed' => !$submission->is_payed]);
+        $newState = !$submission->is_payed;
+        $submission->update([
+            'is_payed' => $newState,
+            'accepted_by' => $newState ? auth()->guard('highboard')->user()->name : null
+        ]);
 
         return back()->with('success', 'Payment status updated successfully.');
     }

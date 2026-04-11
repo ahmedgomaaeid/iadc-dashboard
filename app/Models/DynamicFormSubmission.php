@@ -11,6 +11,7 @@ class DynamicFormSubmission extends Model
         'dynamic_form_id',
         'data',
         'is_payed',
+        'accepted_by',
     ];
 
     protected $casts = [

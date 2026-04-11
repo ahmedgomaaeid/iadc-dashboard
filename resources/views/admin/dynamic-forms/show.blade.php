@@ -104,6 +104,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Submitted At</th>
+                                        <th>Accepted By</th>
                                         <th>Payment</th>
                                         @foreach($orderedFields as $fieldName => $fieldConfig)
                                             <th>{{ $fieldConfig['label'] }}</th>
@@ -115,6 +116,15 @@
                                         <tr class="{{ $submission->is_payed ? 'table-warning' : '' }}">
                                             <td>{{ $submission->id }}</td>
                                             <td class="text-nowrap">{{ $submission->created_at->format('M d, Y H:i') }}</td>
+                                            <td class="text-nowrap">
+                                                @if($submission->accepted_by)
+                                                    <span class="badge bg-success-transparent rounded-pill text-success p-2 px-3">
+                                                        <i class="fe fe-user-check me-1"></i> {{ $submission->accepted_by }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <form action="{{ route('admin.dynamic-forms.submissions.toggle-payment', $submission) }}" method="POST" class="d-inline toggle-payment-form">
                                                     @csrf

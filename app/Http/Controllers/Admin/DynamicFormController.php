@@ -212,7 +212,11 @@ class DynamicFormController extends Controller
      */
     public function togglePayment(DynamicFormSubmission $submission)
     {
-        $submission->update(['is_payed' => !$submission->is_payed]);
+        $newState = !$submission->is_payed;
+        $submission->update([
+            'is_payed' => $newState,
+            'accepted_by' => $newState ? auth()->guard('admin')->user()->name : null
+        ]);
 
         return back()->with('success', 'Payment status updated successfully.');
     }
