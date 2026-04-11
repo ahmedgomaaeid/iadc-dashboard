@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('dynamic_form_submissions', function (Blueprint $table) {
-            $table->boolean('is_payed')->default(false);
+            $table->string('accepted_by')->nullable()->after('is_payed');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('dynamic_form_submissions', function (Blueprint $table) {
-            $table->dropColumn('is_payed');
+            $table->dropColumn('accepted_by');
         });
     }
 };
