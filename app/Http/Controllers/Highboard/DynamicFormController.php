@@ -85,6 +85,10 @@ class DynamicFormController extends Controller
 
         $submission->delete();
 
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Submission deleted successfully.']);
+        }
+
         return back()->with('success', 'Submission deleted successfully.');
     }
 }

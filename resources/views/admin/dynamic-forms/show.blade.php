@@ -229,6 +229,7 @@
     document.querySelectorAll('.btn-delete-submission').forEach(button => {
         button.addEventListener('click', function() {
             const form = this.closest('.delete-submission-form');
+            const row = this.closest('tr');
             
             Swal.fire({
                 title: 'Are you sure?',
@@ -240,7 +241,38 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                data.message,
+                                'success'
+                            );
+                            row.remove();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                data.message || 'Something went wrong.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the submission.',
+                            'error'
+                        );
+                    });
                 }
             });
         });
