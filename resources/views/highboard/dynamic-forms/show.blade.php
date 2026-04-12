@@ -21,57 +21,8 @@
     @endif
 
     <div class="row">
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Form Details</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Title:</strong> {{ $dynamicForm->title }}</p>
-                    <p><strong>Subtitle:</strong> {{ $dynamicForm->subtitle ?? '—' }}</p>
-                    <p><strong>Status:</strong> 
-                        @if($dynamicForm->is_active)
-                            <span class="badge bg-success">Active</span>
-                        @else
-                            <span class="badge bg-secondary">Inactive</span>
-                        @endif
-                    </p>
-                    <p><strong>Total Submissions:</strong> {{ $submissions->total() }}</p>
-                    <p><strong>Form Link:</strong></p>
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" value="{{ $dynamicForm->getFormUrl() }}" id="formLink" readonly>
-                        <button class="btn btn-outline-primary btn-sm" type="button" onclick="copyLink()">
-                            <i class="fe fe-copy"></i>
-                        </button>
-                    </div>
-                    
-                    <p class="mt-3 mb-1"><strong>Share Submissions Link:</strong></p>
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" value="{{ $dynamicForm->getSharedSubmissionsUrl() }}" id="submissionsLink" readonly>
-                        <button class="btn btn-outline-info btn-sm" type="button" onclick="copySubmissionsLink()">
-                            <i class="fe fe-share-2"></i>
-                        </button>
-                    </div>
-                    <hr>
-                    <p class="mb-2"><strong>Selected Fields:</strong></p>
-                    @php $orderedFields = $dynamicForm->getOrderedFields(); @endphp
-                    @foreach($orderedFields as $fieldName => $fieldConfig)
-                        <span class="badge bg-info me-1 mb-1">
-                            <i class="fas {{ $fieldConfig['icon'] }} me-1"></i>{{ $fieldConfig['label'] }}
-                        </span>
-                    @endforeach
-                </div>
-                <div class="card-footer">
-                    @if($submissions->total() > 0)
-                        <a href="{{ route('highboard.dynamic-forms.export', $dynamicForm) }}" class="btn btn-success btn-sm">
-                            <i class="fe fe-download me-1"></i>Export Excel
-                        </a>
-                    @endif
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Submissions ({{ $submissions->total() }})</h3>
@@ -92,6 +43,14 @@
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-primary w-100">Filter</button>
                             </div>
+                            <div class="col-md-3">
+                                @if($submissions->total() > 0)
+                                    <a href="{{ route('highboard.dynamic-forms.export', $dynamicForm) }}" class="btn btn-success btn-sm">
+                                        <i class="fe fe-download me-1"></i>Export Excel
+                                    </a>
+                                @endif
+                            </div>
+                            
                         </div>
                     </form>
                     @if($submissions->count() > 0)
@@ -106,6 +65,7 @@
                                         @foreach($orderedFields as $fieldName => $fieldConfig)
                                             <th>{{ $fieldConfig['label'] }}</th>
                                         @endforeach
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,6 +104,15 @@
                                                     @endif
                                                 </td>
                                             @endforeach
+                                            <td>
+                                                <form action="{{ route('highboard.dynamic-forms.submissions.destroy', $submission) }}" method="POST" class="d-inline delete-submission-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-submission" title="Delete Submission">
+                                                        <i class="fe fe-trash-2"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -205,6 +174,26 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, change it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.btn-delete-submission').forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('.delete-submission-form');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this submission deletion!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

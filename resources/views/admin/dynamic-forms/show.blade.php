@@ -109,6 +109,7 @@
                                         @foreach($orderedFields as $fieldName => $fieldConfig)
                                             <th>{{ $fieldConfig['label'] }}</th>
                                         @endforeach
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -147,6 +148,15 @@
                                                     @endif
                                                 </td>
                                             @endforeach
+                                            <td>
+                                                <form action="{{ route('admin.dynamic-forms.submissions.destroy', $submission) }}" method="POST" class="d-inline delete-submission-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-submission" title="Delete Submission">
+                                                        <i class="fe fe-trash-2"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -208,6 +218,26 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, change it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.btn-delete-submission').forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('.delete-submission-form');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this submission deletion!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

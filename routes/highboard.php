@@ -101,6 +101,7 @@ Route::domain($domain)->group(function () {
         // Dynamic Form Routes
         Route::resource('dynamic-forms', DynamicFormController::class)->only(['index', 'show']);
         Route::post('dynamic-forms/submissions/{submission}/toggle-payment', [DynamicFormController::class, 'togglePayment'])->name('dynamic-forms.submissions.toggle-payment');
+        Route::delete('dynamic-forms/submissions/{submission}', [DynamicFormController::class, 'destroySubmission'])->name('dynamic-forms.submissions.destroy');
         Route::get('dynamic-forms/{dynamicForm}/export', [DynamicFormController::class, 'exportSubmissions'])->name('dynamic-forms.export');
 
         // Profile Routes

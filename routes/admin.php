@@ -67,6 +67,8 @@ Route::domain($domain)->group(function () {
             ->name('dynamic-forms.toggle-active');
         Route::post('dynamic-forms/submissions/{submission}/toggle-payment', [\App\Http\Controllers\Admin\DynamicFormController::class, 'togglePayment'])
             ->name('dynamic-forms.submissions.toggle-payment');
+        Route::delete('dynamic-forms/submissions/{submission}', [\App\Http\Controllers\Admin\DynamicFormController::class, 'destroySubmission'])
+            ->name('dynamic-forms.submissions.destroy');
         Route::get('dynamic-forms/{dynamicForm}/export', [\App\Http\Controllers\Admin\DynamicFormController::class, 'exportSubmissions'])
             ->name('dynamic-forms.export');
 

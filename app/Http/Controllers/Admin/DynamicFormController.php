@@ -229,4 +229,14 @@ class DynamicFormController extends Controller
         $filename = 'form_submissions_' . str_replace(' ', '_', $dynamicForm->title) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
         return Excel::download(new DynamicFormSubmissionExport($dynamicForm), $filename);
     }
+
+    /**
+     * Delete a submission.
+     */
+    public function destroySubmission(DynamicFormSubmission $submission)
+    {
+        $submission->delete();
+
+        return back()->with('success', 'Submission deleted successfully.');
+    }
 }
