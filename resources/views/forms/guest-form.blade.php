@@ -602,11 +602,12 @@
         // --- Wizard Logic (only runs for multi-section forms) ---
         if (!isWizard) return;
 
-        let currentSection = 0;
-        const sections = document.querySelectorAll('.form-section');
-        const steps = document.querySelectorAll('.wizard-step');
+        // showSection and currentSection are global so peaks JS can access them
+        window.currentSection = 0;
+        window.sections = document.querySelectorAll('.form-section');
+        window.steps = document.querySelectorAll('.wizard-step');
 
-        function showSection(n) {
+        window.showSection = function(n) {
             sections.forEach((sec, idx) => {
                 if (idx === n) {
                     sec.classList.remove('d-none');
@@ -663,8 +664,8 @@
         document.querySelectorAll('.btn-next').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (validateSection(currentSection)) {
-                    currentSection++;
-                    showSection(currentSection);
+                    window.currentSection++;
+                    showSection(window.currentSection);
                     document.getElementById('guestForm').scrollIntoView({ behavior: 'smooth' });
                 }
             });
@@ -672,9 +673,9 @@
 
         document.querySelectorAll('.btn-prev').forEach(btn => {
             btn.addEventListener('click', function() {
-                if (currentSection > 0) {
-                    currentSection--;
-                    showSection(currentSection);
+                if (window.currentSection > 0) {
+                    window.currentSection--;
+                    showSection(window.currentSection);
                     document.getElementById('guestForm').scrollIntoView({ behavior: 'smooth' });
                 }
             });
@@ -732,8 +733,8 @@
             document.getElementById('hiddenBundle4').value = document.getElementById('bundlePerson4').value.trim();
         }
         // Move wizard forward to the payment step
-        currentSection++;
-        showSection(currentSection);
+        window.currentSection++;
+        window.showSection(window.currentSection);
         document.getElementById('guestForm').scrollIntoView({ behavior: 'smooth' });
     }
 
