@@ -115,7 +115,7 @@ class LinkedInShareController extends Controller
         }
 
         if ($subdomain === 'peaks') {
-            $postText  = "I'm excited to be attending PEAKS 2026 - Petroleum Engineering Advancements & Knowledge Summit.\n\nProud to be part of the 2nd edition of PEAKS, organized by IADC Suez University Student Chapter in Collaboration with SPE BUE Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on 28, 29 April 2026 at Auditorium, BUE.\n\n🔗 Register here: https://peaks.form.iadcsuez.org\n\n#PEAKS \n#IADCSuez\n#SPEBUE\n#ExploreYourPotential";
+            $postText  = "I'm excited to be attending PEAKS 2026 - Petroleum Engineering Advancements & Knowledge Summit.\n\nProud to be part of the 2nd edition of PEAKS, organized by IADC Suez University Student Chapter in Collaboration with SPE BUE Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on 28, 29 April 2026 at Auditorium, BUE.\n\n🔗 Register here: https://iadcsuez.org/event/11\n\n#PEAKS \n#IADCSuez\n#SPEBUE\n#ExploreYourPotential";
             $titleText = 'PEAKS 2026 ⚡';
             $descText  = 'Petroleum Engineering Advancements & Knowledge Summit — organized by IADC Suez University Student Chapter in collaboration with SPE BUE Student Chapter.';
         } else {
