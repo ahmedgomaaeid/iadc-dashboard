@@ -540,6 +540,25 @@
         </p>
     </div>
 
+    @if($isPeaksForm)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Payment Info',
+                text: 'We will reach out to you shortly regarding the payment process. Kindly stay tuned for further details.',
+                confirmButtonText: 'Got it!',
+                confirmButtonColor: '#6366f1',
+                allowOutsideClick: false,
+                customClass: {
+                    popup: 'rounded-4 shadow-lg',
+                    title: 'fw-bold',
+                }
+            });
+        });
+    </script>
+    @endif
+
     @endif
 
 @endsection
