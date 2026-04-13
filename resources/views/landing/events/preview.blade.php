@@ -121,7 +121,7 @@
     <div class="container container-fluid my-5">
 
         <div class="row">
-            <div class="col-xl-{{ $event->partners->count() > 0 ? '8' : '12' }}">
+            <div class="col-xl-{{ ($event->partners->count() > 0 || $event->communityPartners->count() > 0) ? '8' : '12' }}">
                 <div class="card">
                     {{-- Gallery Carousel or Single Image --}}
                     @if($event->images->count() > 0)
@@ -204,7 +204,7 @@
                                             <div class="text-center" style="transition: transform 0.2s ease;">
                                                 <img src="{{ asset('storage/' . $partner->image) }}"
                                                     alt="Community Partner"
-                                                    style="height: 70px; max-width: 160px; object-fit: contain; filter: grayscale(20%); transition: filter 0.3s ease;"
+                                                    style="height: 150px; max-width: 160px; object-fit: contain; filter: grayscale(20%); transition: filter 0.3s ease;"
                                                     onmouseover="this.style.filter='grayscale(0%)'; this.parentElement.style.transform='translateY(-3px)'"
                                                     onmouseout="this.style.filter='grayscale(20%)'; this.parentElement.style.transform='translateY(0)'">
                                             </div>
