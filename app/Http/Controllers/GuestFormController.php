@@ -127,20 +127,38 @@ class GuestFormController extends Controller
 
             try {
                 $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
-                $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
+                $isPeaks = strtolower($form->subdomain) === 'peaks';
+                
+                if ($isPeaks) {
+                    $baseCard = $manager->read(public_path('images/peakscard.jpg'));
+                } else {
+                    $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
+                }
                 
                 // Resize and place user photo or default
                 $photoPath = $userPhotoPath ? storage_path('app/public/' . $userPhotoPath) : public_path('images/default linked_in.png');
                 if (file_exists($photoPath)) {
                         $photo = $manager->read($photoPath);
-                        $photo->scale(height: 404);
-                        if ($photo->width() > 454) {
-                            $photo->crop(454, 404, position: 'center');
+                        
+                        if ($isPeaks) {
+                            // Peaks photo: 511x511 center crop
+                            $photo->cover(511, 511, 'center');
+                            $radius = 255; // Circular
+                            $xOffset = 1277;
+                            $yOffset = 248;
+                        } else {
+                            // Pulse photo: height 404, max width 454
+                            $photo->scale(height: 404);
+                            if ($photo->width() > 454) {
+                                $photo->crop(454, 404, position: 'center');
+                            }
+                            $radius = 40;
+                            $xOffset = 1853 - $photo->width();
+                            $yOffset = 301;
                         }
                         
-                        // Apply 40px border radius
+                        // Apply border radius
                         $gdImage = $photo->core()->native();
-                        $radius = 40;
                         $width = imagesx($gdImage);
                         $height = imagesy($gdImage);
                         imagealphablending($gdImage, false);
@@ -148,21 +166,29 @@ class GuestFormController extends Controller
                         $transparent = imagecolorallocatealpha($gdImage, 255, 255, 255, 127);
                         for ($x = 0; $x < $width; $x++) {
                             for ($y = 0; $y < $height; $y++) {
-                                if ($x < $radius && $y < $radius) {
-                                    if (pow($x - $radius + 1, 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
-                                } elseif ($x >= $width - $radius && $y < $radius) {
-                                    if (pow($x - ($width - $radius), 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
-                                } elseif ($x < $radius && $y >= $height - $radius) {
-                                    if (pow($x - $radius + 1, 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
-                                } elseif ($x >= $width - $radius && $y >= $height - $radius) {
-                                    if (pow($x - ($width - $radius), 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                // Full circle distance check for Peaks, normal rounded rect for Pulse
+                                if ($isPeaks) {
+                                    $cx = $width / 2;
+                                    $cy = $height / 2;
+                                    if (pow($x - $cx, 2) + pow($y - $cy, 2) > pow($radius, 2)) {
+                                        imagesetpixel($gdImage, $x, $y, $transparent);
+                                    }
+                                } else {
+                                    if ($x < $radius && $y < $radius) {
+                                        if (pow($x - $radius + 1, 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                    } elseif ($x >= $width - $radius && $y < $radius) {
+                                        if (pow($x - ($width - $radius), 2) + pow($y - $radius + 1, 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                    } elseif ($x < $radius && $y >= $height - $radius) {
+                                        if (pow($x - $radius + 1, 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                    } elseif ($x >= $width - $radius && $y >= $height - $radius) {
+                                        if (pow($x - ($width - $radius), 2) + pow($y - ($height - $radius), 2) > pow($radius, 2)) imagesetpixel($gdImage, $x, $y, $transparent);
+                                    }
                                 }
                             }
                         }
                         imagealphablending($gdImage, true);
 
-                        $xOffset = 1853 - $photo->width();
-                        $baseCard->place($photo, 'top-left', $xOffset, 301);
+                        $baseCard->place($photo, 'top-left', $xOffset, $yOffset);
                     }
 
                     // Write user name
@@ -170,9 +196,13 @@ class GuestFormController extends Controller
                         $nameParts = explode(' ', trim($userName));
                         $twoNames = implode(' ', array_slice($nameParts, 0, 2));
                         
-                        $baseCard->text($twoNames, 895, 383, function($font) {
+                        $nameX = $isPeaks ? 699 : 895;
+                        $nameY = $isPeaks ? 380 : 383;
+                        $fontSize = $isPeaks ? 67.5 : 60;
+                        
+                        $baseCard->text($twoNames, $nameX, $nameY, function($font) use ($fontSize) {
                             $font->file(public_path('fonts/MyriadArabic-Bold.otf'));
-                            $font->size(60);
+                            $font->size($fontSize);
                             $font->color('#ffffff');
                             $font->align('left');
                             $font->valign('top');
