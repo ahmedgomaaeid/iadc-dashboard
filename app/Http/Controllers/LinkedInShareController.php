@@ -115,9 +115,9 @@ class LinkedInShareController extends Controller
         }
 
         if ($subdomain === 'peaks') {
-            $postText  = "I’m excited to be attending PEAKS!\n\nLooking forward to learning, networking, and gaining real industry insights.\n\n🔗 Register here: https://peaks.form.iadcsuez.org\n\n#PEAKS \n#IADCSuez\n#ExploreYourPotential";
-            $titleText = 'PEAKS ⚡';
-            $descText  = 'The PEAKS technical event, organized by IADC SUSC.';
+            $postText  = "I'm excited to be attending PEAKS 2026 - Petroleum Engineering Advancements & Knowledge Summit.\n\nProud to be part of the 2nd edition of PEAKS, organized by IADC Suez University Student Chapter in Collaboration with SPE BUE Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on 28, 29 April 2026 at Auditorium, BUE.\n\n🔗 Register here: https://peaks.form.iadcsuez.org\n\n#PEAKS \n#IADCSuez\n#SPEBUE\n#ExploreYourPotential";
+            $titleText = 'PEAKS 2026 ⚡';
+            $descText  = 'Petroleum Engineering Advancements & Knowledge Summit — organized by IADC Suez University Student Chapter in collaboration with SPE BUE Student Chapter.';
         } else {
             $postText  = "I’m excited to be attending PULSE - Petroleum Upstream Learning & Scientific Exchange.\n\nProud to be part of the first technical event at Suez University, organized by IADC Suez University Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on Tuesday, April 21, 2026 at FPME, Suez University.\n\n🔗 Register here: https://pulse.form.iadcsuez.org\n\n#PULSE \n#IADCSuez\n#ExploreYourPotential";
             $titleText = 'PULSE ⚡';
