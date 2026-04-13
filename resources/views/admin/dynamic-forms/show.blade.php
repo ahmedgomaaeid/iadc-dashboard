@@ -110,6 +110,7 @@
                                             <th>{{ $fieldConfig['label'] }}</th>
                                         @endforeach
                                         <th>Package</th>
+                                        <th>Bundle Members</th>
                                         <th>Payment Method</th>
                                         <th>Actions</th>
                                     </tr>
@@ -153,6 +154,17 @@
                                             <td>
                                                 @if(isset($submission->data['_selected_package_name']) && $submission->data['_selected_package_name'])
                                                     <span class="badge bg-primary">{{ $submission->data['_selected_package_name'] }}</span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(isset($submission->data['_registration_mode']) && $submission->data['_registration_mode'] === 'bundle' && isset($submission->data['_bundle_names']))
+                                                    <ul class="mb-0 ps-3" style="font-size: 0.85rem;">
+                                                        @foreach($submission->data['_bundle_names'] as $bName)
+                                                            <li>{{ $bName }}</li>
+                                                        @endforeach
+                                                    </ul>
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif

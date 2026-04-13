@@ -430,6 +430,71 @@
             .package-card .card-info .pkg-price .amount { font-size: 1.3rem; }
             .peaks-title { font-size: 1.25rem; }
         }
+        
+        /* Bundle Toggle & Fields */
+        .reg-mode-toggle {
+            display: inline-flex;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .reg-mode-btn {
+            padding: 8px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #6b7280;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+        .reg-mode-btn.active {
+            background: white;
+            color: #6366f1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        #bundleFields {
+            display: none;
+            background: #f9fafb;
+            border: 2px dashed #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+            animation: fadeInUp 0.4s ease;
+        }
+        #bundleFields.active {
+            display: block;
+        }
+        .bundle-field-group {
+            margin-bottom: 12px;
+        }
+        .bundle-field-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .bundle-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .bundle-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .bundle-input.is-invalid {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
     </style>
 
     <div id="peaksPackageScreen">
@@ -440,6 +505,11 @@
 
         <h2 class="peaks-title">Choose Your Package</h2>
         <p class="peaks-subtitle">Select the experience that suits you best</p>
+
+        <div class="reg-mode-toggle">
+            <button class="reg-mode-btn active" onclick="setRegMode('alone')" id="btnModeAlone">Alone</button>
+            <button class="reg-mode-btn" onclick="setRegMode('bundle')" id="btnModeBundle">Bundle</button>
+        </div>
 
         <div class="packages-grid">
             {{-- Package 1 --}}
@@ -452,7 +522,7 @@
                     <span class="pkg-label">Package 1</span>
                     <span class="pkg-name">Attending, Transportation, Lunch & Breakfast, and Certificates</span>
                     <div class="pkg-price">
-                        <span class="amount">180</span>
+                        <span class="amount" id="pkg1PriceAmount">175</span>
                         <span class="currency">L.E</span>
                     </div>
                 </div>
@@ -489,6 +559,28 @@
                     </div>
                 </div>
                 <div class="card-check"><i class="fas fa-check"></i></div>
+            </div>
+        </div>
+
+        <div id="bundleFields">
+            <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 16px;">
+                <i class="fas fa-info-circle"></i> Please enter the names of your 4 group members as they registered in the form.
+            </p>
+            <div class="bundle-field-group">
+                <label>Person 1 Name</label>
+                <input type="text" class="bundle-input" id="bundlePerson1" placeholder="Name as he registered">
+            </div>
+            <div class="bundle-field-group">
+                <label>Person 2 Name</label>
+                <input type="text" class="bundle-input" id="bundlePerson2" placeholder="Name as he registered">
+            </div>
+            <div class="bundle-field-group">
+                <label>Person 3 Name</label>
+                <input type="text" class="bundle-input" id="bundlePerson3" placeholder="Name as he registered">
+            </div>
+            <div class="bundle-field-group mb-0">
+                <label>Person 4 Name</label>
+                <input type="text" class="bundle-input" id="bundlePerson4" placeholder="Name as he registered">
             </div>
         </div>
 
@@ -846,6 +938,25 @@
 
     // ─── Peaks Package Selection Logic ───
     let selectedPackage = null;
+    let registrationMode = 'alone';
+
+    function setRegMode(mode) {
+        registrationMode = mode;
+        if (mode === 'alone') {
+            document.getElementById('btnModeAlone').classList.add('active');
+            document.getElementById('btnModeBundle').classList.remove('active');
+            document.getElementById('bundleFields').classList.remove('active');
+            document.getElementById('pkg1PriceAmount').innerText = '175';
+        } else {
+            document.getElementById('btnModeAlone').classList.remove('active');
+            document.getElementById('btnModeBundle').classList.add('active');
+            document.getElementById('bundleFields').classList.add('active');
+            document.getElementById('pkg1PriceAmount').innerText = '150';
+            
+            // Auto-select package 1 if nothing is selected or if they switch to bundle
+            // Optional: you can force package 1 here, but let's just make it visually 150.
+        }
+    }
 
     function selectPackage(card) {
         // Remove selection from all cards
@@ -859,6 +970,35 @@
 
     function confirmPackage() {
         if (!selectedPackage) return;
+        
+        let bundleData = null;
+        if (registrationMode === 'bundle') {
+            const p1 = document.getElementById('bundlePerson1');
+            const p2 = document.getElementById('bundlePerson2');
+            const p3 = document.getElementById('bundlePerson3');
+            const p4 = document.getElementById('bundlePerson4');
+            
+            let valid = true;
+            [p1, p2, p3, p4].forEach(el => {
+                if (!el.value.trim()) {
+                    valid = false;
+                    el.classList.add('is-invalid');
+                } else {
+                    el.classList.remove('is-invalid');
+                }
+                
+                el.addEventListener('input', () => el.classList.remove('is-invalid'), {once: true});
+            });
+            
+            if (!valid) return; // Stop if bundle fields are empty
+            
+            bundleData = {
+                p1: p1.value.trim(),
+                p2: p2.value.trim(),
+                p3: p3.value.trim(),
+                p4: p4.value.trim()
+            };
+        }
 
         // Transition to Payment Screen
         const pkgScreen = document.getElementById('peaksPackageScreen');
@@ -905,6 +1045,16 @@
 
         const submissionId = '{{ session("pulse_submission_id") }}';
         const csrfToken = '{{ csrf_token() }}';
+        
+        let bundleNames = [];
+        if (registrationMode === 'bundle') {
+            bundleNames = [
+                document.getElementById('bundlePerson1').value.trim(),
+                document.getElementById('bundlePerson2').value.trim(),
+                document.getElementById('bundlePerson3').value.trim(),
+                document.getElementById('bundlePerson4').value.trim(),
+            ];
+        }
 
         fetch('/save-package', {
             method: 'POST',
@@ -916,7 +1066,9 @@
             body: JSON.stringify({
                 submission_id: submissionId,
                 package: selectedPackage,
-                payment_method: selectedPayment
+                payment_method: selectedPayment,
+                registration_mode: registrationMode,
+                bundle_names: bundleNames
             })
         })
         .then(response => response.json())

@@ -272,16 +272,20 @@ class GuestFormController extends Controller
             'submission_id' => 'required|exists:dynamic_form_submissions,id',
             'package' => 'required|in:1,2,3',
             'payment_method' => 'required|in:vodafone,instapay,cash',
+            'registration_mode' => 'nullable|string|in:alone,bundle',
+            'bundle_names' => 'nullable|array',
         ]);
 
         $submission = DynamicFormSubmission::findOrFail($request->submission_id);
 
+        $isBundle = $request->registration_mode === 'bundle';
+
         $packageNames = [
-            '1' => 'Package 1 - 180 L.E',
+            '1' => $isBundle ? 'Package 1 (Bundle) - 150 L.E' : 'Package 1 - 175 L.E',
             '2' => 'Package 2 - 100 L.E',
             '3' => 'Package 3 - 60 L.E',
         ];
-        
+
         $paymentNames = [
             'vodafone' => 'Vodafone Cash',
             'instapay' => 'Instapay',
@@ -294,6 +298,11 @@ class GuestFormController extends Controller
         $data['_selected_payment'] = $request->payment_method;
         $data['_selected_payment_name'] = $paymentNames[$request->payment_method] ?? '';
         
+        $data['_registration_mode'] = $request->registration_mode ?? 'alone';
+        if ($isBundle && is_array($request->bundle_names)) {
+            $data['_bundle_names'] = $request->bundle_names;
+        }
+
         $submission->update(['data' => $data]);
 
         return response()->json(['success' => true]);

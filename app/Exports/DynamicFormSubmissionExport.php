@@ -42,6 +42,10 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
         }
 
         $headings[] = 'Package';
+        $headings[] = 'Bundle Person 1';
+        $headings[] = 'Bundle Person 2';
+        $headings[] = 'Bundle Person 3';
+        $headings[] = 'Bundle Person 4';
         $headings[] = 'Payment Method';
 
         return $headings;
@@ -69,6 +73,13 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
         }
 
         $row[] = $submission->data['_selected_package_name'] ?? '';
+        
+        $bundleNames = $submission->data['_bundle_names'] ?? [];
+        $row[] = $bundleNames[0] ?? '';
+        $row[] = $bundleNames[1] ?? '';
+        $row[] = $bundleNames[2] ?? '';
+        $row[] = $bundleNames[3] ?? '';
+
         $row[] = $submission->data['_selected_payment_name'] ?? '';
 
         return $row;
