@@ -57,14 +57,20 @@ class LinkedInShareController extends Controller
         $code  = $request->query('code');
         $state = $request->query('state');
 
-        if (!$code) {
-            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'LinkedIn authorization was cancelled.');
-        }
+        $fallbackUrl = 'https://pulse.form.iadcsuez.org';
+        $subdomain = 'pulse';
 
         try {
             $submissionId = decrypt($state);
+            $submission    = DynamicFormSubmission::findOrFail($submissionId);
+            $subdomain = strtolower($submission->dynamicForm->subdomain);
+            $fallbackUrl = "https://{$subdomain}.form.iadcsuez.org";
         } catch (\Exception $e) {
-            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Invalid session state. Please try again.');
+            return redirect($fallbackUrl)->with('linkedin_error', 'Invalid session state. Please try again.');
+        }
+
+        if (!$code) {
+            return redirect($fallbackUrl)->with('linkedin_error', 'LinkedIn authorization was cancelled.');
         }
 
         // 1. Exchange code for access token
@@ -78,7 +84,7 @@ class LinkedInShareController extends Controller
 
         if (!$tokenResp->successful()) {
             Log::error('LinkedIn token error', $tokenResp->json());
-            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Failed to authenticate with LinkedIn. Please try again.');
+            return redirect($fallbackUrl)->with('linkedin_error', 'Failed to authenticate with LinkedIn. Please try again.');
         }
 
         $accessToken = $tokenResp->json('access_token');
@@ -91,14 +97,13 @@ class LinkedInShareController extends Controller
 
         if (!$profileResp->successful()) {
             Log::error('LinkedIn profile error', $profileResp->json());
-            return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Failed to get LinkedIn profile. Please try again.');
+            return redirect($fallbackUrl)->with('linkedin_error', 'Failed to get LinkedIn profile. Please try again.');
         }
 
         $sub       = $profileResp->json('sub'); // person ID from OpenID Connect
         $authorUrn = "urn:li:person:{$sub}";
 
-        // 3. Fetch the form submission and find the uploaded image
-        $submission    = DynamicFormSubmission::findOrFail($submissionId);
+        // 3. Find the uploaded image
         $orderedFields = $submission->dynamicForm->getOrderedFields();
         $imagePath     = null;
 
@@ -109,7 +114,15 @@ class LinkedInShareController extends Controller
             }
         }
 
-        $postText  = "I’m excited to be attending PULSE - Petroleum Upstream Learning & Scientific Exchange.\n\nProud to be part of the first technical event at Suez University, organized by IADC Suez University Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on Tuesday, April 21, 2026 at FPME, Suez University.\n\n🔗 Register here: https://pulse.form.iadcsuez.org\n\n#PULSE \n#IADCSuez\n#ExploreYourPotential";
+        if ($subdomain === 'peaks') {
+            $postText  = "I’m excited to be attending PEAKS!\n\nLooking forward to learning, networking, and gaining real industry insights.\n\n🔗 Register here: https://peaks.form.iadcsuez.org\n\n#PEAKS \n#IADCSuez\n#ExploreYourPotential";
+            $titleText = 'PEAKS ⚡';
+            $descText  = 'The PEAKS technical event, organized by IADC SUSC.';
+        } else {
+            $postText  = "I’m excited to be attending PULSE - Petroleum Upstream Learning & Scientific Exchange.\n\nProud to be part of the first technical event at Suez University, organized by IADC Suez University Student Chapter.\n\nLooking forward to learning, networking, and gaining real industry insights on Tuesday, April 21, 2026 at FPME, Suez University.\n\n🔗 Register here: https://pulse.form.iadcsuez.org\n\n#PULSE \n#IADCSuez\n#ExploreYourPotential";
+            $titleText = 'PULSE ⚡';
+            $descText  = 'The first technical petroleum upstream event at Suez University, organized by IADC SUSC.';
+        }
         $assetUrn  = null;
 
         // 4. Upload the image to LinkedIn
@@ -164,8 +177,8 @@ class LinkedInShareController extends Controller
             $shareContent['media'] = [[
                 'status'      => 'READY',
                 'media'       => $assetUrn,
-                'title'       => ['text' => 'PULSE ⚡'],
-                'description' => ['text' => 'The first technical petroleum upstream event at Suez University, organized by IADC SUSC.'],
+                'title'       => ['text' => $titleText],
+                'description' => ['text' => $descText],
             ]];
         }
 
@@ -195,6 +208,6 @@ class LinkedInShareController extends Controller
             'body'   => $postResp->json(),
         ]);
 
-        return redirect('https://pulse.form.iadcsuez.org')->with('linkedin_error', 'Post was created but LinkedIn returned an error. Check your LinkedIn feed.');
+        return redirect($fallbackUrl)->with('linkedin_error', 'Post was created but LinkedIn returned an error. Check your LinkedIn feed.');
     }
 }

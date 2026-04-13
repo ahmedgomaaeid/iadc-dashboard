@@ -103,9 +103,10 @@ class GuestFormController extends Controller
 
         $redirect = back()->with('registration_success', 'Thank you! Your submission has been received.');
 
-        if (strtolower($form->subdomain) === 'pulse') {
+        if (in_array(strtolower($form->subdomain), ['pulse', 'peaks'])) {
             $redirect->with('is_pulse', true);
             $redirect->with('pulse_submission_id', $submission->id);
+            $redirect->with('pulse_subdomain', strtolower($form->subdomain));
             
             // Generate the finalized image with user photo and name
             $userPhotoPath = null;
@@ -179,7 +180,7 @@ class GuestFormController extends Controller
                     }
 
                     // Save the final card
-                    $filename = 'pulse_' . uniqid() . '.jpg';
+                    $filename = strtolower($subdomain) . '_' . uniqid() . '.jpg';
                     $generatedPath = 'dynamic_form_uploads/' . $filename;
                     $baseCard->save(storage_path('app/public/' . $generatedPath), quality: 90);
                     
@@ -227,7 +228,34 @@ class GuestFormController extends Controller
         
         return view('forms.pulse-share', [
             'submission' => $submission,
-            'imagePath' => $imagePath
+            'imagePath' => $imagePath,
+            'subdomain' => strtolower($form->subdomain)
         ]);
+    }
+
+    /**
+     * Save the selected package for a peaks submission.
+     */
+    public function savePackage(Request $request, $subdomain)
+    {
+        $request->validate([
+            'submission_id' => 'required|exists:dynamic_form_submissions,id',
+            'package' => 'required|in:1,2,3',
+        ]);
+
+        $submission = DynamicFormSubmission::findOrFail($request->submission_id);
+
+        $packageNames = [
+            '1' => 'Package 1 - 180 L.E',
+            '2' => 'Package 2 - 100 L.E',
+            '3' => 'Package 3 - 60 L.E',
+        ];
+
+        $data = $submission->data;
+        $data['_selected_package'] = $request->package;
+        $data['_selected_package_name'] = $packageNames[$request->package] ?? '';
+        $submission->update(['data' => $data]);
+
+        return response()->json(['success' => true]);
     }
 }

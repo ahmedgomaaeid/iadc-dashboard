@@ -6,8 +6,15 @@
 
     {{-- ===== OpenGraph Tags (LinkedIn scrapes these) ===== --}}
     <meta property="og:type"        content="website">
-    <meta property="og:title"       content="I'm attending Pulse Event — April 21! 🎉">
-    <meta property="og:description" content="hi i will attend pulse event in 21 april #pulse #iadcsuez">
+    @php
+        $isPeaks = isset($subdomain) && $subdomain === 'peaks';
+        $title = $isPeaks ? "I'm attending Peaks Event! 🎉" : "I'm attending Pulse Event — April 21! 🎉";
+        $desc = $isPeaks ? "hi i will attend peaks event #peaks #iadcsuez" : "hi i will attend pulse event in 21 april #pulse #iadcsuez";
+        $hashtags = $isPeaks ? "#peaks &nbsp; #iadcsuez" : "#pulse &nbsp; #iadcsuez";
+        $eventName = $isPeaks ? "⚡ Peaks Event" : "⚡ Pulse Event";
+    @endphp
+    <meta property="og:title"       content="{{ $title }}">
+    <meta property="og:description" content="{{ $desc }}">
     @if($imagePath)
     <meta property="og:image"       content="{{ asset('storage/' . $imagePath) }}">
     <meta property="og:image:width"  content="1200">
@@ -19,13 +26,13 @@
 
     {{-- Twitter Card fallback --}}
     <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:title"       content="I'm attending Pulse Event — April 21! 🎉">
-    <meta name="twitter:description" content="hi i will attend pulse event in 21 april #pulse #iadcsuez">
+    <meta name="twitter:title"       content="{{ $title }}">
+    <meta name="twitter:description" content="{{ $desc }}">
     @if($imagePath)
     <meta name="twitter:image"       content="{{ asset('storage/' . $imagePath) }}">
     @endif
 
-    <title>Pulse Event Registration — IADC Suez</title>
+    <title>{{ $isPeaks ? 'Peaks' : 'Pulse' }} Event Registration — IADC Suez</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -127,8 +134,10 @@
     <div class="card">
         <div class="card-banner">
             <div class="event-label">IADC Suez Presents</div>
-            <h1>⚡ Pulse Event</h1>
-            <div class="date-badge"><i class="fas fa-calendar-alt me-1"></i> April 21, 2025</div>
+            <h1>{{ $eventName }}</h1>
+            @if(!$isPeaks)
+            <div class="date-badge"><i class="fas fa-calendar-alt me-1"></i> April 21, 2026</div>
+            @endif
         </div>
 
         @if($imagePath)
@@ -138,11 +147,11 @@
         @endif
 
         <div class="card-body">
-            <p class="attending-text">I'm going to Pulse! 🎉</p>
-            <p class="hashtags">#pulse &nbsp; #iadcsuez</p>
+            <p class="attending-text">I'm going to {{ $isPeaks ? 'Peaks' : 'Pulse' }}! 🎉</p>
+            <p class="hashtags">{!! $hashtags !!}</p>
 
             @php
-                $shareText = 'hi i will attend pulse event in 21 april #pulse #iadcsuez';
+                $shareText = $desc;
                 $shareUrl  = url()->current();
                 $linkedInShareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($shareUrl);
             @endphp

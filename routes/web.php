@@ -15,6 +15,7 @@ use App\Http\Controllers\SharedFormController;
 Route::domain('{subdomain}.form.iadcsuez.org')->group(function () {
     Route::get('/', [GuestFormController::class, 'show'])->name('form.show');
     Route::post('/', [GuestFormController::class, 'submit'])->name('form.submit');
+    Route::post('/save-package', [GuestFormController::class, 'savePackage'])->name('form.savePackage');
 });
 
 // Single global share route for generated image screens
