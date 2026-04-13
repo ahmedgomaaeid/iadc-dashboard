@@ -301,8 +301,7 @@
             margin-bottom: 3px;
         }
         .package-card .card-info .pkg-name {
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-size: 12px;
             color: #1e1b4b;
             margin-bottom: 8px;
             line-height: 1.3;
@@ -451,7 +450,7 @@
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 1</span>
-                    <span class="pkg-name">Full Experience</span>
+                    <span class="pkg-name">Attending, Transportation, Lunch & Breakfast, and Certificates</span>
                     <div class="pkg-price">
                         <span class="amount">180</span>
                         <span class="currency">L.E</span>
@@ -463,11 +462,11 @@
             {{-- Package 2 --}}
             <div class="package-card" data-package="2" onclick="selectPackage(this)">
                 <div class="card-img-section">
-                    <img src="{{ asset('images/33.png') }}" alt="Package 2">
+                    <img src="{{ asset('images/44.png') }}" alt="Package 2">
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 2</span>
-                    <span class="pkg-name">Lunch only</span>
+                    <span class="pkg-name">Attending, Lunch & Breakfast, and Certificates</span>
                     <div class="pkg-price">
                         <span class="amount">100</span>
                         <span class="currency">L.E</span>
@@ -483,7 +482,7 @@
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 3</span>
-                    <span class="pkg-name">Basic</span>
+                    <span class="pkg-name">Attending, and Certificates</span>
                     <div class="pkg-price">
                         <span class="amount">60</span>
                         <span class="currency">L.E</span>
