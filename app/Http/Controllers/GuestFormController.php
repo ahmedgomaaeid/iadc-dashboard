@@ -108,8 +108,8 @@ class GuestFormController extends Controller
 
             $packageNames = [
                 '1' => $isBundle ? 'Package 1 (Bundle) - 150 L.E' : 'Package 1 - 175 L.E',
-                '2' => 'Package 2 - 100 L.E',
-                '3' => 'Package 3 - 60 L.E',
+                '2' => 'Package 2 - 120 L.E',
+                '3' => 'Package 3 - 75 L.E',
             ];
 
             $paymentNames = [

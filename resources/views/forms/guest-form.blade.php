@@ -309,7 +309,7 @@
                     <div class="card-info">
                         <span class="pkg-label">Package 2</span>
                         <span class="pkg-name">Attending, Lunch &amp; Breakfast, and Certificates</span>
-                        <div class="pkg-price"><span class="amount">100</span><span class="currency">L.E</span></div>
+                        <div class="pkg-price"><span class="amount" id="pkg2PriceAmount">120</span><span class="currency">L.E</span></div>
                     </div>
                     <div class="card-check"><i class="fas fa-check"></i></div>
                 </div>
@@ -318,7 +318,7 @@
                     <div class="card-info">
                         <span class="pkg-label">Package 3</span>
                         <span class="pkg-name">Attending, and Certificates</span>
-                        <div class="pkg-price"><span class="amount">60</span><span class="currency">L.E</span></div>
+                        <div class="pkg-price"><span class="amount" id="pkg3PriceAmount">75</span><span class="currency">L.E</span></div>
                     </div>
                     <div class="card-check"><i class="fas fa-check"></i></div>
                 </div>
@@ -695,11 +695,17 @@
             document.getElementById('btnModeBundle').classList.remove('active');
             document.getElementById('bundleFields').classList.remove('active');
             document.getElementById('pkg1PriceAmount').innerText = '175';
+            document.getElementById('pkg2PriceAmount').innerText = '120';
+            document.getElementById('pkg3PriceAmount').innerText = '75';
+            document.getElementsByClassName('currency').forEach(el => el.innerText = 'L.E');
         } else {
             document.getElementById('btnModeAlone').classList.remove('active');
             document.getElementById('btnModeBundle').classList.add('active');
             document.getElementById('bundleFields').classList.add('active');
-            document.getElementById('pkg1PriceAmount').innerText = '150';
+            document.getElementById('pkg1PriceAmount').innerText = '600';
+            document.getElementById('pkg2PriceAmount').innerText = '400';
+            document.getElementById('pkg3PriceAmount').innerText = '240';
+            document.getElementsByClassName('currency').forEach(el => el.innerText = 'L.E for 4 persons');
         }
         document.getElementById('hiddenRegMode').value = mode;
     }
