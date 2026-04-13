@@ -329,7 +329,6 @@
                 <div class="bundle-field-group"><label>Person 1 Name</label><input type="text" class="bundle-input" id="bundlePerson1" placeholder="Name as registered"></div>
                 <div class="bundle-field-group"><label>Person 2 Name</label><input type="text" class="bundle-input" id="bundlePerson2" placeholder="Name as registered"></div>
                 <div class="bundle-field-group"><label>Person 3 Name</label><input type="text" class="bundle-input" id="bundlePerson3" placeholder="Name as registered"></div>
-                <div class="bundle-field-group mb-0"><label>Person 4 Name</label><input type="text" class="bundle-input" id="bundlePerson4" placeholder="Name as registered"></div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
@@ -724,7 +723,7 @@
             return;
         }
         if (registrationMode === 'bundle') {
-            const inputs = ['bundlePerson1','bundlePerson2','bundlePerson3','bundlePerson4'];
+            const inputs = ['bundlePerson1','bundlePerson2','bundlePerson3'];
             let valid = true;
             inputs.forEach(id => {
                 const el = document.getElementById(id);
@@ -736,7 +735,6 @@
             document.getElementById('hiddenBundle1').value = document.getElementById('bundlePerson1').value.trim();
             document.getElementById('hiddenBundle2').value = document.getElementById('bundlePerson2').value.trim();
             document.getElementById('hiddenBundle3').value = document.getElementById('bundlePerson3').value.trim();
-            document.getElementById('hiddenBundle4').value = document.getElementById('bundlePerson4').value.trim();
         }
         // Move wizard forward to the payment step
         window.currentSection++;
