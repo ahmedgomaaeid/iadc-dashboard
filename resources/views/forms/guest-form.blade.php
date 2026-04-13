@@ -391,12 +391,10 @@
             text-align: center;
             animation: fadeInUp 0.6s ease;
         }
-        @if(!$isPeaksForm)
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        @endif
         .pulse-success-badge {
             display: inline-flex;
             align-items: center;
@@ -493,7 +491,7 @@
         }
     </style>
 
-    <div id="pulseSuccessScreen" @if($isPeaksForm) style="display:none;" @endif>
+    <div id="pulseSuccessScreen">
         @php
             $pulseImage = session('pulse_image');
             $pulseSubmissionId = session('pulse_submission_id');
