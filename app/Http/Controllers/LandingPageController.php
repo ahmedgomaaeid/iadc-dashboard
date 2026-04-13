@@ -21,7 +21,7 @@ class LandingPageController extends Controller
 
     public function eventPreview($id)
     {
-        $event = Event::with('partners')->findOrFail($id);
+        $event = Event::with(['partners', 'communityPartners', 'images', 'links'])->findOrFail($id);
         return view('landing.events.preview', compact('event'));
     }
 

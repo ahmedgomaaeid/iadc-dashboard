@@ -407,50 +407,6 @@
                 </div>
             </div>
 
-            <!-- Community Partners Section -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">Community Partners</h3>
-                        <button type="button" class="btn btn-sm btn-success" onclick="addCommunityPartner()">
-                            <i class="fe fe-plus me-1"></i>Add Community Partner
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <!-- Existing Community Partners -->
-                        @if(isset($event) && $event->communityPartners->count() > 0)
-                            <h6 class="text-muted mb-3"><i class="fe fe-move me-1"></i>Existing Community Partners (Drag to Reorder)</h6>
-                            <div id="existing-community-partners-container">
-                                @foreach($event->communityPartners as $index => $partner)
-                                    <div class="partner-card existing-partner-card" id="existing-community-partner-{{ $partner->id }}" data-partner-id="{{ $partner->id }}">
-                                        <span class="drag-handle"><i class="fe fe-menu"></i></span>
-                                        <span class="order-badge">{{ $index + 1 }}</span>
-                                        <button type="button" class="btn btn-sm btn-danger remove-partner"
-                                                onclick="deleteCommunityPartner({{ $partner->id }})">
-                                            <i class="fe fe-x"></i>
-                                        </button>
-                                        <div class="text-center">
-                                            <img src="{{ asset('storage/' . $partner->image) }}"
-                                                 alt="Community Partner"
-                                                 class="image-preview mb-2">
-                                            <div>
-                                                <span class="partner-type-badge type-{{ $partner->type }}">
-                                                    {{ $partner->type_name }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <hr>
-                        @endif
-
-                        <!-- New Community Partners Container -->
-                        <div id="community-partners-container"></div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Partners Section -->
             <div class="col-lg-4">
                 <div class="card">
@@ -491,6 +447,48 @@
 
                         <!-- New Partners Container -->
                         <div id="partners-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Partners Section (full-width separate row above partners) -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0"><i class="fe fe-users me-2"></i>Community Partners</h3>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addCommunityPartner()">
+                            <i class="fe fe-plus me-1"></i>Add Community Partner
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        @if(isset($event) && $event->communityPartners->count() > 0)
+                            <h6 class="text-muted mb-3"><i class="fe fe-move me-1"></i>Existing Community Partners (Drag to Reorder)</h6>
+                            <div id="existing-community-partners-container" style="display:flex; flex-wrap:wrap; gap:12px; padding:4px;">
+                                @foreach($event->communityPartners as $index => $partner)
+                                    <div class="partner-card existing-partner-card" id="existing-community-partner-{{ $partner->id }}" data-partner-id="{{ $partner->id }}"
+                                         style="width:160px; min-height:auto; flex-shrink:0;">
+                                        <span class="drag-handle" style="position:absolute;top:6px;left:8px;"><i class="fe fe-menu"></i></span>
+                                        <span class="order-badge" style="left:30px;">{{ $index + 1 }}</span>
+                                        <button type="button" class="btn btn-sm btn-danger remove-partner"
+                                                onclick="deleteCommunityPartner({{ $partner->id }})">
+                                            <i class="fe fe-x"></i>
+                                        </button>
+                                        <div class="text-center" style="padding-top:10px;">
+                                            <img src="{{ asset('storage/' . $partner->image) }}"
+                                                 alt="Community Partner"
+                                                 style="width:120px;height:90px;object-fit:contain;border-radius:8px;border:1px solid #dee2e6;">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <hr>
+                        @endif
+
+                        <!-- New Community Partners Container -->
+                        <div id="community-partners-container" style="display:flex; flex-wrap:wrap; gap:12px; padding:4px;"></div>
+                        <p class="text-muted small mt-2 mb-0"><i class="fe fe-info me-1"></i>Upload logos only — no type required for community partners.</p>
                     </div>
                 </div>
             </div>
@@ -675,35 +673,23 @@
 
     function addCommunityPartner() {
         const container = document.getElementById('community-partners-container');
-        const partnerTypes = @json($partnerTypes);
-
-        let typeOptions = '';
-        for (const [key, value] of Object.entries(partnerTypes)) {
-            typeOptions += `<option value="${key}">${value}</option>`;
-        }
 
         const html = `
-            <div class="partner-card" id="community-partner-${partnerIndex}">
-                <button type="button" class="btn btn-sm btn-danger remove-partner" onclick="removeCommunityPartner(${partnerIndex})">
-                    <i class="fe fe-x"></i>
-                </button>
-                <div class="mb-3">
-                    <label class="form-label">Partner Type <span class="text-danger">*</span></label>
-                    <select class="form-control" name="community_partners[${partnerIndex}][type]" required>
-                        <option value="">Select Type</option>
-                        ${typeOptions}
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Partner Logo <span class="text-danger">*</span></label>
+            <div style="position:relative; width:170px; flex-shrink:0;" id="community-partner-${partnerIndex}">
+                <div style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:12px; padding:12px; text-align:center;">
+                    <button type="button" onclick="removeCommunityPartner(${partnerIndex})"
+                        style="position:absolute;top:6px;right:6px;background:rgba(220,53,69,0.9);border:none;color:white;width:22px;height:22px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;">
+                        &times;
+                    </button>
+                    <img src="" alt="" id="community-preview-${partnerIndex}"
+                         style="width:120px;height:90px;object-fit:contain;border-radius:8px;border:1px solid #dee2e6;display:none;margin-bottom:8px;">
+                    <label style="font-size:0.78rem;font-weight:600;color:#6c757d;display:block;margin-bottom:6px;">Logo</label>
                     <input type="file"
-                           class="form-control"
+                           class="form-control form-control-sm"
                            name="community_partners[${partnerIndex}][image]"
                            accept="image/*"
                            required
-                           onchange="previewPartnerImage(this, 'cp-${partnerIndex}')"
-                    >
-                    <img src="" alt="" id="partner-preview-cp-${partnerIndex}" class="image-preview" style="display: none;">
+                           onchange="previewCommunityPartnerImage(this, ${partnerIndex})">
                 </div>
             </div>
         `;
@@ -715,6 +701,18 @@
     function removeCommunityPartner(index) {
         const element = document.getElementById(`community-partner-${index}`);
         if (element) element.remove();
+    }
+
+    function previewCommunityPartnerImage(input, index) {
+        const preview = document.getElementById(`community-preview-${index}`);
+        if (input.files && input.files[0] && preview) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
     function updateCommunityPartnerOrder() {

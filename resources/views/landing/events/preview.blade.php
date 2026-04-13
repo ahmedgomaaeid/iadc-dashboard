@@ -189,8 +189,32 @@
                     </div>
                 </div>
             </div>
-            @if($event->partners->count() > 0)
-                <div class="col-xl-4">
+            <div class="col-xl-4">
+                @if($event->communityPartners->count() > 0)
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title fw-bold">
+                                        <i class="fe fe-users me-2 text-primary"></i>Community Partners
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-center gap-4 py-2">
+                                        @foreach($event->communityPartners as $partner)
+                                            <div class="text-center" style="transition: transform 0.2s ease;">
+                                                <img src="{{ asset('storage/' . $partner->image) }}"
+                                                    alt="Community Partner"
+                                                    style="height: 70px; max-width: 160px; object-fit: contain; filter: grayscale(20%); transition: filter 0.3s ease;"
+                                                    onmouseover="this.style.filter='grayscale(0%)'; this.parentElement.style.transform='translateY(-3px)'"
+                                                    onmouseout="this.style.filter='grayscale(20%)'; this.parentElement.style.transform='translateY(0)'">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @if($event->partners->count() > 0)
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Sponsors</div>
@@ -208,8 +232,8 @@
                             </div>
                         </div>
                     </div>
+                @endif
                 </div>
-            @endif
         </div>
     </div>
 @endsection
