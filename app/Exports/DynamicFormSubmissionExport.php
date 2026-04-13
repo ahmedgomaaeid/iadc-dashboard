@@ -41,6 +41,9 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
             $headings[] = $fieldConfig['label'] ?? ucfirst(str_replace('_', ' ', $fieldName));
         }
 
+        $headings[] = 'Package';
+        $headings[] = 'Payment Method';
+
         return $headings;
     }
 
@@ -64,6 +67,9 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
 
             $row[] = is_array($value) ? implode(', ', $value) : $value;
         }
+
+        $row[] = $submission->data['_selected_package_name'] ?? '';
+        $row[] = $submission->data['_selected_payment_name'] ?? '';
 
         return $row;
     }

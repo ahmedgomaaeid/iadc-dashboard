@@ -502,6 +502,51 @@
             💡 Your package choice will be recorded with your registration.
         </p>
     </div>
+
+    <div id="peaksPaymentScreen" style="display: none; padding: 30px 20px; text-align: center;">
+        <h2 class="peaks-title">Choose Payment Method</h2>
+        <p class="peaks-subtitle">How would you like to pay?</p>
+
+        <div class="packages-grid">
+            {{-- Payment 1 --}}
+            <div class="package-card" data-payment="vodafone" onclick="selectPayment(this)">
+                <div class="card-img-section">
+                    <img src="{{ asset('images/vodafone.png') }}" alt="Vodafone Cash">
+                </div>
+                <div class="card-info">
+                    <span class="pkg-name">Vodafone Cash</span>
+                </div>
+                <div class="card-check"><i class="fas fa-check"></i></div>
+            </div>
+
+            {{-- Payment 2 --}}
+            <div class="package-card" data-payment="instapay" onclick="selectPayment(this)">
+                <div class="card-img-section">
+                    <img src="{{ asset('images/instapay.png') }}" alt="Instapay">
+                </div>
+                <div class="card-info">
+                    <span class="pkg-name">Instapay</span>
+                </div>
+                <div class="card-check"><i class="fas fa-check"></i></div>
+            </div>
+
+            {{-- Payment 3 --}}
+            <div class="package-card" data-payment="cash" onclick="selectPayment(this)">
+                <div class="card-img-section">
+                    <img src="{{ asset('images/cash.png') }}" alt="Cash">
+                </div>
+                <div class="card-info">
+                    <span class="pkg-name">Cash</span>
+                </div>
+                <div class="card-check"><i class="fas fa-check"></i></div>
+            </div>
+        </div>
+
+        <button class="btn-confirm-package" id="confirmPaymentBtn" onclick="confirmPayment()">
+            <span class="btn-text"><i class="fas fa-check"></i> Submit</span>
+            <span class="spinner"></span>
+        </button>
+    </div>
     @endif
 
     {{-- === PULSE / PEAKS — CUSTOM SUCCESS SCREEN === --}}
@@ -816,7 +861,46 @@
     function confirmPackage() {
         if (!selectedPackage) return;
 
-        const btn = document.getElementById('confirmPackageBtn');
+        // Transition to Payment Screen
+        const pkgScreen = document.getElementById('peaksPackageScreen');
+        pkgScreen.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        pkgScreen.style.opacity = '0';
+        pkgScreen.style.transform = 'translateY(-20px)';
+
+        setTimeout(() => {
+            pkgScreen.style.display = 'none';
+            // Show the Payment Selection screen
+            const payScreen = document.getElementById('peaksPaymentScreen');
+            payScreen.style.display = 'block';
+            payScreen.style.opacity = '0';
+            payScreen.style.transform = 'translateY(20px)';
+            payScreen.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+            requestAnimationFrame(() => {
+                payScreen.style.opacity = '1';
+                payScreen.style.transform = 'translateY(0)';
+            });
+
+            payScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 400);
+    }
+    
+    let selectedPayment = null;
+
+    function selectPayment(card) {
+        // Remove selection from all cards within payment screen
+        document.querySelectorAll('#peaksPaymentScreen .package-card').forEach(c => c.classList.remove('selected'));
+        // Select this card
+        card.classList.add('selected');
+        selectedPayment = card.getAttribute('data-payment');
+        // Enable the submit button
+        document.getElementById('confirmPaymentBtn').classList.add('active');
+    }
+
+    function confirmPayment() {
+        if (!selectedPackage || !selectedPayment) return;
+
+        const btn = document.getElementById('confirmPaymentBtn');
         btn.classList.add('loading');
         btn.disabled = true;
 
@@ -832,20 +916,21 @@
             },
             body: JSON.stringify({
                 submission_id: submissionId,
-                package: selectedPackage
+                package: selectedPackage,
+                payment_method: selectedPayment
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Smoothly hide package screen
-                const pkgScreen = document.getElementById('peaksPackageScreen');
-                pkgScreen.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                pkgScreen.style.opacity = '0';
-                pkgScreen.style.transform = 'translateY(-20px)';
+                // Smoothly hide payment screen
+                const payScreen = document.getElementById('peaksPaymentScreen');
+                payScreen.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                payScreen.style.opacity = '0';
+                payScreen.style.transform = 'translateY(-20px)';
 
                 setTimeout(() => {
-                    pkgScreen.style.display = 'none';
+                    payScreen.style.display = 'none';
                     // Show the LinkedIn share screen
                     const successScreen = document.getElementById('pulseSuccessScreen');
                     successScreen.style.display = 'block';

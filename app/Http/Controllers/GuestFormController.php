@@ -241,6 +241,7 @@ class GuestFormController extends Controller
         $request->validate([
             'submission_id' => 'required|exists:dynamic_form_submissions,id',
             'package' => 'required|in:1,2,3',
+            'payment_method' => 'required|in:vodafone,instapay,cash',
         ]);
 
         $submission = DynamicFormSubmission::findOrFail($request->submission_id);
@@ -250,10 +251,19 @@ class GuestFormController extends Controller
             '2' => 'Package 2 - 100 L.E',
             '3' => 'Package 3 - 60 L.E',
         ];
+        
+        $paymentNames = [
+            'vodafone' => 'Vodafone Cash',
+            'instapay' => 'Instapay',
+            'cash' => 'Cash',
+        ];
 
         $data = $submission->data;
         $data['_selected_package'] = $request->package;
         $data['_selected_package_name'] = $packageNames[$request->package] ?? '';
+        $data['_selected_payment'] = $request->payment_method;
+        $data['_selected_payment_name'] = $paymentNames[$request->payment_method] ?? '';
+        
         $submission->update(['data' => $data]);
 
         return response()->json(['success' => true]);

@@ -109,6 +109,8 @@
                                         @foreach($orderedFields as $fieldName => $fieldConfig)
                                             <th>{{ $fieldConfig['label'] }}</th>
                                         @endforeach
+                                        <th>Package</th>
+                                        <th>Payment Method</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -148,6 +150,20 @@
                                                     @endif
                                                 </td>
                                             @endforeach
+                                            <td>
+                                                @if(isset($submission->data['_selected_package_name']) && $submission->data['_selected_package_name'])
+                                                    <span class="badge bg-primary">{{ $submission->data['_selected_package_name'] }}</span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(isset($submission->data['_selected_payment_name']) && $submission->data['_selected_payment_name'])
+                                                    <span class="badge bg-info">{{ $submission->data['_selected_payment_name'] }}</span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <form action="{{ route('admin.dynamic-forms.submissions.destroy', $submission) }}" method="POST" class="d-inline delete-submission-form">
                                                     @csrf
