@@ -14,7 +14,8 @@
         @csrf
         
         @php
-            $isWizard = count($orderedSections) > 1;
+            $isPeaks = strtolower($form->subdomain) === 'peaks';
+            $isWizard = count($orderedSections) > 1 || $isPeaks;
         @endphp
 
         @if($isWizard)
@@ -26,6 +27,21 @@
                         <div class="step-label d-none d-md-block">{{ $section['name'] }}</div>
                     </div>
                 @endforeach
+
+                @if($isPeaks)
+                    @php 
+                        $pkgIndex = count($orderedSections); 
+                        $payIndex = count($orderedSections) + 1; 
+                    @endphp
+                    <div class="wizard-step {{ $pkgIndex === 0 ? 'active' : '' }}" data-step="{{ $pkgIndex }}">
+                        <div class="step-number">{{ $pkgIndex + 1 }}</div>
+                        <div class="step-label d-none d-md-block">Package</div>
+                    </div>
+                    <div class="wizard-step {{ $payIndex === 0 ? 'active' : '' }}" data-step="{{ $payIndex }}">
+                        <div class="step-number">{{ $payIndex + 1 }}</div>
+                        <div class="step-label d-none d-md-block">Payment</div>
+                    </div>
+                @endif
             </div>
         @endif
 
@@ -130,7 +146,12 @@
                             <div></div>
                         @endif
 
-                        @if($index < count($orderedSections) - 1)
+                        @php
+                            $isLastDynamicSection = $index === (count($orderedSections) - 1);
+                            $showSubmit = $isLastDynamicSection && !$isPeaks;
+                        @endphp
+
+                        @if(!$showSubmit)
                             <button type="button" class="btn btn-primary btn-next px-4 py-2" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border: none; border-radius: 10px;">
                                 Next<i class="fas fa-arrow-right ms-2"></i>
                             </button>
