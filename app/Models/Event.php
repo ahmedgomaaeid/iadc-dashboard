@@ -35,7 +35,19 @@ class Event extends Model
      */
     public function partners()
     {
-        return $this->hasMany(EventPartner::class)->orderBy('sort_order');
+        return $this->hasMany(EventPartner::class)
+            ->where('category', 'partner')
+            ->orderBy('sort_order');
+    }
+
+    /**
+     * Get the community partners for the event.
+     */
+    public function communityPartners()
+    {
+        return $this->hasMany(EventPartner::class)
+            ->where('category', 'community_partner')
+            ->orderBy('sort_order');
     }
 
     /**

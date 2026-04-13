@@ -13,6 +13,7 @@ class EventPartner extends Model
         'event_id',
         'image',
         'type',
+        'category',
         'sort_order',
     ];
 

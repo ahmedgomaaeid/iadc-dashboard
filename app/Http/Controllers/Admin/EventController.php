@@ -54,6 +54,9 @@ class EventController extends Controller
             'partners' => 'nullable|array',
             'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+            'community_partners' => 'nullable|array',
+            'community_partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'community_partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
             'gallery' => 'nullable|array',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'links' => 'nullable|array',
@@ -76,13 +79,31 @@ class EventController extends Controller
             $maxOrder = 0;
             foreach ($request->input('partners') as $index => $partnerInput) {
                 $partnerType = $partnerInput['type'] ?? null;
-                
                 if ($partnerType && $request->hasFile("partners.{$index}.image")) {
                     $partnerImage = $this->uploadImage($request->file("partners.{$index}.image"), 'event-partners');
                     EventPartner::create([
                         'event_id' => $event->id,
                         'image' => $partnerImage,
                         'type' => $partnerType,
+                        'category' => 'partner',
+                        'sort_order' => $maxOrder++,
+                    ]);
+                }
+            }
+        }
+
+        // Handle community partners
+        if ($request->has('community_partners')) {
+            $maxOrder = 0;
+            foreach ($request->input('community_partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                if ($partnerType && $request->hasFile("community_partners.{$index}.image")) {
+                    $partnerImage = $this->uploadImage($request->file("community_partners.{$index}.image"), 'event-partners');
+                    EventPartner::create([
+                        'event_id' => $event->id,
+                        'image' => $partnerImage,
+                        'type' => $partnerType,
+                        'category' => 'community_partner',
                         'sort_order' => $maxOrder++,
                     ]);
                 }
@@ -126,6 +147,8 @@ class EventController extends Controller
     {
         $event = Event::with(['partners' => function($query) {
             $query->orderBy('sort_order');
+        }, 'communityPartners' => function($query) {
+            $query->orderBy('sort_order');
         }, 'images' => function($query) {
             $query->orderBy('sort_order');
         }])->findOrFail($id);
@@ -156,6 +179,9 @@ class EventController extends Controller
             'partners' => 'nullable|array',
             'partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
+            'community_partners' => 'nullable|array',
+            'community_partners.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'community_partners.*.type' => 'nullable|in:' . implode(',', array_keys(EventPartner::TYPES)),
             'gallery' => 'nullable|array',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'links' => 'nullable|array',
@@ -194,7 +220,6 @@ class EventController extends Controller
             $maxOrder = $event->partners()->max('sort_order') ?? 0;
             foreach ($request->input('partners') as $index => $partnerInput) {
                 $partnerType = $partnerInput['type'] ?? null;
-                
                 if ($partnerType && $request->hasFile("partners.{$index}.image")) {
                     $maxOrder++;
                     $partnerImage = $this->uploadImage($request->file("partners.{$index}.image"), 'event-partners');
@@ -202,6 +227,26 @@ class EventController extends Controller
                         'event_id' => $event->id,
                         'image' => $partnerImage,
                         'type' => $partnerType,
+                        'category' => 'partner',
+                        'sort_order' => $maxOrder,
+                    ]);
+                }
+            }
+        }
+
+        // Handle new community partners
+        if ($request->has('community_partners')) {
+            $maxOrder = $event->communityPartners()->max('sort_order') ?? 0;
+            foreach ($request->input('community_partners') as $index => $partnerInput) {
+                $partnerType = $partnerInput['type'] ?? null;
+                if ($partnerType && $request->hasFile("community_partners.{$index}.image")) {
+                    $maxOrder++;
+                    $partnerImage = $this->uploadImage($request->file("community_partners.{$index}.image"), 'event-partners');
+                    EventPartner::create([
+                        'event_id' => $event->id,
+                        'image' => $partnerImage,
+                        'type' => $partnerType,
+                        'category' => 'community_partner',
                         'sort_order' => $maxOrder,
                     ]);
                 }

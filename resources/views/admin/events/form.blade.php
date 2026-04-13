@@ -86,6 +86,8 @@
         margin-top: 10px;
         border: 3px solid #dee2e6;
     }
+    #existing-community-partners-container,
+    #community-partners-container,
     #existing-partners-container,
     #partners-container {
         max-height: 500px;
@@ -405,6 +407,50 @@
                 </div>
             </div>
 
+            <!-- Community Partners Section -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">Community Partners</h3>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addCommunityPartner()">
+                            <i class="fe fe-plus me-1"></i>Add Community Partner
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Existing Community Partners -->
+                        @if(isset($event) && $event->communityPartners->count() > 0)
+                            <h6 class="text-muted mb-3"><i class="fe fe-move me-1"></i>Existing Community Partners (Drag to Reorder)</h6>
+                            <div id="existing-community-partners-container">
+                                @foreach($event->communityPartners as $index => $partner)
+                                    <div class="partner-card existing-partner-card" id="existing-community-partner-{{ $partner->id }}" data-partner-id="{{ $partner->id }}">
+                                        <span class="drag-handle"><i class="fe fe-menu"></i></span>
+                                        <span class="order-badge">{{ $index + 1 }}</span>
+                                        <button type="button" class="btn btn-sm btn-danger remove-partner"
+                                                onclick="deleteCommunityPartner({{ $partner->id }})">
+                                            <i class="fe fe-x"></i>
+                                        </button>
+                                        <div class="text-center">
+                                            <img src="{{ asset('storage/' . $partner->image) }}"
+                                                 alt="Community Partner"
+                                                 class="image-preview mb-2">
+                                            <div>
+                                                <span class="partner-type-badge type-{{ $partner->type }}">
+                                                    {{ $partner->type_name }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <hr>
+                        @endif
+
+                        <!-- New Community Partners Container -->
+                        <div id="community-partners-container"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Partners Section -->
             <div class="col-lg-4">
                 <div class="card">
@@ -423,13 +469,13 @@
                                     <div class="partner-card existing-partner-card" id="existing-partner-{{ $partner->id }}" data-partner-id="{{ $partner->id }}">
                                         <span class="drag-handle"><i class="fe fe-menu"></i></span>
                                         <span class="order-badge">{{ $index + 1 }}</span>
-                                        <button type="button" class="btn btn-sm btn-danger remove-partner" 
+                                        <button type="button" class="btn btn-sm btn-danger remove-partner"
                                                 onclick="deletePartner({{ $partner->id }})">
                                             <i class="fe fe-x"></i>
                                         </button>
                                         <div class="text-center">
-                                            <img src="{{ asset('storage/' . $partner->image) }}" 
-                                                 alt="Partner" 
+                                            <img src="{{ asset('storage/' . $partner->image) }}"
+                                                 alt="Partner"
                                                  class="image-preview mb-2">
                                             <div>
                                                 <span class="partner-type-badge type-{{ $partner->type }}">
@@ -546,6 +592,20 @@
             }
         });
 
+        // Initialize Sortable for existing community partners
+        const existingCommunityPartnersContainer = document.getElementById('existing-community-partners-container');
+        if (existingCommunityPartnersContainer) {
+            new Sortable(existingCommunityPartnersContainer, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                handle: '.drag-handle',
+                onEnd: function() {
+                    updateCommunityPartnerOrder();
+                }
+            });
+        }
+
         // Initialize Sortable for existing partners
         const existingPartnersContainer = document.getElementById('existing-partners-container');
         if (existingPartnersContainer) {
@@ -609,6 +669,91 @@
             error: function(xhr) {
                 console.error('Error updating partner order:', xhr);
                 alert('Error updating partner order. Please try again.');
+            }
+        });
+    }
+
+    function addCommunityPartner() {
+        const container = document.getElementById('community-partners-container');
+        const partnerTypes = @json($partnerTypes);
+
+        let typeOptions = '';
+        for (const [key, value] of Object.entries(partnerTypes)) {
+            typeOptions += `<option value="${key}">${value}</option>`;
+        }
+
+        const html = `
+            <div class="partner-card" id="community-partner-${partnerIndex}">
+                <button type="button" class="btn btn-sm btn-danger remove-partner" onclick="removeCommunityPartner(${partnerIndex})">
+                    <i class="fe fe-x"></i>
+                </button>
+                <div class="mb-3">
+                    <label class="form-label">Partner Type <span class="text-danger">*</span></label>
+                    <select class="form-control" name="community_partners[${partnerIndex}][type]" required>
+                        <option value="">Select Type</option>
+                        ${typeOptions}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Partner Logo <span class="text-danger">*</span></label>
+                    <input type="file"
+                           class="form-control"
+                           name="community_partners[${partnerIndex}][image]"
+                           accept="image/*"
+                           required
+                           onchange="previewPartnerImage(this, 'cp-${partnerIndex}')"
+                    >
+                    <img src="" alt="" id="partner-preview-cp-${partnerIndex}" class="image-preview" style="display: none;">
+                </div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', html);
+        partnerIndex++;
+    }
+
+    function removeCommunityPartner(index) {
+        const element = document.getElementById(`community-partner-${index}`);
+        if (element) element.remove();
+    }
+
+    function updateCommunityPartnerOrder() {
+        const container = document.getElementById('existing-community-partners-container');
+        if (!container) return;
+
+        const cards = container.querySelectorAll('.partner-card[data-partner-id]');
+        const order = [];
+
+        cards.forEach((card, index) => {
+            order.push(card.dataset.partnerId);
+            const badge = card.querySelector('.order-badge');
+            if (badge) badge.textContent = index + 1;
+        });
+
+        $.ajax({
+            url: '{{ route("admin.events.partners.update-order") }}',
+            type: 'POST',
+            data: { _token: '{{ csrf_token() }}', order: order },
+            success: function() { console.log('Community partner order updated'); },
+            error: function(xhr) { console.error('Error:', xhr); }
+        });
+    }
+
+    function deleteCommunityPartner(partnerId) {
+        if (!confirm('Are you sure you want to remove this community partner?')) return;
+
+        $.ajax({
+            url: `/admin/events/partners/${partnerId}`,
+            type: 'POST',
+            data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
+            success: function() {
+                $(`#existing-community-partner-${partnerId}`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+            },
+            error: function(xhr) {
+                alert('Error deleting community partner. Please try again.');
+                console.error(xhr);
             }
         });
     }
