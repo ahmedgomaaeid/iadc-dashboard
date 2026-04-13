@@ -223,7 +223,7 @@
                             <div class="">
                                 @foreach ($event->partners as $partner)
                                 <div class="d-flex overflow-visible mb-2">
-                                    <img class="bradius me-3" style="height: 64px;" src="{{ asset('storage/' . $partner->image) }}" alt="avatar-img">
+                                    <img class="me-3" style="height: 64px;" src="{{ asset('storage/' . $partner->image) }}" alt="avatar-img">
                                     <div class="media-body valign-middle" style="padding-top: 18px;">
                                         <span class="fw-semibold badge bg-success-transparent rounded-pill text-success p-2 px-3">{{ $partner->type }} Sponsor</a>
                                     </div>
