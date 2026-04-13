@@ -130,7 +130,7 @@ class GuestFormController extends Controller
                 $isPeaks = strtolower($form->subdomain) === 'peaks';
                 
                 if ($isPeaks) {
-                    $baseCard = $manager->read(public_path('images/peakscard.jpg'));
+                    $baseCard = $manager->read(public_path('images/peakscard.jpeg'));
                 } else {
                     $baseCard = $manager->read(public_path('images/LinkedIn.jpg.jpeg'));
                 }

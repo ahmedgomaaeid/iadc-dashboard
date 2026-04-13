@@ -447,7 +447,7 @@
             <div class="package-card" data-package="1" onclick="selectPackage(this)">
                 <div class="popular-tag"><i class="fas fa-star" style="margin-right:4px"></i> Best Value</div>
                 <div class="card-img-section">
-                    <img src="{{ asset('images/11.png') }}" alt="Package 1">
+                    <img src="{{ asset('images/22.png') }}" alt="Package 1">
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 1</span>
@@ -463,11 +463,11 @@
             {{-- Package 2 --}}
             <div class="package-card" data-package="2" onclick="selectPackage(this)">
                 <div class="card-img-section">
-                    <img src="{{ asset('images/22.png') }}" alt="Package 2">
+                    <img src="{{ asset('images/33.png') }}" alt="Package 2">
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 2</span>
-                    <span class="pkg-name">Standard</span>
+                    <span class="pkg-name">Lunch only</span>
                     <div class="pkg-price">
                         <span class="amount">100</span>
                         <span class="currency">L.E</span>
@@ -479,7 +479,7 @@
             {{-- Package 3 --}}
             <div class="package-card" data-package="3" onclick="selectPackage(this)">
                 <div class="card-img-section">
-                    <img src="{{ asset('images/33.png') }}" alt="Package 3">
+                    <img src="{{ asset('images/11.png') }}" alt="Package 3">
                 </div>
                 <div class="card-info">
                     <span class="pkg-label">Package 3</span>
