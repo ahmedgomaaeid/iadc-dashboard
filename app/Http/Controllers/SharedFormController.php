@@ -37,7 +37,7 @@ class SharedFormController extends Controller
     /**
      * Export form submissions to Excel for a shared link.
      */
-    public function exportSubmissions($encryptedId)
+    public function exportSubmissions(Request $request, $encryptedId)
     {
         try {
             $id = Crypt::decryptString($encryptedId);
@@ -52,6 +52,6 @@ class SharedFormController extends Controller
         }
 
         $filename = 'form_submissions_' . str_replace(' ', '_', $dynamicForm->title) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
-        return Excel::download(new DynamicFormSubmissionExport($dynamicForm), $filename);
+        return Excel::download(new DynamicFormSubmissionExport($dynamicForm, $request->all()), $filename);
     }
 }

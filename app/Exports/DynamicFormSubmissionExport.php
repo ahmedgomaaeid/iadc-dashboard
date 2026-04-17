@@ -15,11 +15,13 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
 {
     protected DynamicForm $form;
     protected array $orderedFields;
+    protected array $filters;
 
-    public function __construct(DynamicForm $form)
+    public function __construct(DynamicForm $form, array $filters = [])
     {
         $this->form = $form;
         $this->orderedFields = $form->getOrderedFields();
+        $this->filters = $filters;
     }
 
     /**
@@ -27,7 +29,21 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
      */
     public function collection()
     {
-        return $this->form->submissions()->latest()->get();
+        $query = $this->form->submissions()->latest();
+
+        if (!empty($this->filters['search'])) {
+            $query->where('data', 'LIKE', '%' . $this->filters['search'] . '%');
+        }
+
+        if (!empty($this->filters['payment_status'])) {
+            if ($this->filters['payment_status'] === 'paid') {
+                $query->where('is_payed', true);
+            } elseif ($this->filters['payment_status'] === 'unpaid') {
+                $query->where('is_payed', false);
+            }
+        }
+
+        return $query->get();
     }
 
     /**

@@ -66,12 +66,12 @@ class DynamicFormController extends Controller
     /**
      * Export form submissions to Excel.
      */
-    public function exportSubmissions($id)
+    public function exportSubmissions(Request $request, $id)
     {
         $dynamicForm = auth()->guard('highboard')->user()->dynamicForms()->where('is_active', true)->findOrFail($id);
 
         $filename = 'form_submissions_' . str_replace(' ', '_', $dynamicForm->title) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
-        return Excel::download(new DynamicFormSubmissionExport($dynamicForm), $filename);
+        return Excel::download(new DynamicFormSubmissionExport($dynamicForm, $request->all()), $filename);
     }
 
     /**
