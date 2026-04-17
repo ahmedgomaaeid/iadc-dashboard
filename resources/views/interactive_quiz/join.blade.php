@@ -12,10 +12,10 @@
         body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
         .registration-container { max-width: 600px; margin: 100px auto; padding: 20px; }
         .registration-card { background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        .card-header { background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center; }
+        .card-header { background: linear-gradient(135deg, #B4120D 0%, #d61811 100%); color: white; padding: 30px; text-align: center; }
         .card-header h2 { font-weight: 600; margin-bottom: 5px; }
         .card-body { padding: 30px; }
-        .btn-register { background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%); color: #fff; border-radius: 10px; padding: 12px; font-weight: 600; font-size: 1.1rem; border: none; width: 100%; transition: transform 0.2s; }
+        .btn-register { background: linear-gradient(135deg, #B4120D 0%, #d61811 100%); color: #fff; border-radius: 10px; padding: 12px; font-weight: 600; font-size: 1.1rem; border: none; width: 100%; transition: transform 0.2s; }
         .btn-register:hover { transform: translateY(-2px); color: #fff; }
     </style>
 </head>

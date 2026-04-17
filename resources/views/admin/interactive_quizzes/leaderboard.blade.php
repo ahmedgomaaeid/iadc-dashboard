@@ -1,4 +1,4 @@
-@extends('layouts.highboard-dashboard')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Interactive Quiz Leaderboard')
 
@@ -7,8 +7,8 @@
         <h1 class="page-title">Interactive Quiz Control Panel</h1>
         <div>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('highboard.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('highboard.interactive_quizzes.index') }}">Interactive Quizzes</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.interactive_quizzes.index') }}">Interactive Quizzes</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Control Panel</li>
             </ol>
         </div>
@@ -34,14 +34,14 @@
                         <button id="btn-next-question" class="btn btn-warning shadow-sm" style="display:none;" onclick="nextQuestion()">
                             <i class="fas fa-step-forward me-2"></i>Show Next Question
                         </button>
-                        <form action="{{ route('highboard.interactive_quizzes.leaderboard.clear', $quiz) }}" method="POST" style="display:inline;" onsubmit="return confirm('Clear leaderboard?');">
+                        <form action="{{ route('admin.interactive_quizzes.leaderboard.clear', $quiz) }}" method="POST" style="display:inline;" onsubmit="return confirm('Clear leaderboard?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger shadow-sm">
                                 <i class="fas fa-trash me-2"></i>Clear Session
                             </button>
                         </form>
-                        <a href="{{ route('highboard.interactive_quizzes.show', $quiz) }}" class="btn btn-outline-secondary shadow-sm">
+                        <a href="{{ route('admin.interactive_quizzes.show', $quiz) }}" class="btn btn-outline-secondary shadow-sm">
                             <i class="fas fa-arrow-left me-2"></i>Back
                         </a>
                     </div>
@@ -115,8 +115,8 @@
 @section('scripts')
 <script>
     const quizId = {{ $quiz->id }};
-    const stateUrl = `{{ route('highboard.interactive_quizzes.state', $quiz) }}`;
-    const nextQuestionUrl = `{{ route('highboard.interactive_quizzes.next-question', $quiz) }}`;
+    const stateUrl = `{{ route('admin.interactive_quizzes.state', $quiz) }}`;
+    const nextQuestionUrl = `{{ route('admin.interactive_quizzes.next-question', $quiz) }}`;
     const csrfToken = '{{ csrf_token() }}';
     
     let currentStateJSON = null;

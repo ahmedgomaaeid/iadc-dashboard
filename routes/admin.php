@@ -61,6 +61,19 @@ Route::domain($domain)->group(function () {
         Route::resource('quizzes.questions', \App\Http\Controllers\Admin\QuestionController::class)->shallow();
         Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only([]);
 
+        // Interactive Quiz Management Routes
+        Route::resource('interactive_quizzes', \App\Http\Controllers\Admin\InteractiveQuizController::class);
+        Route::patch('interactive_quizzes/{interactive_quiz}/toggle-active', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'toggleActive'])
+            ->name('interactive_quizzes.toggle-active');
+        Route::get('interactive_quizzes/{interactive_quiz}/leaderboard', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'leaderboard'])
+            ->name('interactive_quizzes.leaderboard');
+        Route::delete('interactive_quizzes/{interactive_quiz}/leaderboard/clear', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'clearLeaderboard'])
+            ->name('interactive_quizzes.leaderboard.clear');
+        Route::get('interactive_quizzes/{interactive_quiz}/state', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'state'])
+            ->name('interactive_quizzes.state');
+        Route::post('interactive_quizzes/{interactive_quiz}/next-question', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'nextQuestion'])
+            ->name('interactive_quizzes.next-question');
+
         // Dynamic Form Management Routes
         Route::resource('dynamic-forms', \App\Http\Controllers\Admin\DynamicFormController::class);
         Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\Admin\DynamicFormController::class, 'toggleActive'])

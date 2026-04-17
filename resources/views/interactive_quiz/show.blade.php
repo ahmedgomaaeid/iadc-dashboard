@@ -16,20 +16,20 @@
         
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .score-badge { position: absolute; top: 20px; left: 20px; background: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #1d4ed8; }
+        .score-badge { position: absolute; top: 20px; left: 20px; background: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #B4120D; }
         .user-badge { position: absolute; top: 20px; right: 20px; background: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #374151; }
 
         /* Loader */
-        .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top-color: #B4120D; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Question View */
         .timer-circle { width: 100px; height: 100px; border-radius: 50%; background: #ef4444; color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; margin: 0 auto 30px; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
         .question-text { font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 30px; }
         .choice-btn { background: #fff; border: 2px solid #e5e7eb; border-radius: 15px; padding: 20px; text-align: left; font-size: 1.1rem; width: 100%; margin-bottom: 15px; cursor: pointer; transition: all 0.2s; position: relative; }
-        .choice-btn:hover { border-color: #3b82f6; background: #eff6ff; }
-        .choice-btn.selected { border-color: #3b82f6; background: #dbeafe; }
-        .choice-btn .letter { background: #3b82f6; color: white; width: 35px; height: 35px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; }
+        .choice-btn:hover { border-color: #B4120D; background: #fee2e2; }
+        .choice-btn.selected { border-color: #B4120D; background: #fca5a5; }
+        .choice-btn .letter { background: #B4120D; color: white; width: 35px; height: 35px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; }
 
         .waiting-text { font-size: 1.3rem; color: #4b5563; font-weight: 600; margin-top: 20px; }
 
@@ -59,11 +59,11 @@
 
         <!-- LOBBY -->
         <div id="panel-lobby" class="card-panel">
-            <i class="fas fa-hand-sparkles fa-4x text-primary mb-4"></i>
+            <i class="fas fa-hand-sparkles fa-4x mb-4" style="color: #B4120D;"></i>
             <h2>Welcome to {{ $quiz->name }}</h2>
             <br>
-            <div class="spinner border-primary" style="border-width:4px;"></div>
-            <h4 class="waiting-text text-primary">Waiting for the admin to start the quiz...</h4>
+            <div class="spinner" style="border-width:4px;"></div>
+            <h4 class="waiting-text" style="color: #B4120D;">Waiting for the admin to start the quiz...</h4>
             <p class="text-muted mt-3">Get ready! Questions will appear here automatically.</p>
         </div>
 
@@ -111,7 +111,7 @@
 
             <div class="mt-4 pt-3 border-top">
                 <div class="spinner" style="width: 30px; height: 30px; border-width:3px; margin-bottom:10px;"></div>
-                <h5 class="text-primary mt-2">Waiting for the next question...</h5>
+                <h5 class="mt-2" style="color: #B4120D;">Waiting for the next question...</h5>
             </div>
         </div>
 
@@ -126,7 +126,7 @@
                 <div>Total Score<br><span id="final-score">0</span></div>
             </div>
 
-            <a href="{{ url('/') }}" class="btn btn-primary btn-lg mt-4 px-5 rounded-pill">Go Home</a>
+            <a href="{{ url('/') }}" class="btn btn-lg mt-4 px-5 rounded-pill text-white" style="background-color: #B4120D;">Go Home</a>
         </div>
     </div>
 
