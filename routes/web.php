@@ -57,6 +57,12 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 Route::get('/quiz/{id}', [ControllersQuizController::class, 'showQuiz'])->name('quiz.show');
 Route::post('/quiz/{id}/finish', [ControllersQuizController::class, 'finishQuiz'])->name('quiz.finish');
 
+// Interactive Quiz Frontend Routes
+Route::get('/interactive-quiz/{quiz}', [\App\Http\Controllers\InteractiveQuizController::class, 'show'])->name('interactive_quiz.show');
+Route::post('/interactive-quiz/{quiz}/join', [\App\Http\Controllers\InteractiveQuizController::class, 'join'])->name('interactive_quiz.join');
+Route::get('/interactive-quiz/{quiz}/state', [\App\Http\Controllers\InteractiveQuizController::class, 'state'])->name('interactive_quiz.state');
+Route::post('/interactive-quiz/{quiz}/answer', [\App\Http\Controllers\InteractiveQuizController::class, 'answer'])->name('interactive_quiz.answer');
+
 // Unified Google Auth Routes
 Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');

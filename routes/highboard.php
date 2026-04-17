@@ -98,6 +98,14 @@ Route::domain($domain)->group(function () {
         Route::post('quizzes/{quiz}/questions/ai-import', [QuizController::class, 'storeQuestionsFromText'])->name('quizzes.questions.ai-import');
         Route::resource('quizzes.questions', QuestionController::class)->shallow();
 
+        // Interactive Quiz Routes
+        Route::resource('interactive_quizzes', \App\Http\Controllers\Highboard\InteractiveQuizController::class)->parameters(['interactive_quizzes' => 'interactive_quiz']);
+        Route::patch('interactive_quizzes/{interactive_quiz}/toggle-active', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'toggleActive'])->name('interactive_quizzes.toggle-active');
+        Route::get('interactive_quizzes/{interactive_quiz}/leaderboard', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'leaderboard'])->name('interactive_quizzes.leaderboard');
+        Route::delete('interactive_quizzes/{interactive_quiz}/leaderboard/clear', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'clearLeaderboard'])->name('interactive_quizzes.leaderboard.clear');
+        Route::get('interactive_quizzes/{interactive_quiz}/state', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'state'])->name('interactive_quizzes.state');
+        Route::post('interactive_quizzes/{interactive_quiz}/next-question', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'nextQuestion'])->name('interactive_quizzes.next-question');
+
         // Dynamic Form Routes
         Route::resource('dynamic-forms', DynamicFormController::class)->only(['index', 'show']);
         Route::post('dynamic-forms/submissions/{submission}/toggle-payment', [DynamicFormController::class, 'togglePayment'])->name('dynamic-forms.submissions.toggle-payment');

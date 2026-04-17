@@ -226,6 +226,11 @@
                                                 class="side-menu__label">Quizzes</span></a>
                                     </li>
                                     <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.interactive_quizzes.index') }}"><i
+                                                class="side-menu__icon fe fe-play-circle"></i><span
+                                                class="side-menu__label">Interactive Quizzes</span></a>
+                                    </li>
+                                    <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('highboard.dynamic-forms.index') }}"><i
                                                 class="side-menu__icon fe fe-file-text"></i><span
                                                 class="side-menu__label">Dynamic Forms</span></a>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $quiz->name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/IADC Icon.png') }}">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; overflow-x: hidden; }
+        .quiz-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .card-panel { background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); padding: 40px; margin-bottom: 20px; display: none; text-align: center; }
+        .card-panel.active { display: block; animation: slideUp 0.4s ease forwards; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .score-badge { position: absolute; top: 20px; left: 20px; background: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #1d4ed8; }
+        .user-badge { position: absolute; top: 20px; right: 20px; background: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: #374151; }
+
+        /* Loader */
+        .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Question View */
+        .timer-circle { width: 100px; height: 100px; border-radius: 50%; background: #ef4444; color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; margin: 0 auto 30px; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
+        .question-text { font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 30px; }
+        .choice-btn { background: #fff; border: 2px solid #e5e7eb; border-radius: 15px; padding: 20px; text-align: left; font-size: 1.1rem; width: 100%; margin-bottom: 15px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .choice-btn:hover { border-color: #3b82f6; background: #eff6ff; }
+        .choice-btn.selected { border-color: #3b82f6; background: #dbeafe; }
+        .choice-btn .letter { background: #3b82f6; color: white; width: 35px; height: 35px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; }
+
+        .waiting-text { font-size: 1.3rem; color: #4b5563; font-weight: 600; margin-top: 20px; }
+
+        /* Leaderboard View */
+        .rank-row { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #e5e7eb; }
+        .rank-row:last-child { border-bottom: none; }
+        .rank-num { font-size: 1.5rem; font-weight: 700; color: #6b7280; width: 50px; text-align: center; }
+        .rank-name { font-size: 1.2rem; font-weight: 600; flex: 1; text-align: left; }
+        .rank-score { font-size: 1.3rem; font-weight: 700; color: #10b981; }
+
+        .my-rank-banner { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 15px; padding: 20px; margin-bottom: 30px; font-size: 1.2rem; font-weight: 600; display: flex; justify-content: space-around; }
+        .my-rank-banner div { text-align: center; }
+        .my-rank-banner span { display: block; font-size: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="score-badge"><i class="fas fa-star me-2 text-warning"></i>Score: <span id="my-score">0</span></div>
+    <div class="user-badge"><i class="fas fa-user-circle me-2 text-secondary"></i>Participant</div>
+
+    <div class="quiz-container">
+        
+        <!-- INITIAL LOADER -->
+        <div id="panel-loading" class="card-panel active">
+            <div class="spinner"></div>
+            <h4 class="waiting-text">Connecting to server...</h4>
+        </div>
+
+        <!-- LOBBY -->
+        <div id="panel-lobby" class="card-panel">
+            <i class="fas fa-hand-sparkles fa-4x text-primary mb-4"></i>
+            <h2>Welcome to {{ $quiz->name }}</h2>
+            <br>
+            <div class="spinner border-primary" style="border-width:4px;"></div>
+            <h4 class="waiting-text text-primary">Waiting for the admin to start the quiz...</h4>
+            <p class="text-muted mt-3">Get ready! Questions will appear here automatically.</p>
+        </div>
+
+        <!-- QUESTION -->
+        <div id="panel-question" class="card-panel pb-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold text-muted">Question <span id="q-number">1</span></h5>
+            </div>
+            
+            <div class="timer-circle" id="q-timer">--</div>
+            
+            <h3 class="question-text" id="q-text">Loading question...</h3>
+            
+            <div id="choices-container" class="mt-4">
+                <button class="choice-btn" onclick="submitAnswer('a')"><span class="letter">A</span><span id="opt-a-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('b')"><span class="letter">B</span><span id="opt-b-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('c')"><span class="letter">C</span><span id="opt-c-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('d')"><span class="letter">D</span><span id="opt-d-text">--</span></button>
+            </div>
+        </div>
+
+        <!-- WAITING FOR TIME TO UP -->
+        <div id="panel-waiting" class="card-panel">
+            <i class="fas fa-check-circle fa-5x text-success mb-4"></i>
+            <h2>Answer Submitted!</h2>
+            <h4 class="waiting-text">Waiting for the timer to run out...</h4>
+            <p class="text-muted mt-3">Scores are calculated based on how fast you answer. Points: Time Remaining.</p>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div id="panel-leaderboard" class="card-panel p-4">
+            <div class="my-rank-banner">
+                <div>Rank<br><span id="my-rank">--</span></div>
+                <div>Points<br><span id="my-points">0</span></div>
+            </div>
+            
+            <h5 class="text-start fw-bold mb-3 d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-trophy text-warning me-2"></i>Live Leaderboard</span>
+                <div class="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+            </h5>
+            
+            <div id="leaderboard-list" class="text-start bg-light rounded-4 border p-2">
+                <!-- Data here -->
+            </div>
+
+            <div class="mt-4 pt-3 border-top">
+                <div class="spinner" style="width: 30px; height: 30px; border-width:3px; margin-bottom:10px;"></div>
+                <h5 class="text-primary mt-2">Waiting for the next question...</h5>
+            </div>
+        </div>
+
+        <!-- FINISHED -->
+        <div id="panel-finished" class="card-panel">
+            <i class="fas fa-flag-checkered fa-5x text-success mb-4"></i>
+            <h1 class="display-5 fw-bold mb-2">Quiz Finished!</h1>
+            <p class="text-muted fs-5 mb-5">Thanks for participating in {{ $quiz->name }}</p>
+            
+            <div class="my-rank-banner">
+                <div>Final Rank<br><span id="final-rank">--</span></div>
+                <div>Total Score<br><span id="final-score">0</span></div>
+            </div>
+
+            <a href="{{ url('/') }}" class="btn btn-primary btn-lg mt-4 px-5 rounded-pill">Go Home</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const stateUrl = `{{ route('interactive_quiz.state', $quiz) }}`;
+        const answerUrl = `{{ route('interactive_quiz.answer', $quiz) }}`;
+        const csrfToken = '{{ csrf_token() }}';
+        const myParticipantId = '{{ $participantId }}';
+        
+        let currentState = 'loading';
+        let currentQuestionNumber = 0;
+        let timerInterval = null;
+        let hasAnsweredCurrent = false;
+
+        function switchPanel(panelId) {
+            document.querySelectorAll('.card-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+        }
+
+        function calculateTimeRemaining(startTime, timeLimit) {
+            let now = Math.floor(Date.now() / 1000);
+            let elapsed = now - startTime;
+            let remaining = timeLimit - elapsed;
+            return remaining > 0 ? remaining : 0;
+        }
+
+        function submitAnswer(ans) {
+            if (hasAnsweredCurrent) return;
+            hasAnsweredCurrent = true;
+            
+            // UI Feedback
+            const btns = document.querySelectorAll('.choice-btn');
+            btns.forEach(b => {
+                b.disabled = true;
+                if(b.getAttribute('onclick').includes(`('${ans}')`)){
+                    b.classList.add('selected');
+                }
+            });
+
+            // Post
+            fetch(answerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ question_index: currentQuestionNumber, answer: ans })
+            }).then(res => res.json()).then(data => {
+                if (data.status === 'success') {
+                    switchPanel('panel-waiting');
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            }).catch(e => {
+                Swal.fire('Network error', 'Failed to submit answer', 'error');
+                hasAnsweredCurrent = false;
+                btns.forEach(b => b.disabled = false);
+            });
+        }
+
+        function pollState() {
+            fetch(stateUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'unauthorized') {
+                        window.location.reload();
+                        return;
+                    }
+
+                    document.getElementById('my-score').innerText = data.data.my_score;
+
+                    const state = data.data.state;
+                    
+                    if (state === 'lobby') {
+                        if (currentState !== 'lobby') switchPanel('panel-lobby');
+                    } 
+                    else if (state === 'question') {
+                        let qNum = data.data.current_question;
+                        let isNewQuestion = (qNum !== currentQuestionNumber);
+                        currentQuestionNumber = qNum;
+
+                        if (data.data.has_answered) {
+                            if (currentState !== 'waiting') switchPanel('panel-waiting');
+                        } else {
+                            if (currentState !== 'question' || isNewQuestion) {
+                                switchPanel('panel-question');
+                                hasAnsweredCurrent = false;
+                                
+                                // Restore buttons
+                                document.querySelectorAll('.choice-btn').forEach(b => {
+                                    b.disabled = false;
+                                    b.classList.remove('selected');
+                                });
+
+                                // Setup data
+                                if (data.data.question_data) {
+                                    const q = data.data.question_data;
+                                    document.getElementById('q-number').innerText = qNum;
+                                    document.getElementById('q-text').innerText = q.question;
+                                    document.getElementById('opt-a-text').innerText = q.options.a;
+                                    document.getElementById('opt-b-text').innerText = q.options.b;
+                                    document.getElementById('opt-c-text').innerText = q.options.c;
+                                    document.getElementById('opt-d-text').innerText = q.options.d;
+                                }
+
+                                // Reset timer
+                                if(timerInterval) clearInterval(timerInterval);
+                                timerInterval = setInterval(() => {
+                                    let rem = calculateTimeRemaining(data.data.start_time, data.data.time_limit);
+                                    document.getElementById('q-timer').innerText = rem;
+                                    if(rem <= 0) {
+                                        clearInterval(timerInterval);
+                                        // Timeout, lock selection immediately
+                                        hasAnsweredCurrent = true;
+                                    }
+                                }, 1000);
+                            }
+                        }
+                    }
+                    else if (state === 'leaderboard') {
+                        if (currentState !== 'leaderboard') switchPanel('panel-leaderboard');
+                        
+                        // Update Board
+                        if (data.data.leaderboard_data) {
+                            let html = '';
+                            let myRank = '--';
+                            data.data.leaderboard_data.forEach(p => {
+                                if(p.participant_id === myParticipantId) {
+                                    myRank = p.rank;
+                                }
+                                html += `<div class="rank-row">
+                                    <div class="rank-num">#${p.rank}</div>
+                                    <div class="rank-name">${p.name} ${p.participant_id === myParticipantId ? '(You)' : ''}</div>
+                                    <div class="rank-score">${p.score}</div>
+                                </div>`;
+                            });
+                            document.getElementById('leaderboard-list').innerHTML = html || '<div class="p-3 text-center text-muted">No entries yet.</div>';
+                            document.getElementById('my-rank').innerText = myRank;
+                            document.getElementById('my-points').innerText = data.data.my_score;
+                        }
+
+                    }
+                    else if (state === 'finished') {
+                        if (currentState !== 'finished') switchPanel('panel-finished');
+                        document.getElementById('final-rank').innerText = document.getElementById('my-rank').innerText;
+                        document.getElementById('final-score').innerText = data.data.my_score;
+                    }
+
+                    currentState = state;
+                })
+                .catch(err => console.error('Poll error', err));
+        }
+
+        // Start polling immediately and then every interval
+        pollState();
+        setInterval(pollState, 1500);
+
+        // Prevent copying and context menu
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+    </script>
+</body>
+</html>

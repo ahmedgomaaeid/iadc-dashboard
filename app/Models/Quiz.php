@@ -9,7 +9,7 @@ class Quiz extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'is_active', 'visibility', 'committee_id'];
+    protected $fillable = ['name', 'is_active', 'visibility', 'committee_id', 'type'];
 
     protected $casts = [
         'is_active' => 'boolean',
