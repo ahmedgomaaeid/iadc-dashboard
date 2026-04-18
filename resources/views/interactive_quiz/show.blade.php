@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('images/IADC Icon.png') }}">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; overflow-x: hidden; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         .quiz-container { max-width: 800px; margin: 40px auto; padding: 20px; }
         .card-panel { background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); padding: 40px; margin-bottom: 20px; display: none; text-align: center; }
         .card-panel.active { display: block; animation: slideUp 0.4s ease forwards; }
@@ -289,6 +289,17 @@
         // Prevent copying and context menu
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        
+        // Prevent keyboard shortcuts (Ctrl+C, Ctrl+A, F12, etc.)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'a' || e.key === 'x' || e.key === 'v' || e.key === 'u' || e.key === 'p' || e.key === 's')) {
+                e.preventDefault();
+            }
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
