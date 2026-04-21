@@ -54,22 +54,15 @@
     <div class="row mb-4" id="active-question-card" style="display:none;">
         <div class="col-12">
             <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border-radius: 25px;">
-                <div class="card-body text-center" style="padding: 5rem 2rem;">
-                    <span class="badge px-4 py-2 fs-5 mb-4 shadow-sm" style="border-radius: 30px; background-color: #B4120D; color: white;">Question <span id="active-q-number">--</span></span>
+                <div class="card-body text-center" style="padding: 6rem 3rem;">
+                    <span class="badge px-4 py-2 fs-4 mb-4 shadow-sm" style="border-radius: 30px; background-color: #B4120D; color: white;">Question <span id="active-q-number">--</span></span>
                     
-                    <h1 class="mb-5 display-4 fw-bolder text-dark" id="active-q-text" style="line-height: 1.4; color: #1e293b;">Loading question...</h1>
-                    
-                    <div class="row justify-content-center mb-5 gx-4 gy-4">
-                        <div class="col-md-5 text-start"><div class="p-4 bg-white shadow-sm fw-bold fs-4 text-dark" style="border-radius: 15px; border-left: 8px solid #B4120D;" id="opt-a">A) --</div></div>
-                        <div class="col-md-5 text-start"><div class="p-4 bg-white shadow-sm fw-bold fs-4 text-dark" style="border-radius: 15px; border-left: 8px solid #3b82f6;" id="opt-b">B) --</div></div>
-                        <div class="col-md-5 text-start"><div class="p-4 bg-white shadow-sm fw-bold fs-4 text-dark" style="border-radius: 15px; border-left: 8px solid #10b981;" id="opt-c">C) --</div></div>
-                        <div class="col-md-5 text-start"><div class="p-4 bg-white shadow-sm fw-bold fs-4 text-dark" style="border-radius: 15px; border-left: 8px solid #f59e0b;" id="opt-d">D) --</div></div>
-                    </div>
+                    <h1 class="mb-5 display-2 fw-bolder text-dark" id="active-q-text" style="line-height: 1.4; color: #1e293b;">Loading question...</h1>
                     
                     <div class="mt-4">
-                        <div class="d-inline-flex flex-column align-items-center justify-content-center text-white rounded-circle shadow-lg pulse" style="width: 160px; height: 160px; border: 8px solid #fff; background-color: #B4120D;">
-                            <span class="text-uppercase fw-bold mb-1" style="font-size: 0.9rem; letter-spacing: 2px;">Time Left</span>
-                            <h1 class="mb-0 display-2 fw-bold" id="timer-display" style="line-height: 1;">--</h1>
+                        <div class="d-inline-flex flex-column align-items-center justify-content-center text-white rounded-circle shadow-lg pulse" style="width: 180px; height: 180px; border: 8px solid #fff; background-color: #B4120D;">
+                            <span class="text-uppercase fw-bold mb-1" style="font-size: 1rem; letter-spacing: 2px;">Time Left</span>
+                            <h1 class="mb-0 display-1 fw-bold" id="timer-display" style="line-height: 1;">--</h1>
                         </div>
                     </div>
                 </div>
@@ -157,8 +150,9 @@
             return;
         }
 
+        const top6 = leaderboard.slice(0, 6);
         let html = '';
-        leaderboard.forEach(p => {
+        top6.forEach(p => {
             let rankBadge = p.rank;
             if(p.rank === 1) rankBadge = `<i class="fas fa-crown text-warning fa-lg"></i>`;
             else if(p.rank === 2) rankBadge = `<i class="fas fa-medal text-secondary fa-lg"></i>`;
@@ -220,10 +214,6 @@
                 const q = stateData.question_data;
                 document.getElementById('active-q-number').innerText = stateData.current_question;
                 document.getElementById('active-q-text').innerText = q.question;
-                document.getElementById('opt-a').innerText = 'A) ' + q.options.a;
-                document.getElementById('opt-b').innerText = 'B) ' + q.options.b;
-                document.getElementById('opt-c').innerText = 'C) ' + q.options.c;
-                document.getElementById('opt-d').innerText = 'D) ' + q.options.d;
             }
             
             // Re-sync timer
@@ -259,10 +249,6 @@
                 const q = data.data.question_data;
                 document.getElementById('active-q-number').innerText = data.data.current_question;
                 document.getElementById('active-q-text').innerText = q.question;
-                document.getElementById('opt-a').innerText = 'A) ' + q.options.a;
-                document.getElementById('opt-b').innerText = 'B) ' + q.options.b;
-                document.getElementById('opt-c').innerText = 'C) ' + q.options.c;
-                document.getElementById('opt-d').innerText = 'D) ' + q.options.d;
                 
                 // Immediately fetch state to update UI
                 fetchState();

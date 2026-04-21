@@ -157,8 +157,9 @@
             return;
         }
 
+        const top6 = leaderboard.slice(0, 6);
         let html = '';
-        leaderboard.forEach(p => {
+        top6.forEach(p => {
             let rankBadge = p.rank;
             if(p.rank === 1) rankBadge = `<i class="fas fa-crown text-warning fa-lg"></i>`;
             else if(p.rank === 2) rankBadge = `<i class="fas fa-medal text-secondary fa-lg"></i>`;

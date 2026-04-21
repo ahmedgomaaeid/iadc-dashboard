@@ -25,11 +25,12 @@
 
         /* Question View */
         .timer-circle { width: 100px; height: 100px; border-radius: 50%; background: #ef4444; color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; margin: 0 auto 30px; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
-        .question-text { font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 30px; }
-        .choice-btn { background: #fff; border: 2px solid #e5e7eb; border-radius: 15px; padding: 20px; text-align: left; font-size: 1.1rem; width: 100%; margin-bottom: 15px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .choice-btn { background: #fff; border: 3px solid #e5e7eb; border-radius: 20px; padding: 28px 24px; text-align: center; font-size: 1.5rem; font-weight: 600; width: 100%; margin-bottom: 18px; cursor: pointer; transition: all 0.25s ease; position: relative; }
         .choice-btn:hover { border-color: #B4120D; background: #fee2e2; }
-        .choice-btn.selected { border-color: #B4120D; background: #fca5a5; }
-        .choice-btn .letter { background: #B4120D; color: white; width: 35px; height: 35px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; }
+        .choice-btn.selected { border-color: #B4120D; background: #fca5a5; transform: scale(0.97); }
+        .choice-btn .letter { background: #B4120D; color: white; width: 48px; height: 48px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 18px; font-size: 1.3rem; }
+        .choice-btn .option-text { font-size: 1.3rem; }
+        .q-number-badge { background: linear-gradient(135deg, #B4120D 0%, #d61811 100%); color: white; padding: 8px 24px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; display: inline-block; margin-bottom: 16px; }
 
         .waiting-text { font-size: 1.3rem; color: #4b5563; font-weight: 600; margin-top: 20px; }
 
@@ -69,19 +70,17 @@
 
         <!-- QUESTION -->
         <div id="panel-question" class="card-panel pb-2">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold text-muted">Question <span id="q-number">1</span></h5>
-            </div>
+            <div class="q-number-badge">Question <span id="q-number">1</span></div>
             
             <div class="timer-circle" id="q-timer">--</div>
             
-            <h3 class="question-text" id="q-text">Loading question...</h3>
+            <p class="text-muted mb-4" style="font-size: 1rem;">Select your answer below</p>
             
-            <div id="choices-container" class="mt-4">
-                <button class="choice-btn" onclick="submitAnswer('a')"><span class="letter">A</span><span id="opt-a-text">--</span></button>
-                <button class="choice-btn" onclick="submitAnswer('b')"><span class="letter">B</span><span id="opt-b-text">--</span></button>
-                <button class="choice-btn" onclick="submitAnswer('c')"><span class="letter">C</span><span id="opt-c-text">--</span></button>
-                <button class="choice-btn" onclick="submitAnswer('d')"><span class="letter">D</span><span id="opt-d-text">--</span></button>
+            <div id="choices-container">
+                <button class="choice-btn" onclick="submitAnswer('a')"><span class="letter">A</span><span class="option-text" id="opt-a-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('b')"><span class="letter">B</span><span class="option-text" id="opt-b-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('c')"><span class="letter">C</span><span class="option-text" id="opt-c-text">--</span></button>
+                <button class="choice-btn" onclick="submitAnswer('d')"><span class="letter">D</span><span class="option-text" id="opt-d-text">--</span></button>
             </div>
         </div>
 
@@ -223,11 +222,10 @@
                                     b.classList.remove('selected');
                                 });
 
-                                // Setup data
+                                // Setup data (question text hidden from participants - shown on admin screen)
                                 if (data.data.question_data) {
                                     const q = data.data.question_data;
                                     document.getElementById('q-number').innerText = qNum;
-                                    document.getElementById('q-text').innerText = q.question;
                                     document.getElementById('opt-a-text').innerText = q.options.a;
                                     document.getElementById('opt-b-text').innerText = q.options.b;
                                     document.getElementById('opt-c-text').innerText = q.options.c;
@@ -253,12 +251,15 @@
                         
                         // Update Board
                         if (data.data.leaderboard_data) {
+                            const top6 = data.data.leaderboard_data.slice(0, 6);
                             let html = '';
                             let myRank = '--';
                             data.data.leaderboard_data.forEach(p => {
                                 if(p.participant_id === myParticipantId) {
                                     myRank = p.rank;
                                 }
+                            });
+                            top6.forEach(p => {
                                 html += `<div class="rank-row">
                                     <div class="rank-num">#${p.rank}</div>
                                     <div class="rank-name">${p.name} ${p.participant_id === myParticipantId ? '(You)' : ''}</div>
