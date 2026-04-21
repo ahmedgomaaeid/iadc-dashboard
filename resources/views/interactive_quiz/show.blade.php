@@ -140,6 +140,7 @@
         let currentQuestionNumber = 0;
         let timerInterval = null;
         let hasAnsweredCurrent = false;
+        let serverTimeOffset = 0; // server_time - client_time (seconds)
 
         function switchPanel(panelId) {
             document.querySelectorAll('.card-panel').forEach(p => p.classList.remove('active'));
@@ -147,7 +148,7 @@
         }
 
         function calculateTimeRemaining(startTime, timeLimit) {
-            let now = Math.floor(Date.now() / 1000);
+            let now = Math.floor(Date.now() / 1000) + serverTimeOffset;
             let elapsed = now - startTime;
             let remaining = timeLimit - elapsed;
             return remaining > 0 ? remaining : 0;
@@ -198,6 +199,11 @@
                     }
 
                     document.getElementById('my-score').innerText = data.data.my_score;
+
+                    // Sync clock with server
+                    if (data.data.server_time) {
+                        serverTimeOffset = data.data.server_time - Math.floor(Date.now() / 1000);
+                    }
 
                     const state = data.data.state;
                     

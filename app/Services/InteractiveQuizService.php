@@ -32,6 +32,7 @@ class InteractiveQuizService
                 'current_question' => $currentQuestion,
                 'start_time' => $startTime,
                 'time_limit' => $timeLimit,
+                'server_time' => time(),
             ];
         } catch (\Throwable $e) {
             Log::error("InteractiveQuizService getState error: " . $e->getMessage());

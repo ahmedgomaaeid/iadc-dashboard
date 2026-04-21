@@ -114,12 +114,17 @@
     
     let currentStateJSON = null;
     let timerInterval = null;
+    let serverTimeOffset = 0; // server_time - client_time (seconds)
 
     function fetchState() {
         fetch(stateUrl)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
+                    // Sync clock with server
+                    if (data.state && data.state.server_time) {
+                        serverTimeOffset = data.state.server_time - Math.floor(Date.now() / 1000);
+                    }
                     updateUI(data.state, data.leaderboard);
                 }
             })
@@ -127,7 +132,7 @@
     }
 
     function calculateTimeRemaining(startTime, timeLimit) {
-        let now = Math.floor(Date.now() / 1000);
+        let now = Math.floor(Date.now() / 1000) + serverTimeOffset;
         let elapsed = now - startTime;
         let remaining = timeLimit - elapsed;
         return remaining > 0 ? remaining : 0;
