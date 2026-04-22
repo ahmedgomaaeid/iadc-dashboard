@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\Committee;
 use App\Services\InteractiveQuizService;
+use App\Exports\InteractiveLeaderboardExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InteractiveQuizController extends Controller
 {
@@ -88,6 +90,12 @@ class InteractiveQuizController extends Controller
     public function leaderboard(Quiz $interactive_quiz)
     {
         return view('highboard.interactive_quizzes.leaderboard', ['quiz' => $interactive_quiz]);
+    }
+
+    public function exportLeaderboard(Quiz $interactive_quiz)
+    {
+        $filename = 'interactive_leaderboard_' . str_replace(' ', '_', $interactive_quiz->name) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new InteractiveLeaderboardExport($interactive_quiz->id, $interactive_quiz->name), $filename);
     }
 
     public function clearLeaderboard(Quiz $interactive_quiz)

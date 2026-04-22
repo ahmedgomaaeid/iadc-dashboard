@@ -102,6 +102,7 @@ Route::domain($domain)->group(function () {
         Route::resource('interactive_quizzes', \App\Http\Controllers\Highboard\InteractiveQuizController::class)->parameters(['interactive_quizzes' => 'interactive_quiz']);
         Route::patch('interactive_quizzes/{interactive_quiz}/toggle-active', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'toggleActive'])->name('interactive_quizzes.toggle-active');
         Route::get('interactive_quizzes/{interactive_quiz}/leaderboard', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'leaderboard'])->name('interactive_quizzes.leaderboard');
+        Route::get('interactive_quizzes/{interactive_quiz}/leaderboard/export', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'exportLeaderboard'])->name('interactive_quizzes.leaderboard.export');
         Route::delete('interactive_quizzes/{interactive_quiz}/leaderboard/clear', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'clearLeaderboard'])->name('interactive_quizzes.leaderboard.clear');
         Route::get('interactive_quizzes/{interactive_quiz}/state', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'state'])->name('interactive_quizzes.state');
         Route::post('interactive_quizzes/{interactive_quiz}/next-question', [\App\Http\Controllers\Highboard\InteractiveQuizController::class, 'nextQuestion'])->name('interactive_quizzes.next-question');

@@ -34,6 +34,9 @@
                         <button id="btn-next-question" class="btn btn-warning shadow-sm" style="display:none;" onclick="nextQuestion()">
                             <i class="fas fa-step-forward me-2"></i>Show Next Question
                         </button>
+                        <a id="btn-export" href="{{ route('highboard.interactive_quizzes.leaderboard.export', $quiz) }}" class="btn btn-success shadow-sm">
+                            <i class="fas fa-file-excel me-2"></i>Export to Excel
+                        </a>
                         <form action="{{ route('highboard.interactive_quizzes.leaderboard.clear', $quiz) }}" method="POST" style="display:inline;" onsubmit="return confirm('Clear leaderboard?');">
                             @csrf
                             @method('DELETE')
