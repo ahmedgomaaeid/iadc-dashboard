@@ -231,4 +231,28 @@ class QuizController extends Controller
             'timestamp' => time()
         ]);
     }
+
+    /**
+     * Record a fullscreen violation for a participant
+     */
+    public function recordFullscreenViolation(Request $request, $quizId)
+    {
+        $validated = $request->validate([
+            'participant_id' => 'required|string',
+            'type' => 'required|string|in:fullscreen_exit,tab_switch',
+            'question_number' => 'nullable|integer',
+        ]);
+
+        QuizCacheService::recordFullscreenViolation(
+            $quizId,
+            $validated['participant_id'],
+            [
+                'type' => $validated['type'],
+                'question_number' => $validated['question_number'] ?? null,
+                'timestamp' => time(),
+            ]
+        );
+
+        return response()->json(['success' => true, 'message' => 'Violation recorded']);
+    }
 }

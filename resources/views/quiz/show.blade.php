@@ -373,6 +373,134 @@
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
+
+            /* Fullscreen Overlay */
+            .fullscreen-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                color: white;
+                text-align: center;
+                padding: 30px;
+            }
+
+            .fullscreen-overlay.hidden {
+                display: none;
+            }
+
+            .fullscreen-icon {
+                font-size: 5rem;
+                margin-bottom: 30px;
+                animation: float 3s ease-in-out infinite;
+                color: #60a5fa;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-15px); }
+            }
+
+            .fullscreen-overlay h2 {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+            .fullscreen-overlay p {
+                font-size: 1.1rem;
+                opacity: 0.8;
+                max-width: 500px;
+                margin-bottom: 30px;
+            }
+
+            .btn-fullscreen {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                border: none;
+                border-radius: 15px;
+                padding: 18px 50px;
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            }
+
+            .btn-fullscreen:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+            }
+
+            .btn-fullscreen:active {
+                transform: translateY(0);
+            }
+
+            .fullscreen-warning {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(15, 23, 42, 0.95);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                color: white;
+                text-align: center;
+                padding: 30px;
+            }
+
+            .fullscreen-warning.hidden {
+                display: none;
+            }
+
+            .warning-icon {
+                font-size: 5rem;
+                color: #ef4444;
+                margin-bottom: 20px;
+                animation: shake 0.5s ease-in-out;
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+
+            .violation-counter {
+                background: rgba(239, 68, 68, 0.2);
+                border: 2px solid #ef4444;
+                border-radius: 12px;
+                padding: 12px 25px;
+                margin: 15px 0 25px;
+                font-size: 0.95rem;
+                color: #fca5a5;
+            }
+
+            .fullscreen-notice {
+                position: fixed;
+                top: 15px;
+                right: 15px;
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                color: #ef4444;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                z-index: 100;
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -437,6 +565,34 @@
             </div>
         </main>
 
+        <!-- Fullscreen Enforcement Overlay -->
+        <div id="fullscreen-overlay" class="fullscreen-overlay hidden">
+            <i class="fas fa-expand fullscreen-icon"></i>
+            <h2>Fullscreen Required</h2>
+            <p>To ensure exam integrity, you must enter fullscreen mode before starting the quiz. Please click the button below.</p>
+            <button class="btn-fullscreen" onclick="enterFullscreen()">
+                <i class="fas fa-expand me-2"></i> Enter Fullscreen & Start
+            </button>
+        </div>
+
+        <!-- Fullscreen Exit Warning Overlay -->
+        <div id="fullscreen-warning" class="fullscreen-warning hidden">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <h2>⚠️ Fullscreen Violation Detected</h2>
+            <p>You have exited fullscreen mode. This violation has been recorded and will be visible to the administrator.</p>
+            <div class="violation-counter">
+                <i class="fas fa-flag me-2"></i> Violation #<span id="violation-count">0</span> recorded at <span id="violation-time"></span>
+            </div>
+            <button class="btn-fullscreen" onclick="reEnterFullscreen()">
+                <i class="fas fa-expand me-2"></i> Re-enter Fullscreen & Continue
+            </button>
+        </div>
+
+        <!-- Violation Notice Badge (persistent) -->
+        <div id="fullscreen-notice" class="fullscreen-notice">
+            <i class="fas fa-eye me-1"></i> Monitored Session
+        </div>
+
         <footer class="footer">
             <p>Explore Your Potential</p>
         </footer>
@@ -450,6 +606,12 @@
             let currentQuestionNumber = 1;
             let timerInterval = null;
             let questionStartTime = null;
+
+            // Fullscreen anti-cheat state
+            let isFullscreenActive = false;
+            let quizStarted = false;
+            let violationCount = 0;
+            let pendingFullscreenStart = false;
 
             // Prevent copy, cut, and right-click on quiz content
             document.addEventListener('DOMContentLoaded', function() {
@@ -553,9 +715,9 @@
 
                     participantId = data.participant_id;
 
-                    // Close loading and start quiz
+                    // Close loading — show fullscreen gate instead of starting quiz directly
                     Swal.close();
-                    await loadQuestion(currentQuestionNumber);
+                    showFullscreenGate();
 
                 } catch (error) {
                     console.error('Registration error:', error);
@@ -834,6 +996,108 @@
                 };
                 return text.replace(/[&<>"']/g, m => map[m]);
             }
+
+            // ===== FULLSCREEN ANTI-CHEAT SYSTEM =====
+
+            function showFullscreenGate() {
+                document.getElementById('fullscreen-overlay').classList.remove('hidden');
+            }
+
+            function enterFullscreen() {
+                const el = document.documentElement;
+                pendingFullscreenStart = true;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen();
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                } else if (el.msRequestFullscreen) {
+                    el.msRequestFullscreen();
+                } else {
+                    // Fullscreen not supported — proceed anyway
+                    onFullscreenEntered();
+                }
+            }
+
+            function reEnterFullscreen() {
+                const el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen();
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                } else if (el.msRequestFullscreen) {
+                    el.msRequestFullscreen();
+                }
+                document.getElementById('fullscreen-warning').classList.add('hidden');
+            }
+
+            function onFullscreenEntered() {
+                isFullscreenActive = true;
+                document.getElementById('fullscreen-overlay').classList.add('hidden');
+                document.getElementById('fullscreen-warning').classList.add('hidden');
+                document.getElementById('fullscreen-notice').style.display = 'block';
+
+                if (!quizStarted) {
+                    quizStarted = true;
+                    loadQuestion(currentQuestionNumber);
+                }
+            }
+
+            function onFullscreenExited() {
+                if (!quizStarted) return; // Not yet in quiz
+                isFullscreenActive = false;
+
+                violationCount++;
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+
+                document.getElementById('violation-count').textContent = violationCount;
+                document.getElementById('violation-time').textContent = timeStr;
+                document.getElementById('fullscreen-warning').classList.remove('hidden');
+
+                // Report violation to backend
+                reportViolation('fullscreen_exit');
+            }
+
+            function reportViolation(type) {
+                if (!participantId) return;
+                fetch(`/api/quizzes/${QUIZ_ID}/fullscreen-violation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        participant_id: participantId,
+                        type: type,
+                        question_number: currentQuestionNumber
+                    })
+                }).catch(err => console.error('Failed to report violation:', err));
+            }
+
+            // Listen for fullscreen changes
+            document.addEventListener('fullscreenchange', function() {
+                if (document.fullscreenElement) {
+                    onFullscreenEntered();
+                } else {
+                    onFullscreenExited();
+                }
+            });
+            document.addEventListener('webkitfullscreenchange', function() {
+                if (document.webkitFullscreenElement) {
+                    onFullscreenEntered();
+                } else {
+                    onFullscreenExited();
+                }
+            });
+
+            // Tab switch detection
+            document.addEventListener('visibilitychange', function() {
+                if (!quizStarted || !participantId) return;
+                if (document.hidden) {
+                    violationCount++;
+                    reportViolation('tab_switch');
+                }
+            });
         </script>
     </body>
 </html>

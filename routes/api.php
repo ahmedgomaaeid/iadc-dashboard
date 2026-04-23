@@ -25,6 +25,9 @@ Route::post('/quizzes/{quiz}/finish', [QuizController::class, 'finishQuiz']);
 // Leaderboard endpoint
 Route::get('/quizzes/{quiz}/leaderboard', [QuizController::class, 'getLeaderboard']);
 
+// Fullscreen violation recording
+Route::post('/quizzes/{quiz}/fullscreen-violation', [QuizController::class, 'recordFullscreenViolation']);
+
 // Session endpoints
 // use App\Http\Controllers\Api\SessionController;
 // Route::get('/sessions/{session}/status', [SessionController::class, 'status']);

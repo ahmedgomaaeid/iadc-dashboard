@@ -410,11 +410,16 @@ class QuizCacheService
                 $scoreKeyWithoutPrefix = "quiz:{$quizId}:participant:{$participantId}:score";
                 $score = (int) Redis::get($scoreKeyWithoutPrefix);
 
+                // Get fullscreen violations for this participant
+                $violations = self::getFullscreenViolations($quizId, $participantId);
+
                 $leaderboard[] = [
                     'participant_id' => $participantId,
                     'name' => $participant['name'] ?? 'Unknown',
                     'email' => $participant['email'] ?? '',
                     'score' => $score,
+                    'violations_count' => count($violations),
+                    'violations' => $violations,
                 ];
             }
 
@@ -498,6 +503,10 @@ class QuizCacheService
                 foreach ($startKeys as $key) {
                     Redis::del($key);
                 }
+
+                // Delete fullscreen violations
+                $violationsKey = "quiz:{$quizId}:participant:{$participantId}:fs_violations";
+                Redis::del($violationsKey);
             }
 
             Log::info('Cleared leaderboard data from Redis', [
@@ -548,6 +557,54 @@ class QuizCacheService
                 'error' => $e->getMessage(),
             ]);
             return '';
+        }
+    }
+
+    /**
+     * Record a fullscreen violation for a participant.
+     */
+    public static function recordFullscreenViolation(int $quizId, string $participantId, array $violation): void
+    {
+        try {
+            $key = "quiz:{$quizId}:participant:{$participantId}:fs_violations";
+            $payload = json_encode([
+                'type' => $violation['type'] ?? 'fullscreen_exit',
+                'question_number' => $violation['question_number'] ?? null,
+                'timestamp' => $violation['timestamp'] ?? time(),
+                'recorded_at' => date('Y-m-d H:i:s'),
+            ]);
+            Redis::rpush($key, $payload);
+            // Set expiry to 24 hours if it's the first violation
+            if ((int) Redis::llen($key) === 1) {
+                Redis::expire($key, 86400);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Failed to record fullscreen violation in Redis', [
+                'quiz_id' => $quizId,
+                'participant_id' => $participantId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Get all fullscreen violations for a participant.
+     */
+    public static function getFullscreenViolations(int $quizId, string $participantId): array
+    {
+        try {
+            $key = "quiz:{$quizId}:participant:{$participantId}:fs_violations";
+            $violations = Redis::lrange($key, 0, -1);
+            return array_map(function ($v) {
+                return json_decode($v, true);
+            }, $violations ?: []);
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get fullscreen violations from Redis', [
+                'quiz_id' => $quizId,
+                'participant_id' => $participantId,
+                'error' => $e->getMessage(),
+            ]);
+            return [];
         }
     }
 }

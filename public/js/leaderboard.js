@@ -18,6 +18,11 @@
     function updateLeaderboard(leaderboard, totalParticipants) {
         const tbody = document.getElementById('leaderboard-body');
 
+        // Store full data for modal access
+        if (typeof allLeaderboardData !== 'undefined') {
+            allLeaderboardData = leaderboard;
+        }
+
         // Update stats
         document.getElementById('total-participants').textContent = totalParticipants;
         document.getElementById('top-score').textContent = leaderboard.length > 0 ? leaderboard[0].score : 0;
@@ -25,7 +30,7 @@
         if (leaderboard.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="text-center py-5 text-muted">
+                    <td colspan="5" class="text-center py-5 text-muted">
                         <i class="fas fa-users-slash fa-2x mb-3"></i>
                         <p>No participants yet. Waiting for quiz takers...</p>
                     </td>
@@ -67,6 +72,17 @@
             const statusColor = entry.score > 0 ? 'success' : 'secondary';
             const statusText = entry.score > 0 ? 'Active' : 'Joined';
 
+            // Violation badge
+            const vCount = entry.violations_count || 0;
+            let violationHtml = '';
+            if (vCount === 0) {
+                violationHtml = `<span class="violation-badge violation-clean"><i class="fas fa-check-circle"></i> Clean</span>`;
+            } else if (vCount <= 2) {
+                violationHtml = `<span class="violation-badge violation-minor" onclick="showViolationDetails('${entry.participant_id}')" title="Click for details"><i class="fas fa-exclamation-triangle"></i> ${vCount} Minor</span>`;
+            } else {
+                violationHtml = `<span class="violation-badge violation-suspicious" onclick="showViolationDetails('${entry.participant_id}')" title="Click for details"><i class="fas fa-skull-crossbones"></i> ${vCount} Suspicious</span>`;
+            }
+
             return `
                 <tr class="leaderboard-row ${animationClass}" data-participant-id="${entry.participant_id}">
                     <td class="text-center align-middle">
@@ -87,6 +103,9 @@
                         <span class="score-badge">${entry.score}</span>
                     </td>
                     <td class="text-center align-middle">
+                        ${violationHtml}
+                    </td>
+                    <td class="text-center align-middle">
                         <span class="status-badge bg-${statusColor} text-white">
                             <i class="fas fa-circle-check me-1"></i>${statusText}
                         </span>
@@ -104,6 +123,47 @@
                 row.classList.remove('new-entry', 'position-up', 'position-down', 'score-changed');
             });
         }, 500);
+    }
+
+    // Show violation details in modal
+    function showViolationDetails(participantId) {
+        if (typeof allLeaderboardData === 'undefined') return;
+
+        const participant = allLeaderboardData.find(p => p.participant_id === participantId);
+        if (!participant) return;
+
+        document.getElementById('violation-participant-name').textContent = participant.name + ' — ' + participant.violations_count + ' violation(s)';
+
+        const violations = participant.violations || [];
+        if (violations.length === 0) {
+            document.getElementById('violation-details-list').innerHTML = '<p class="text-muted text-center">No violation details available.</p>';
+        } else {
+            let html = '';
+            violations.forEach((v, idx) => {
+                const isFullscreen = v.type === 'fullscreen_exit';
+                const typeIcon = isFullscreen ? 'fa-expand' : 'fa-window-restore';
+                const typeClass = isFullscreen ? 'violation-type-fullscreen' : 'violation-type-tab';
+                const typeLabel = isFullscreen ? 'Fullscreen Exit' : 'Tab Switch';
+                const timeStr = v.recorded_at || new Date(v.timestamp * 1000).toLocaleString();
+                const qNum = v.question_number ? `Question #${v.question_number}` : 'N/A';
+
+                html += `
+                    <div class="violation-item">
+                        <div class="violation-type-icon ${typeClass}">
+                            <i class="fas ${typeIcon}"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">#${idx + 1} — ${typeLabel}</div>
+                            <small class="text-muted">${timeStr} • ${qNum}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('violation-details-list').innerHTML = html;
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('violationModal'));
+        modal.show();
     }
 
     function updateLastUpdateTime() {

@@ -41,6 +41,7 @@ class LeaderboardExport implements FromCollection, WithHeadings, WithMapping, Wi
             'Participant Name',
             'Email',
             'Score',
+            'Fullscreen Violations',
         ];
     }
 
@@ -50,11 +51,26 @@ class LeaderboardExport implements FromCollection, WithHeadings, WithMapping, Wi
      */
     public function map($row): array
     {
+        // Format violations summary
+        $violationCount = $row['violations_count'] ?? 0;
+        $violationSummary = $violationCount . ' violation(s)';
+        if ($violationCount > 0 && !empty($row['violations'])) {
+            $details = [];
+            foreach ($row['violations'] as $v) {
+                $type = ($v['type'] ?? 'unknown') === 'fullscreen_exit' ? 'Fullscreen Exit' : 'Tab Switch';
+                $time = $v['recorded_at'] ?? date('Y-m-d H:i:s', $v['timestamp'] ?? 0);
+                $q = isset($v['question_number']) ? "Q{$v['question_number']}" : '';
+                $details[] = "{$type} at {$time}" . ($q ? " ({$q})" : '');
+            }
+            $violationSummary .= ': ' . implode('; ', $details);
+        }
+
         return [
             $row['rank'],
             $row['name'],
             $row['email'],
             $row['score'],
+            $violationSummary,
         ];
     }
 

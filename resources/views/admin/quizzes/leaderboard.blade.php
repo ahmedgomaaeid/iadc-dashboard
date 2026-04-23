@@ -3,6 +3,61 @@
 @section('title', 'Leaderboard')
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/leaderboard.css') }}">
+<style>
+    .violation-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .violation-badge:hover {
+        transform: scale(1.05);
+    }
+    .violation-clean {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+    .violation-minor {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+    .violation-suspicious {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+    .violation-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .violation-item:last-child {
+        border-bottom: none;
+    }
+    .violation-type-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 0.9rem;
+    }
+    .violation-type-fullscreen {
+        background-color: #fee2e2;
+        color: #ef4444;
+    }
+    .violation-type-tab {
+        background-color: #fef3c7;
+        color: #f59e0b;
+    }
+</style>
 @endsection
 @section('content')
     <div class="page-header">
@@ -101,12 +156,13 @@
                                     <th width="80" class="text-center">Rank</th>
                                     <th>Participant</th>
                                     <th width="120" class="text-center">Score</th>
+                                    <th width="150" class="text-center">Violations</th>
                                     <th width="150" class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="leaderboard-body">
                                 <tr>
-                                    <td colspan="4" class="text-center py-5 text-muted">
+                                    <td colspan="5" class="text-center py-5 text-muted">
                                         <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
                                         <p>Loading leaderboard data...</p>
                                     </td>
@@ -119,12 +175,33 @@
         </div>
     </div>
 @endsection
+
+<!-- Violation Details Modal -->
+<div class="modal fade" id="violationModal" tabindex="-1" aria-labelledby="violationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="violationModalLabel">
+                    <i class="fas fa-flag me-2"></i>Violation Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-3" id="violation-participant-name"></h6>
+                <div id="violation-details-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section('scripts')
     <script>
         const QUIZ_ID = {{ $quiz->id }};
         const UPDATE_INTERVAL = 2000; // 2 seconds
         let previousLeaderboard = [];
         let updateTimer = null;
+        let allLeaderboardData = []; // Store full data for modal access
     </script>
     <script src="{{ asset('js/leaderboard.js') }}"></script>
 @endsection
