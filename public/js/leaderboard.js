@@ -140,10 +140,16 @@
         } else {
             let html = '';
             violations.forEach((v, idx) => {
-                const isFullscreen = v.type === 'fullscreen_exit';
-                const typeIcon = isFullscreen ? 'fa-expand' : 'fa-window-restore';
-                const typeClass = isFullscreen ? 'violation-type-fullscreen' : 'violation-type-tab';
-                const typeLabel = isFullscreen ? 'Fullscreen Exit' : 'Tab Switch';
+                const typeMap = {
+                    'fullscreen_exit': { icon: 'fa-expand', css: 'violation-type-fullscreen', label: 'Fullscreen Exit' },
+                    'tab_switch':      { icon: 'fa-window-restore', css: 'violation-type-tab', label: 'Tab Switch' },
+                    'focus_lost':      { icon: 'fa-desktop', css: 'violation-type-tab', label: 'Focus Lost (2nd Screen?)' },
+                    'screenshot_attempt': { icon: 'fa-camera', css: 'violation-type-fullscreen', label: 'Screenshot Attempt' },
+                };
+                const info = typeMap[v.type] || typeMap['tab_switch'];
+                const typeIcon = info.icon;
+                const typeClass = info.css;
+                const typeLabel = info.label;
                 const timeStr = v.recorded_at || new Date(v.timestamp * 1000).toLocaleString();
                 const qNum = v.question_number ? `Question #${v.question_number}` : 'N/A';
 

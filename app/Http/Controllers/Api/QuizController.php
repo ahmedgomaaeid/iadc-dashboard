@@ -239,7 +239,7 @@ class QuizController extends Controller
     {
         $validated = $request->validate([
             'participant_id' => 'required|string',
-            'type' => 'required|string|in:fullscreen_exit,tab_switch',
+            'type' => 'required|string|in:fullscreen_exit,tab_switch,focus_lost,screenshot_attempt',
             'question_number' => 'nullable|integer',
         ]);
 

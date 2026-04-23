@@ -57,7 +57,13 @@ class LeaderboardExport implements FromCollection, WithHeadings, WithMapping, Wi
         if ($violationCount > 0 && !empty($row['violations'])) {
             $details = [];
             foreach ($row['violations'] as $v) {
-                $type = ($v['type'] ?? 'unknown') === 'fullscreen_exit' ? 'Fullscreen Exit' : 'Tab Switch';
+                $typeMap = [
+                    'fullscreen_exit' => 'Fullscreen Exit',
+                    'tab_switch' => 'Tab Switch',
+                    'focus_lost' => 'Focus Lost (2nd Screen)',
+                    'screenshot_attempt' => 'Screenshot Attempt',
+                ];
+                $type = $typeMap[$v['type'] ?? 'unknown'] ?? $v['type'] ?? 'Unknown';
                 $time = $v['recorded_at'] ?? date('Y-m-d H:i:s', $v['timestamp'] ?? 0);
                 $q = isset($v['question_number']) ? "Q{$v['question_number']}" : '';
                 $details[] = "{$type} at {$time}" . ($q ? " ({$q})" : '');

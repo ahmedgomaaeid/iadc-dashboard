@@ -1109,6 +1109,107 @@
                     reportViolation('tab_switch');
                 }
             });
+
+            // ===== DUAL-MONITOR / FOCUS LOSS DETECTION =====
+
+            // Detect when user clicks on another screen/window (catches dual-monitor usage)
+            window.addEventListener('blur', function() {
+                if (!quizStarted || !participantId || quizFinished) return;
+                // Small delay to avoid false positives from fullscreen transitions
+                setTimeout(() => {
+                    if (!document.hasFocus() && quizStarted && !quizFinished) {
+                        violationCount++;
+                        document.getElementById('violation-count').textContent = violationCount;
+                        document.getElementById('violation-time').textContent = new Date().toLocaleTimeString();
+                        document.getElementById('fullscreen-warning').classList.remove('hidden');
+                        reportViolation('focus_lost');
+                    }
+                }, 300);
+            });
+
+            // ===== SCREENSHOT PREVENTION =====
+
+            // Block PrintScreen key and clear clipboard
+            document.addEventListener('keyup', function(e) {
+                if (!quizStarted || quizFinished) return;
+                // PrintScreen key
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    // Clear clipboard to prevent screenshot capture
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText('').catch(() => {});
+                    }
+                    violationCount++;
+                    reportViolation('screenshot_attempt');
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Screenshot Blocked',
+                        text: 'Taking screenshots is not allowed during the exam. This violation has been recorded.',
+                        confirmButtonColor: '#ef4444',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            });
+
+            // Also block Ctrl+PrintScreen, Win+Shift+S (Windows Snipping Tool)
+            document.addEventListener('keydown', function(e) {
+                if (!quizStarted || quizFinished) return;
+                // PrintScreen
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Win+Shift+S (Snipping Tool) — we can only catch Shift+S combo
+                if (e.shiftKey && e.metaKey && (e.key === 's' || e.key === 'S')) {
+                    e.preventDefault();
+                    violationCount++;
+                    reportViolation('screenshot_attempt');
+                    return false;
+                }
+            });
+
+            // ===== MULTI-SCREEN DETECTION =====
+
+            // Detect multiple screens and warn the user
+            async function detectMultipleScreens() {
+                try {
+                    // Method 1: Screen Details API (modern browsers)
+                    if ('getScreenDetails' in window) {
+                        const screenDetails = await window.getScreenDetails();
+                        if (screenDetails.screens.length > 1) {
+                            return screenDetails.screens.length;
+                        }
+                    }
+                    
+                    // Method 2: Compare screen and window dimensions for hints
+                    if (window.screen.availWidth > window.screen.width * 1.5) {
+                        return 2; // Likely extended display
+                    }
+                } catch (e) {
+                    // Permission denied or API not available — can't detect
+                }
+                return 1;
+            }
+
+            // Check for multiple screens when fullscreen gate appears
+            const originalShowFullscreenGate = showFullscreenGate;
+            showFullscreenGate = async function() {
+                originalShowFullscreenGate();
+                
+                const screenCount = await detectMultipleScreens();
+                if (screenCount > 1) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Multiple Screens Detected',
+                        html: `<p>We detected <strong>${screenCount} screens</strong> connected to your device.</p>
+                               <p>Please disconnect extra monitors before starting the exam. Using multiple screens during the exam will be flagged as a violation.</p>`,
+                        confirmButtonText: 'I Understand',
+                        confirmButtonColor: '#ef4444',
+                        allowOutsideClick: false,
+                    });
+                }
+            };
         </script>
     </body>
 </html>
