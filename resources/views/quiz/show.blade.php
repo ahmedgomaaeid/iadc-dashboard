@@ -612,6 +612,7 @@
             let quizStarted = false;
             let violationCount = 0;
             let pendingFullscreenStart = false;
+            let quizFinished = false;
 
             // Prevent copy, cut, and right-click on quiz content
             document.addEventListener('DOMContentLoaded', function() {
@@ -964,6 +965,16 @@
 
             // Show final results
             function showFinalResults() {
+                quizFinished = true;
+
+                // Exit fullscreen gracefully since exam is done
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitFullscreenElement) {
+                    document.webkitExitFullscreen();
+                }
+                document.getElementById('fullscreen-notice').style.display = 'none';
+
                 const container = document.getElementById('quiz_inputs_container');
 
                 container.innerHTML = `
@@ -1043,7 +1054,7 @@
             }
 
             function onFullscreenExited() {
-                if (!quizStarted) return; // Not yet in quiz
+                if (!quizStarted || quizFinished) return; // Not yet in quiz or already finished
                 isFullscreenActive = false;
 
                 violationCount++;
@@ -1092,7 +1103,7 @@
 
             // Tab switch detection
             document.addEventListener('visibilitychange', function() {
-                if (!quizStarted || !participantId) return;
+                if (!quizStarted || !participantId || quizFinished) return;
                 if (document.hidden) {
                     violationCount++;
                     reportViolation('tab_switch');
