@@ -81,7 +81,9 @@ class InteractiveQuizController extends Controller
         $interactive_quiz->save();
 
         if (!$interactive_quiz->is_active) {
-            InteractiveQuizService::clearSession($interactive_quiz->id);
+            // Only clear the quiz flow/timing keys — participant scores are preserved
+            // so the leaderboard remains visible and exportable after deactivation.
+            InteractiveQuizService::clearStateOnly($interactive_quiz->id);
         }
 
         return back()->with('success', 'Quiz status updated.');

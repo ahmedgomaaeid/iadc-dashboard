@@ -248,4 +248,21 @@ class InteractiveQuizService
             Log::error("InteractiveQuizService clearSession error: " . $e->getMessage());
         }
     }
+
+    /**
+     * Clear only the quiz flow/state keys when deactivating a quiz.
+     * Participant scores and data are preserved so the leaderboard
+     * remains visible and exportable until Redis TTLs naturally expire.
+     */
+    public static function clearStateOnly(int $quizId): void
+    {
+        try {
+            Redis::del("i_quiz:{$quizId}:state");
+            Redis::del("i_quiz:{$quizId}:current_question");
+            Redis::del("i_quiz:{$quizId}:start_time");
+            Redis::del("i_quiz:{$quizId}:time_limit");
+        } catch (\Throwable $e) {
+            Log::error("InteractiveQuizService clearStateOnly error: " . $e->getMessage());
+        }
+    }
 }
