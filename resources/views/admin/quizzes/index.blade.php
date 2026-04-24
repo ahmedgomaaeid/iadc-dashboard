@@ -49,6 +49,7 @@
                             </thead>
                             <tbody>
                                 @forelse($quizzes as $quiz)
+                                    @if($quiz->id != 22)
                                     <tr>
                                         <td class="fw-semibold">{{ $quiz->name }}</td>
                                         <td>
@@ -98,6 +99,7 @@
                                             </form>
                                         </td>
                                     </tr>
+                                    @endif
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center text-muted py-4">No quizzes found. Create your first quiz.</td>
