@@ -64,6 +64,7 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
         $headings[] = 'Bundle Person 4';
         $headings[] = 'Payment Method';
         $headings[] = 'Paid';
+        $headings[] = 'Accepted By';
 
         return $headings;
     }
@@ -99,6 +100,7 @@ class DynamicFormSubmissionExport implements FromCollection, WithHeadings, WithM
 
         $row[] = $submission->data['_selected_payment_name'] ?? '';
         $row[] = $submission->is_payed ? 'Yes' : 'No';
+        $row[] = $submission->accepted_by ?? '';
 
         return $row;
     }
