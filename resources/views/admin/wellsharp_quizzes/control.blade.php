@@ -36,6 +36,9 @@
                         <button id="btn-next-question" class="btn btn-warning shadow-sm" style="display:none;" onclick="nextQuestion()">
                             <i class="fas fa-step-forward me-2"></i>Show Next Question
                         </button>
+                        <button id="btn-skip-question" class="btn btn-secondary shadow-sm" style="display:none;" onclick="skipQuestion()">
+                            <i class="fas fa-forward me-2"></i>Skip to Leaderboard
+                        </button>
                         <a href="{{ route('wellsharp.present', $quiz) }}" target="_blank" class="btn btn-outline-info shadow-sm">
                             <i class="fas fa-tv me-2"></i>Open Presentation
                         </a>
@@ -130,6 +133,7 @@
     const addParticipantUrl = `{{ route('admin.wellsharp_quizzes.add-participant', $quiz) }}`;
     const addScoreUrl = `{{ route('admin.wellsharp_quizzes.add-score', $quiz) }}`;
     const removeParticipantBaseUrl = `{{ url('admin/wellsharp_quizzes/' . $quiz->id . '/remove-participant') }}`;
+    const skipQuestionUrl = `{{ route('admin.wellsharp_quizzes.skip-question', $quiz) }}`;
     const csrfToken = '{{ csrf_token() }}';
 
     let currentState = 'lobby';
@@ -149,6 +153,7 @@
     function updateUI(stateData, leaderboardData) {
         const badge = document.getElementById('quiz-status-badge');
         const btnNext = document.getElementById('btn-next-question');
+        const btnSkip = document.getElementById('btn-skip-question');
         const counter = document.getElementById('question-counter');
         const preview = document.getElementById('question-preview');
 
@@ -163,6 +168,7 @@
             badge.className = 'badge bg-secondary';
             badge.innerText = 'LOBBY';
             btnNext.style.display = 'block';
+            btnSkip.style.display = 'none';
             btnNext.innerHTML = '<i class="fas fa-play me-2"></i>Start Quiz';
             preview.innerHTML = '<p class="text-muted mb-0">No question active — click Start Quiz to begin</p>';
         }
@@ -170,6 +176,7 @@
             badge.className = 'badge bg-info';
             badge.innerText = 'LEADERBOARD (Showing on Presentation)';
             btnNext.style.display = 'block';
+            btnSkip.style.display = 'none';
             btnNext.innerHTML = '<i class="fas fa-step-forward me-2"></i>Show Next Question';
             preview.innerHTML = '<p class="text-info mb-0"><i class="fas fa-trophy me-2"></i>Leaderboard is showing on the presentation screen</p>';
         }
@@ -177,12 +184,14 @@
             badge.className = 'badge bg-success';
             badge.innerText = 'FINISHED';
             btnNext.style.display = 'none';
+            btnSkip.style.display = 'none';
             preview.innerHTML = '<p class="text-success mb-0"><i class="fas fa-check-circle me-2"></i>Quiz is finished! Final leaderboard is showing.</p>';
         }
         else if (stateData.state === 'question') {
             badge.className = 'badge bg-danger';
             badge.innerText = 'QUESTION IN PROGRESS';
             btnNext.style.display = 'none';
+            btnSkip.style.display = 'block';
 
             if (stateData.question_data) {
                 const q = stateData.question_data;
@@ -266,6 +275,30 @@
             console.error(err);
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Failed. Retry?';
+        });
+    }
+
+    function skipQuestion() {
+        const btn = document.getElementById('btn-skip-question');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Skipping...';
+
+        fetch(skipQuestionUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            fetchState();
+        })
+        .catch(err => {
+            console.error(err);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-forward me-2"></i>Skip to Leaderboard';
         });
     }
 

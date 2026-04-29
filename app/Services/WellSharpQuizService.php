@@ -219,6 +219,24 @@ class WellSharpQuizService
     }
 
     /**
+     * Skip the current question — switch to leaderboard without awarding points.
+     */
+    public static function skipQuestion(int $quizId): bool
+    {
+        try {
+            $state = Redis::get("ws_quiz:{$quizId}:state") ?: 'lobby';
+            if ($state !== 'question') {
+                return false;
+            }
+            Redis::set("ws_quiz:{$quizId}:state", 'leaderboard');
+            return true;
+        } catch (\Throwable $e) {
+            Log::error("WellSharpQuizService skipQuestion error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Clear an entire WellSharp quiz session.
      */
     public static function clearSession(int $quizId): void

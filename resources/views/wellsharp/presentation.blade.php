@@ -74,7 +74,7 @@
         }
 
         .question-header {
-            padding: 2rem 4rem;
+            padding: 0.5rem 3rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -83,9 +83,9 @@
         .question-badge {
             background: #B4120D;
             color: white;
-            padding: 0.6rem 2rem;
+            padding: 0.8rem 2.5rem;
             border-radius: 50px;
-            font-size: 1.3rem;
+            font-size: 2rem;
             font-weight: 700;
             letter-spacing: 1px;
         }
@@ -102,31 +102,31 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0 6rem;
+            padding: 0;
+            width: 100%;
         }
 
         .question-text {
-            font-size: 3.2rem;
+            font-size: 4.5rem;
             font-weight: 800;
             text-align: center;
-            line-height: 1.3;
-            margin-bottom: 4rem;
+            line-height: 1.2;
+            margin-bottom: 2.5rem;
             color: #fff;
-            max-width: 1200px;
+            width: 95%;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            width: 100%;
-            max-width: 1100px;
+            gap: 1.2rem;
+            width: 95%;
         }
 
         .option-card {
             padding: 1.8rem 2.5rem;
             border-radius: 18px;
-            font-size: 1.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -136,14 +136,14 @@
         }
 
         .option-card .option-letter {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             background: rgba(255,255,255,0.2);
             flex-shrink: 0;
         }
@@ -160,12 +160,12 @@
         }
 
         .leaderboard-header {
-            padding: 2.5rem 4rem 1rem;
+            padding: 0.5rem 4rem 0.5rem;
             text-align: center;
         }
 
         .leaderboard-header h1 {
-            font-size: 3rem;
+            font-size: 4.5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #f1c40f, #e67e22);
             -webkit-background-clip: text;
@@ -185,19 +185,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 2rem 4rem;
+            padding: 0.5rem 4rem;
             overflow-y: auto;
         }
 
         .leaderboard-table {
-            width: 100%;
-            max-width: 1000px;
+            width: 95%;
         }
 
         .lb-row {
             display: flex;
             align-items: center;
-            padding: 1.2rem 2rem;
+            padding: 1.5rem 2.5rem;
             margin-bottom: 0.8rem;
             border-radius: 16px;
             background: rgba(255,255,255,0.05);
@@ -223,31 +222,31 @@
         }
 
         .lb-rank {
-            width: 70px;
+            width: 100px;
             text-align: center;
-            font-size: 1.8rem;
+            font-size: 2.8rem;
             font-weight: 900;
             flex-shrink: 0;
         }
 
         .lb-rank .rank-icon {
-            font-size: 2rem;
+            font-size: 3.2rem;
         }
 
         .lb-name {
             flex: 1;
-            font-size: 1.6rem;
+            font-size: 2.4rem;
             font-weight: 700;
             padding-left: 1rem;
         }
 
         .lb-score {
-            font-size: 1.8rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            padding: 0.4rem 1.5rem;
+            padding: 0.5rem 2rem;
             border-radius: 30px;
             background: linear-gradient(135deg, #B4120D, #ff4444);
-            min-width: 100px;
+            min-width: 130px;
             text-align: center;
         }
 
@@ -259,11 +258,11 @@
 
         .finished-banner {
             text-align: center;
-            padding: 2rem;
+            padding: 0.5rem;
         }
 
         .finished-banner h1 {
-            font-size: 3.5rem;
+            font-size: 5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #f1c40f, #e67e22, #ff4444);
             -webkit-background-clip: text;
@@ -272,9 +271,9 @@
         }
 
         .finished-banner .trophy-icon {
-            font-size: 4rem;
+            font-size: 5rem;
             color: #f1c40f;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             animation: trophy-bounce 1s ease-in-out infinite;
         }
 
@@ -364,7 +363,7 @@
             <h1>Quiz Complete!</h1>
         </div>
         <div class="leaderboard-header">
-            <h1 style="font-size: 2rem;"><i class="fas fa-medal me-2"></i>Final Results</h1>
+            <h1 style="font-size: 3.5rem;"><i class="fas fa-medal me-2"></i>Final Results</h1>
         </div>
         <div class="leaderboard-content">
             <div class="leaderboard-table" id="lb-table-final">

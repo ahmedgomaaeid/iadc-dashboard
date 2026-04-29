@@ -90,6 +90,8 @@ Route::domain($domain)->group(function () {
             ->name('wellsharp_quizzes.remove-participant');
         Route::post('wellsharp_quizzes/{wellsharp_quiz}/add-score', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'addScore'])
             ->name('wellsharp_quizzes.add-score');
+        Route::post('wellsharp_quizzes/{wellsharp_quiz}/skip-question', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'skipQuestion'])
+            ->name('wellsharp_quizzes.skip-question');
         Route::delete('wellsharp_quizzes/{wellsharp_quiz}/clear', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'clearSession'])
             ->name('wellsharp_quizzes.clear');
 

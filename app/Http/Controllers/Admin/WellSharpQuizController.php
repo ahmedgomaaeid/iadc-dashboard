@@ -158,6 +158,17 @@ class WellSharpQuizController extends Controller
         return response()->json(['status' => 'success']);
     }
 
+    public function skipQuestion(Quiz $wellsharp_quiz)
+    {
+        $success = WellSharpQuizService::skipQuestion($wellsharp_quiz->id);
+
+        if (!$success) {
+            return response()->json(['status' => 'error', 'message' => 'No question to skip'], 400);
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
     public function clearSession(Quiz $wellsharp_quiz)
     {
         WellSharpQuizService::clearSession($wellsharp_quiz->id);
