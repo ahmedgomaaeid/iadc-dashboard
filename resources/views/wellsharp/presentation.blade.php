@@ -15,8 +15,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0f0f1a;
-            color: #fff;
+            background: #f5f6fa;
+            color: #1a1a2e;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
@@ -40,7 +40,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #0f0f1a 100%);
+            background: linear-gradient(135deg, #f5f6fa 0%, #e8ecf1 50%, #f5f6fa 100%);
         }
 
         #lobby-screen .logo-icon {
@@ -53,7 +53,7 @@
         #lobby-screen h1 {
             font-size: 4rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #B4120D, #ff4444);
+            background: linear-gradient(135deg, #B4120D, #d42020);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -70,7 +70,7 @@
         /* ============ QUESTION SCREEN ============ */
         #question-screen {
             flex-direction: column;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 100%);
+            background: linear-gradient(135deg, #f5f6fa 0%, #e8ecf1 100%);
         }
 
         .question-header {
@@ -92,7 +92,7 @@
 
         .quiz-title-small {
             font-size: 1.1rem;
-            color: #666;
+            color: #999;
             font-weight: 600;
         }
 
@@ -112,7 +112,7 @@
             text-align: center;
             line-height: 1.2;
             margin-bottom: 2.5rem;
-            color: #fff;
+            color: #1a1a2e;
             width: 95%;
         }
 
@@ -133,6 +133,7 @@
             gap: 1.2rem;
             transition: all 0.3s ease;
             border: 3px solid transparent;
+            color: #fff;
         }
 
         .option-card .option-letter {
@@ -144,7 +145,7 @@
             justify-content: center;
             font-weight: 900;
             font-size: 1.8rem;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             flex-shrink: 0;
         }
 
@@ -156,7 +157,7 @@
         /* ============ LEADERBOARD SCREEN ============ */
         #leaderboard-screen {
             flex-direction: column;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 100%);
+            background: linear-gradient(135deg, #f5f6fa 0%, #e8ecf1 100%);
         }
 
         .leaderboard-header {
@@ -167,7 +168,7 @@
         .leaderboard-header h1 {
             font-size: 4.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            background: linear-gradient(135deg, #d4a017, #c0780e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -175,7 +176,7 @@
 
         .leaderboard-header .subtitle {
             font-size: 1.2rem;
-            color: #888;
+            color: #999;
             margin-top: 0.5rem;
         }
 
@@ -199,26 +200,26 @@
             padding: 1.5rem 2.5rem;
             margin-bottom: 0.8rem;
             border-radius: 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.06);
             transition: all 0.3s ease;
         }
 
         .lb-row.top-1 {
-            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(241,196,15,0.05));
-            border-color: rgba(241,196,15,0.3);
+            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(241,196,15,0.06));
+            border-color: rgba(241,196,15,0.35);
             transform: scale(1.03);
         }
 
         .lb-row.top-2 {
-            background: linear-gradient(135deg, rgba(192,192,192,0.12), rgba(192,192,192,0.05));
-            border-color: rgba(192,192,192,0.25);
+            background: linear-gradient(135deg, rgba(160,160,170,0.15), rgba(160,160,170,0.06));
+            border-color: rgba(160,160,170,0.35);
             transform: scale(1.015);
         }
 
         .lb-row.top-3 {
-            background: linear-gradient(135deg, rgba(205,127,50,0.12), rgba(205,127,50,0.05));
-            border-color: rgba(205,127,50,0.25);
+            background: linear-gradient(135deg, rgba(205,127,50,0.15), rgba(205,127,50,0.06));
+            border-color: rgba(205,127,50,0.35);
         }
 
         .lb-rank {
@@ -226,6 +227,7 @@
             text-align: center;
             font-size: 2.8rem;
             font-weight: 900;
+            color: #333;
             flex-shrink: 0;
         }
 
@@ -238,6 +240,7 @@
             font-size: 2.4rem;
             font-weight: 700;
             padding-left: 1rem;
+            color: #1a1a2e;
         }
 
         .lb-score {
@@ -245,7 +248,8 @@
             font-weight: 900;
             padding: 0.5rem 2rem;
             border-radius: 30px;
-            background: linear-gradient(135deg, #B4120D, #ff4444);
+            background: linear-gradient(135deg, #B4120D, #d42020);
+            color: #fff;
             min-width: 130px;
             text-align: center;
         }
@@ -253,7 +257,7 @@
         /* ============ FINISHED SCREEN ============ */
         #finished-screen {
             flex-direction: column;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 100%);
+            background: linear-gradient(135deg, #f5f6fa 0%, #e8ecf1 100%);
         }
 
         .finished-banner {
@@ -264,7 +268,7 @@
         .finished-banner h1 {
             font-size: 5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #f1c40f, #e67e22, #ff4444);
+            background: linear-gradient(135deg, #d4a017, #c0780e, #B4120D);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -272,7 +276,7 @@
 
         .finished-banner .trophy-icon {
             font-size: 5rem;
-            color: #f1c40f;
+            color: #d4a017;
             margin-bottom: 0.5rem;
             animation: trophy-bounce 1s ease-in-out infinite;
         }
@@ -300,7 +304,7 @@
         /* Scrollbar styling */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -308,7 +312,7 @@
     <!-- LOBBY SCREEN -->
     <div id="lobby-screen" class="screen active">
         <div class="logo-icon">
-            <img src="{{ asset('assets/images/brand/logo.png') }}" alt="Logo" style="height: 10rem; object-fit: contain;">
+            <img src="{{ asset('assets/images/brand/logo-3.png') }}" alt="Logo" style="height: 10rem; object-fit: contain;">
         </div>
         <h1>{{ $quiz->name }}</h1>
         <p>Waiting to start...</p>
@@ -318,7 +322,7 @@
     <div id="question-screen" class="screen">
         <div class="question-header">
             <span class="question-badge">Question <span id="q-number">1</span></span>
-            <span class="quiz-title-small">{{ $quiz->name }}</span>
+            <span class="quiz-title-small"><img src="{{ asset('assets/images/brand/logo-2.svg') }}" alt="Logo" style="height: 3.5rem; object-fit: contain;"></span>
         </div>
         <div class="question-body">
             <div class="question-text" id="q-text">Loading question...</div>
