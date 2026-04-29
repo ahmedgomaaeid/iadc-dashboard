@@ -308,7 +308,7 @@
     <!-- LOBBY SCREEN -->
     <div id="lobby-screen" class="screen active">
         <div class="logo-icon">
-            <i class="fas fa-bolt"></i>
+            <img src="{{ asset('assets/images/brand/logo.png') }}" alt="Logo" style="height: 10rem; object-fit: contain;">
         </div>
         <h1>{{ $quiz->name }}</h1>
         <p>Waiting to start...</p>
