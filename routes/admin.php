@@ -74,6 +74,25 @@ Route::domain($domain)->group(function () {
         Route::post('interactive_quizzes/{interactive_quiz}/next-question', [\App\Http\Controllers\Admin\InteractiveQuizController::class, 'nextQuestion'])
             ->name('interactive_quizzes.next-question');
 
+        // WellSharp Quiz Management Routes
+        Route::resource('wellsharp_quizzes', \App\Http\Controllers\Admin\WellSharpQuizController::class);
+        Route::patch('wellsharp_quizzes/{wellsharp_quiz}/toggle-active', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'toggleActive'])
+            ->name('wellsharp_quizzes.toggle-active');
+        Route::get('wellsharp_quizzes/{wellsharp_quiz}/control', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'controlPanel'])
+            ->name('wellsharp_quizzes.control');
+        Route::get('wellsharp_quizzes/{wellsharp_quiz}/state', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'state'])
+            ->name('wellsharp_quizzes.state');
+        Route::post('wellsharp_quizzes/{wellsharp_quiz}/next-question', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'nextQuestion'])
+            ->name('wellsharp_quizzes.next-question');
+        Route::post('wellsharp_quizzes/{wellsharp_quiz}/add-participant', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'addParticipant'])
+            ->name('wellsharp_quizzes.add-participant');
+        Route::delete('wellsharp_quizzes/{wellsharp_quiz}/remove-participant/{participantId}', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'removeParticipant'])
+            ->name('wellsharp_quizzes.remove-participant');
+        Route::post('wellsharp_quizzes/{wellsharp_quiz}/add-score', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'addScore'])
+            ->name('wellsharp_quizzes.add-score');
+        Route::delete('wellsharp_quizzes/{wellsharp_quiz}/clear', [\App\Http\Controllers\Admin\WellSharpQuizController::class, 'clearSession'])
+            ->name('wellsharp_quizzes.clear');
+
         // Dynamic Form Management Routes
         Route::resource('dynamic-forms', \App\Http\Controllers\Admin\DynamicFormController::class);
         Route::patch('dynamic-forms/{dynamicForm}/toggle-active', [\App\Http\Controllers\Admin\DynamicFormController::class, 'toggleActive'])

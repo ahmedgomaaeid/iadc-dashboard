@@ -230,6 +230,11 @@
                                                 class="side-menu__label">Interactive Quizzes</span></a>
                                     </li>
                                     <li class="slide">
+                                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.wellsharp_quizzes.index') }}"><i
+                                                class="side-menu__icon fas fa-bolt"></i><span
+                                                class="side-menu__label">WellSharp Quiz</span></a>
+                                    </li>
+                                    <li class="slide">
                                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.dynamic-forms.index') }}"><i
                                                 class="side-menu__icon fe fe-file-text"></i><span
                                                 class="side-menu__label">Dynamic Forms</span></a>

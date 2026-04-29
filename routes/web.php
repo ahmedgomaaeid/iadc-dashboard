@@ -63,6 +63,10 @@ Route::post('/interactive-quiz/{quiz}/join', [\App\Http\Controllers\InteractiveQ
 Route::get('/interactive-quiz/{quiz}/state', [\App\Http\Controllers\InteractiveQuizController::class, 'state'])->name('interactive_quiz.state');
 Route::post('/interactive-quiz/{quiz}/answer', [\App\Http\Controllers\InteractiveQuizController::class, 'answer'])->name('interactive_quiz.answer');
 
+// WellSharp Presentation Routes (Public, for projector display)
+Route::get('/wellsharp/{quiz}/present', [\App\Http\Controllers\WellSharpPresentationController::class, 'show'])->name('wellsharp.present');
+Route::get('/wellsharp/{quiz}/present/state', [\App\Http\Controllers\WellSharpPresentationController::class, 'state'])->name('wellsharp.present.state');
+
 // Unified Google Auth Routes
 Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
